@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quản lý Nhân Viên"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
+
+    <EditText
+        android:id="@+id/editTextMaNV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Mã Nhân Viên" />
+
+    <EditText
+        android:id="@+id/editTextTenNV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tên Nhân Viên" />
+
+    <EditText
+        android:id="@+id/editTextSDT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Số Điện Thoại" />
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email" />
+
+    <Button
+        android:id="@+id/buttonAddEmployee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Thêm Nhân Viên"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/buttonShowLog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Load Nhân Viên"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
