@@ -59,22 +59,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
 
         Switch sw = findViewById(R.id.map_sw);
         sw.setOnCheckedChangeListener(this::switchMap);
-
-        LinearLayout checkin_btn = findViewById(R.id.checkin_btn);
-//        checkin_btn.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
-//                    checkin_btn.setElevation(0);
-//                    checkin_btn.setTranslationZ(0);
-//                    return true;
-//                } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
-//                    checkin_btn.setElevation(4);
-//                    checkin_btn.setTranslationZ(5);
-//                    return true;
-//                }
-//                return false;
-//            }});
     }
 
     private void switchMap(CompoundButton buttonView, boolean isChecked){
