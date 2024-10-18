@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "On_Time"
+rootProject.name = "Checkin"
 include(":app")
  
