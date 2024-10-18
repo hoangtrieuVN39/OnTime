@@ -1,5 +1,4 @@
-﻿create database chamcong
-USE chamcong;
+﻿USE chamcong;
 -- Tạo bảng NhanVien
 CREATE TABLE Employee (
     EmployeeID VARCHAR(10) PRIMARY KEY,
@@ -124,14 +123,14 @@ INSERT INTO LeaveRequest (RequestID, CreatedTime, Statuss, LeaveTypeID, Employee
 -- Insert dữ liệu vào bảng ChamCong
 INSERT INTO Attendance  (AttendanceID, CreatedTime, Statuss, AttendanceType, LateTime, EmployeeID,ShiftID) VALUES
 ('CC001', '2024-01-01 08:00:00', 'Complete', 'Check in', ' ', 'NV001', 'CA001'),  
-('CC002', '2024-01-05 08:15:00', 'Complete', 'Check in', '15 minutes late', 'NV002', 'CA002'),  
-('CC003', '2024-01-10 08:30:00', 'Complete', 'Check in', '30 minutes late', 'NV003', 'CA003'),  
-('CC004', '2024-01-15 08:45:00', 'Complete', 'Check in', '45 minutes late', 'NV004', 'CA001'),  
-('CC005', '2024-01-20 09:00:00', 'Complete', 'Check in', '5 minutes late', 'NV005', 'CA002'),  
-('CC006', '2024-01-25 08:05:00', 'Complete', 'Check in', '15 minutes late', 'NV006', 'CA003'),  
+('CC002', '2024-01-05 13:15:00', 'Complete', 'Check in', '15 minutes late', 'NV002', 'CA002'),  
+('CC003', '2024-01-10 18:30:00', 'Complete', 'Check in', '30 minutes late', 'NV003', 'CA003'),  
+('CC004', '2024-01-15 12:05:00', 'Complete', 'Check out','5 minutes late ', 'NV004', 'CA001'),  
+('CC005', '2024-01-20 17:05:00', 'Complete', 'Check out', '5 minutes late', 'NV005', 'CA002'),  
+('CC006', '2024-01-25 18:05:00', 'Complete', 'Check in', '15 minutes late', 'NV006', 'CA003'),  
 ('CC007', '2024-02-01 08:20:00', 'Complete', 'Check in', '20 minutes late', 'NV007', 'CA001'),  
-('CC008', '2024-02-05 08:10:00', 'Complete', 'Check in', '10 minutes late', 'NV008', 'CA002'),  
-('CC009', '2024-02-10 08:35:00', 'Complete', 'Check in', '35 minutes late', 'NV009', 'CA003'),  
+('CC008', '2024-02-05 17:10:00', 'Complete', 'Check out', '10 minutes late', 'NV008', 'CA002'),  
+('CC009', '2024-02-10 18:35:00', 'Complete', 'Check in', '35 minutes late', 'NV009', 'CA003'),  
 ('CC010', '2024-02-15 08:50:00', 'Complete', 'Check in', '15 minutes late', 'NV010', 'CA001');
 
 
