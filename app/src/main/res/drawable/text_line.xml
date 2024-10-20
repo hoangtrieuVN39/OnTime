@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/transparent"/> <!-- Nền trong suốt -->
+
+    <padding
+        android:bottom="10dp" /> <!-- Đặt khoảng cách giữa văn bản và viền -->
+</shape>

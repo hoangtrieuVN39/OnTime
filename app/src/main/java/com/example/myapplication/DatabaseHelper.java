@@ -53,6 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LEAVETYPEID_REF = "LeaveTypeID";
     private static final String COLUMN_EMPLOYEEEMAIL_REF = "EmployeeEmail";
     private static final String COLUMN_PERMISSIONLEVEL = "PermissionLevel";
+    private static final String COLUMN_REASON = "Reason";
 
     // Table ChamCong
     private static final String TABLE_ATTENDANCE = "Attendance";
@@ -61,6 +62,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LATETIME = "LateTime";
     private static final String COLUMN_EMPLOYEEID_REF = "EmployeeID";
     private static final String COLUMN_SHIFTID_REF = "ShiftID";
+
+
+    // Table Vị trí chấm công
+    private static final String TABLE_LOCATION = "Location";
+    private static final String COLUMN_LOCATIONID = "LocationID";
+    private static final String COLUMN_LONGITUDE = "Longitude";
+    private static final String COLUMN_LATITUDE = "Latitude";
 
     private Context context;
     //phương thức khởi tạo
@@ -79,6 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_ACCOUNT);
         db.execSQL(CREATE_TABLE_LEAVEREQUEST);
         db.execSQL(CREATE_TABLE_ATTENDANCE);
+        db.execSQL(CREATE_TABLE_LOCATION);
     }
 
     private static final String CREATE_TABLE_EMPLOYEE = "CREATE TABLE " + TABLE_EMPLOYEE + " ("
@@ -123,6 +132,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_SHIFTID_REF + " VARCHAR(10), "
             + "FOREIGN KEY (" + COLUMN_EMPLOYEEID + ") REFERENCES " + TABLE_EMPLOYEE + "(" + COLUMN_EMPLOYEEID + "), "
             + "FOREIGN KEY (" + COLUMN_SHIFTID_REF + ") REFERENCES " + TABLE_WORKSHIFT + "(" + COLUMN_SHIFTID  + "))";
+
+    private static final String CREATE_TABLE_LOCATION = "CREATE TABLE " + TABLE_LOCATION + " ("
+            + COLUMN_LOCATIONID + " VARCHAR(10) PRIMARY KEY, "
+            + COLUMN_LONGITUDE + " DECIMAL(10, 8), "
+            + COLUMN_LATITUDE + " DECIMAL(10, 8))";
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion,
                           int newVersion) {

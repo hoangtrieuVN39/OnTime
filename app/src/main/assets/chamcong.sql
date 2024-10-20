@@ -1,4 +1,5 @@
-﻿USE chamcong;
+﻿create database checktimee
+USE checktimee;
 -- Tạo bảng NhanVien
 CREATE TABLE Employee (
     EmployeeID VARCHAR(10) PRIMARY KEY,
@@ -36,7 +37,8 @@ CREATE TABLE LeaveRequest (
     Statuss VARCHAR(50),
     LeaveTypeID VARCHAR(10),  
     EmployeeEmail  VARCHAR(100),    
-    PermissionLevel VARCHAR(10),  
+    PermissionLevel VARCHAR(10),
+    Reason VARCHAR(50),
     FOREIGN KEY (LeaveTypeID) REFERENCES LeaveType(LeaveTypeID), 
     FOREIGN KEY (EmployeeEmail) REFERENCES Employee(EmployeeEmail) 
 );
@@ -53,7 +55,11 @@ CREATE TABLE Attendance  (
     FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
     FOREIGN KEY (ShiftID) REFERENCES WorkShift(ShiftID)  
 );
-
+CREATE TABLE Location (
+    LocationID VARCHAR(10) PRIMARY KEY,
+    Longitude DECIMAL(10, 8),
+    Latitude DECIMAL(10, 8)
+);
 
 -- Insert dữ liệu vào bảng NhanVien
 INSERT INTO Employee (EmployeeID, EmployeeName, PhoneNumber, EmployeeEmail) VALUES
@@ -96,29 +102,25 @@ INSERT INTO LeaveType (LeaveTypeID, LeaveTypeName) VALUES
 
 -- Insert dữ liệu vào bảng CaChamCong
 INSERT INTO WorkShift (ShiftID, ShiftName, StartTime, EndTime ) VALUES
-('CA001', 'Morning shift', '08:00:00', '12:00:00'),
-('CA002', 'Afternoon shift', '13:00:00', '17:00:00'),
-('CA003', 'Evening Shift', '18:00:00', '22:00:00'),
-('CA004', 'Morning shift',  '08:00:00', '12:00:00'),
-('CA005', 'Office hours', '08:00:00', '17:00:00'),
-('CA006', 'Morning shift',  '08:00:00', '12:00:00'),
-('CA007', 'Evening Shift', '18:00:00', '22:00:00'),
-('CA008', 'Afternoon shift', '13:00:00', '17:00:00'),
-('CA009', 'Office hours', '08:00:00', '17:00:00'),
-('CA010', 'Afternoon shift', '13:00:00', '17:00:00');
+('CA001', 'Ca sáng', '08:00:00', '12:00:00'),
+('CA002', 'Ca chiều', '13:00:00', '17:00:00'),
+('CA003', 'Ca tối', '18:00:00', '22:00:00');
+
 
 -- Insert dữ liệu vào bảng DonTu
-INSERT INTO LeaveRequest (RequestID, CreatedTime, Statuss, LeaveTypeID, EmployeeEmail, PermissionLevel) VALUES
-('DT001', '2024-01-01 08:00:00', 'Accept', 'LDT003', 'nva@example.com', 'NV003'),
-('DT002', '2024-01-05 08:00:00', 'Accept', 'LDT005', 'ltb@example.com', 'NV002'),
-('DT003', '2024-01-10 08:00:00', 'Accept', 'LDT001', 'tvc@example.com', 'NV001'),
-('DT004', '2024-01-15 08:00:00', 'Pending approval', 'LDT006', 'ptd@example.com', 'NV005'),
-('DT005', '2024-01-20 08:00:00', 'Refused', 'LDT004', 'hve@example.com', 'NV003'),
-('DT006', '2024-01-25 08:00:00', 'Accept', 'LDT002', 'ntf@example.com', 'NV002'),
-('DT007', '2024-02-01 08:00:00', 'Pending approval', 'LDT003', 'lvg@example.com', 'NV001'),
-('DT008', '2024-02-05 08:00:00', 'Refused', 'LDT005', 'tth@example.com', 'NV006'),
-('DT009', '2024-02-10 08:00:00', 'Accept', 'LDT001', 'pvi@example.com', 'NV002'),
-('DT010', '2024-02-15 08:00:00', 'Pending approval', 'LDT007', 'htk@example.com', 'NV007');
+-- Chèn dữ liệu vào bảng DonTu với Reason
+INSERT INTO LeaveRequest (RequestID, CreatedTime, Statuss, LeaveTypeID, EmployeeEmail, PermissionLevel, Reason) VALUES
+('DT001', '2024-01-01 08:00:00', 'Accept', 'LDT003', 'nva@example.com', 'NV003', 'Vacation'),
+('DT002', '2024-01-05 08:00:00', 'Accept', 'LDT005', 'ltb@example.com', 'NV002', 'Business Trip'),
+('DT003', '2024-01-10 08:00:00', 'Accept', 'LDT001', 'tvc@example.com', 'NV001', 'Personal Leave'),
+('DT004', '2024-01-15 08:00:00', 'Pending approval', 'LDT006', 'ptd@example.com', 'NV005', 'Medical Appointment'),
+('DT005', '2024-01-20 08:00:00', 'Refused', 'LDT004', 'hve@example.com', 'NV003', 'Family Emergency'),
+('DT006', '2024-01-25 08:00:00', 'Accept', 'LDT002', 'ntf@example.com', 'NV002', 'Sick Leave'),
+('DT007', '2024-02-01 08:00:00', 'Pending approval', 'LDT003', 'lvg@example.com', 'NV001', 'work online at home'),
+('DT008', '2024-02-05 08:00:00', 'Refused', 'LDT005', 'tth@example.com', 'NV006', 'Annual Leave'),
+('DT009', '2024-02-10 08:00:00', 'Accept', 'LDT001', 'pvi@example.com', 'NV002', 'Leave for study'),
+('DT010', '2024-02-15 08:00:00', 'Pending approval', 'LDT007', 'htk@example.com', 'NV007', 'work online at home');
+
 
 -- Insert dữ liệu vào bảng ChamCong
 INSERT INTO Attendance  (AttendanceID, CreatedTime, Statuss, AttendanceType, LateTime, EmployeeID,ShiftID) VALUES
@@ -133,6 +135,9 @@ INSERT INTO Attendance  (AttendanceID, CreatedTime, Statuss, AttendanceType, Lat
 ('CC009', '2024-02-10 18:35:00', 'Complete', 'Check in', '35 minutes late', 'NV009', 'CA003'),  
 ('CC010', '2024-02-15 08:50:00', 'Complete', 'Check in', '15 minutes late', 'NV010', 'CA001');
 
+INSERT INTO Location (LocationID, Longitude, Latitude) VALUES
+('VT001', 16.0345,  108.2481), 
+('VT002', 106.682699, 10.762622);  
 
 -- 1. Truy vấn để lấy thông tin về nhân viên và đơn từ của họ
 SELECT Employee.EmployeeName, LeaveRequest.CreatedTime, LeaveRequest.Statuss
