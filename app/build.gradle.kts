@@ -6,20 +6,20 @@ plugins {
 android {
 	namespace = "com.example.checkin"
 	compileSdk = 34
-
+	
 	defaultConfig {
 		applicationId = "com.example.checkin"
 		minSdk = 28
 		targetSdk = 34
 		versionCode = 1
 		versionName = "1.0"
-
+		
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		vectorDrawables {
 			useSupportLibrary = true
 		}
 	}
-
+	
 	buildTypes {
 		release {
 			isMinifyEnabled = false
@@ -97,4 +97,5 @@ dependencies {
 	implementation("com.google.android.gms:play-services-location:21.3.0")
 	implementation(libs.androidx.fragment)
 	implementation(libs.androidx.fragment.ktx)
+	implementation(libs.androidx.material)
 }
