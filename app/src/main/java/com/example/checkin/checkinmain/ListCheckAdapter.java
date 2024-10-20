@@ -6,12 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.checkin.Check;
 import com.example.checkin.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -50,11 +52,21 @@ public class ListCheckAdapter extends BaseAdapter {
         TextView check_time = v.findViewById(R.id.check_time);
         TextView check_type = v.findViewById(R.id.check_type);
         TextView shift_name = v.findViewById(R.id.shift_name);
+        LinearLayout main_lyt = v.findViewById(R.id.main_lyt);
 
-        icon.setImageResource(R.drawable.ic_launcher_foreground);
+        if (mCheck.get(i)[2].equals("Bắt đầu") || mCheck.get(i)[2].equals("Kết thúc")) {
+            icon.setImageResource(R.drawable.baseline_outlined_flag_24);
+        } else {
+            icon.setImageResource(R.drawable.baseline_check_24);
+        }
+
         check_time.setText(mCheck.get(i)[1]);
         check_type.setText(mCheck.get(i)[2]);
         shift_name.setText(shift);
+
+        if (mCheck.get(i)[3].equals("0")) {
+            main_lyt.setAlpha(0.5F);
+        }
 
         return v;
     }

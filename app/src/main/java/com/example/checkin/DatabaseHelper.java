@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,19 +17,19 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBManager extends SQLiteOpenHelper {
-    // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
-    public static String DATABASE_PATH = "";
-    public static String DATABASE_NAME = "db.db";
-    Context ctx;
+public class DatabaseHelper extends SQLiteOpenHelper {
+
+    private static final int DATABASE_VERSION = 1;
+    private static String DATABASE_PATH = "";
+    private static final String DATABASE_NAME = "dbase.db";
+
+    private Context context;
     SQLiteDatabase mDatabase;
 
-    public DBManager(Context context) throws IOException {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        System.out.println(Environment.get());
-        this.DATABASE_PATH = Environment.getDataDirectory() + "/data/" + context.getPackageName() + "/databases/";
-        this.ctx = context;
+    public DatabaseHelper(Context context, SQLiteDatabase.CursorFactory factory) throws IOException {
+        super(context, DATABASE_NAME, factory, DATABASE_VERSION);
+        DATABASE_PATH = context.getDatabasePath(DATABASE_NAME).getAbsolutePath();
+        this.context = context;
         boolean dbexist = checkdatabase();
         if (dbexist) {
             open();
@@ -56,11 +57,11 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     private void copydatabase() throws IOException {
-        InputStream myinput = ctx.getAssets().open("db.db");
+        InputStream myinput = context.getAssets().open("dbase.db");
 
-        String outfilename = DATABASE_PATH + DATABASE_NAME;
+        String outfilename = DATABASE_PATH;
 
-        OutputStream myoutput = Files.newOutputStream(Paths.get(outfilename));
+        OutputStream myoutput = new FileOutputStream(outfilename);
 
         byte[] buffer = new byte[1024];
         int length;
@@ -76,8 +77,7 @@ public class DBManager extends SQLiteOpenHelper {
     private boolean checkdatabase() {
         boolean checkdb = false;
         try {
-            String myPath = DATABASE_PATH + DATABASE_NAME;
-            File dbfile = new File(myPath);
+            File dbfile = new File(DATABASE_PATH);
             checkdb = dbfile.exists();
         } catch (SQLiteException e) {
             System.out.println("Database doesn't exist");
@@ -86,7 +86,7 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     public void open(){
-        String mypath = DATABASE_PATH + DATABASE_NAME;
+        String mypath = DATABASE_PATH;
         mDatabase = SQLiteDatabase.openDatabase(mypath, null, SQLiteDatabase.OPEN_READWRITE);
     }
 
@@ -107,12 +107,36 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onCreate(db);
     }
 
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
-    }
+    public List<List> loadDataHandler(String TABLE_NAME, String FILTER, String[] SELECTION_ARGS) {
+        List<List> results = new ArrayList<>();
 
+        String query = "SELECT * FROM " + TABLE_NAME;
+        if (SELECTION_ARGS != null) {
+            query = "SELECT " + String.join(", ", SELECTION_ARGS) + " FROM " + TABLE_NAME;
+        }
+        if (FILTER != null) {
+            query += " WHERE " + FILTER;
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        while (cursor.moveToNext()) {
+            List<String> result = new ArrayList<>();
+            for (int i = 0; i < cursor.getColumnCount(); i++) {
+                result.add(cursor.getString(i));
+            }
+            ;
+            results.add(result);
+        }
+
+        cursor.close();
+        db.close();
+        return results;
+    }
 }

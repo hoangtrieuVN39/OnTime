@@ -18,6 +18,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="top"
         android:fillViewport="true">
 
 
@@ -70,10 +71,11 @@
                                     android:id="@+id/imageView"
                                     android:layout_width="16dp"
                                     android:layout_height="16dp"
-                                    android:layout_weight="0" />
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/outline_location_on_24" />
 
                                 <TextView
-                                    android:id="@+id/textView"
+                                    android:id="@+id/currentcheckpoint_txt"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -99,15 +101,16 @@
                                     android:id="@+id/imageView"
                                     android:layout_width="16dp"
                                     android:layout_height="16dp"
-                                    android:layout_weight="0" />
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/outline_info_24" />
 
                                 <TextView
-                                    android:id="@+id/textView"
+                                    android:id="@+id/currentplace_txt"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="Văn phòng Đà Nẵng"
-                                    android:textColor="@color/black" />
+                                    android:text="Ngoài vị trí"
+                                    android:textColor="#4BEC83" />
                             </LinearLayout>
 
                         </LinearLayout>
@@ -119,7 +122,6 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/textView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -141,42 +143,47 @@
                     <LinearLayout
                         android:id="@+id/lyt2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="100dp"
                         android:layout_weight="0"
                         android:background="@drawable/roundgradient"
                         android:gravity="center"
                         android:orientation="horizontal"
-                        android:padding="12dp"
+                        android:paddingLeft="32dp"
+                        android:paddingTop="12dp"
+                        android:paddingRight="32dp"
+                        android:paddingBottom="12dp"
                         android:visibility="visible">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/textView"
+                                android:id="@+id/currentdate_txt"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="Văn phòng Đà Nẵng"
-                                android:textColor="@color/black" />
+                                android:text="Thứ 6, 19/10/2024"
+                                android:textColor="@color/black"
+                                android:textSize="16sp" />
 
                             <Space
                                 android:layout_width="4dp"
                                 android:layout_height="4dp" />
 
                             <TextView
-                                android:id="@+id/textView"
+                                android:id="@+id/currenttime_txt"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="09:35:24"
+                                android:text="09:35:24a"
                                 android:textColor="@color/black"
-                                android:textSize="32sp" />
+                                android:textSize="32sp"
+                                android:textStyle="bold" />
 
                         </LinearLayout>
 
@@ -184,14 +191,12 @@
                             android:id="@+id/lyt3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0"
                             android:gravity="center"
                             android:orientation="vertical">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="0"
                                 android:baselineAligned="false"
                                 android:gravity="center"
                                 android:orientation="horizontal"
@@ -201,43 +206,18 @@
                                     android:id="@+id/imageView"
                                     android:layout_width="16dp"
                                     android:layout_height="16dp"
-                                    android:layout_weight="0" />
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/baseline_outlined_flag_24" />
 
                                 <TextView
-                                    android:id="@+id/textView"
+                                    android:id="@+id/currentshift_txt"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Văn phòng Đà Nẵng"
-                                    android:textColor="@color/black" />
+                                    android:text="Ca sáng"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
                             </LinearLayout>
 
-                            <Space
-                                android:layout_width="8dp"
-                                android:layout_height="8dp" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0"
-                                android:baselineAligned="false"
-                                android:gravity="center"
-                                android:orientation="horizontal"
-                                android:textAlignment="center">
-
-                                <ImageView
-                                    android:id="@+id/imageView"
-                                    android:layout_width="16dp"
-                                    android:layout_height="16dp" />
-
-                                <TextView
-                                    android:id="@+id/textView"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Văn phòng Đà Nẵng"
-                                    android:textColor="@color/black" />
-                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -245,8 +225,8 @@
             </LinearLayout>
 
             <Space
-                android:layout_width="wrap_content"
-                android:layout_height="120dp" />
+                android:layout_width="match_parent"
+                android:layout_height="160dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -258,7 +238,7 @@
                     android:layout_width="160dp"
                     android:layout_height="160dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/checkinbtn"
+                    android:background="@drawable/checkin_btn"
                     android:elevation="4dp"
                     android:gravity="center"
                     android:orientation="vertical"
@@ -267,7 +247,7 @@
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        app:srcCompat="@drawable/googleg_standard_color_18" />
+                        app:srcCompat="@drawable/baseline_touch_app_24" />
 
                     <Space
                         android:layout_width="match_parent"
@@ -292,11 +272,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:background="@drawable/round_white_16dp"
+                    android:elevation="20dp"
                     android:orientation="vertical"
                     android:paddingLeft="16dp"
                     android:paddingTop="24dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="16dp">
+                    android:paddingBottom="16dp"
+                    android:translationZ="5dp">
 
                     <TextView
                         android:id="@+id/textView3"

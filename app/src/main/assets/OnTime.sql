@@ -1,7 +1,4 @@
-﻿create database chamcong
-USE chamcong;
--- Tạo bảng NhanVien
-CREATE TABLE Employee (
+﻿CREATE TABLE Employee (
     EmployeeID VARCHAR(10) PRIMARY KEY,
     EmployeeName VARCHAR(100),
     PhoneNumber VARCHAR(15),
@@ -70,7 +67,7 @@ INSERT INTO Employee (EmployeeID, EmployeeName, PhoneNumber, EmployeeEmail) VALU
 ('NV010', 'Hoàng Thị Kiên', '0910123456', 'htk@example.com');
 
 -- Insert dữ liệu vào bảng TaiKhoan
-INSERT INTO Account (AccountID, Password, FullName,  EmployeeEmail) VALUES
+INSERT INTO Account (AccountID, Passwordd, FullName,  EmployeeEmail) VALUES
 ('TK001', 'password1', 'Nguyễn Văn Anh', 'nva@example.com'),
 ('TK002', 'password2', 'Lê Thị Bình', 'ltb@example.com'),
 ('TK003', 'password3', 'Trần Văn Cương', 'tvc@example.com'),
@@ -99,11 +96,10 @@ INSERT INTO LeaveType (LeaveTypeID, LeaveTypeName) VALUES
 INSERT INTO WorkShift (ShiftID, ShiftName, StartTime, EndTime ) VALUES
 ('CA001', 'Morning shift', '08:00:00', '12:00:00'),
 ('CA002', 'Afternoon shift', '13:00:00', '17:00:00'),
-('CA003', 'Evening Shift', '18:00:00', '22:00:00'),
-
+('CA003', 'Evening Shift', '18:00:00', '22:00:00');
 
 -- Insert dữ liệu vào bảng DonTu
-INSERT INTO LeaveRequest (RequestID, CreatedTime, Status, LeaveTypeID, EmployeeEmail, PermissionLevel) VALUES
+INSERT INTO LeaveRequest (RequestID, CreatedTime, Statuss, LeaveTypeID, EmployeeEmail, PermissionLevel) VALUES
 ('DT001', '2024-01-01 08:00:00', 'Accept', 'LDT003', 'nva@example.com', 'NV003'),
 ('DT002', '2024-01-05 08:00:00', 'Accept', 'LDT005', 'ltb@example.com', 'NV002'),
 ('DT003', '2024-01-10 08:00:00', 'Accept', 'LDT001', 'tvc@example.com', 'NV001'),
@@ -116,14 +112,15 @@ INSERT INTO LeaveRequest (RequestID, CreatedTime, Status, LeaveTypeID, EmployeeE
 ('DT010', '2024-02-15 08:00:00', 'Pending approval', 'LDT007', 'htk@example.com', 'NV007');
 
 -- Insert dữ liệu vào bảng ChamCong
-INSERT INTO Attendance  (AttendanceID, CreatedTime, Status, AttendanceType, LateTime, EmployeeID,ShiftID) VALUES
-('CC001', '2024-01-01 08:00:00', 'Check in', '', 'NV001', 'CA001'),
-('CC002', '2024-01-05 08:15:0', 'Check in', '15 minutes late', 'NV002', 'CA002'),
-('CC003', '2024-01-10 08:30:00', 'Check in', '30 minutes late', 'NV003', 'CA003'),
-('CC004', '2024-01-15 08:45:00', 'Check in', '45 minutes late', 'NV004', 'CA001'),
-('CC005', '2024-01-20 09:00:00', 'Check in', '5 minutes late', 'NV005', 'CA002'),
-('CC006', '2024-01-25 08:05:00', 'Check in', '15 minutes late', 'NV006', 'CA003'),
-('CC007', '2024-02-01 08:20:00', 'Check in', '20 minutes late', 'NV007', 'CA001'),
-('CC008', '2024-02-05 08:10:00', 'Check in', '10 minutes late', 'NV008', 'CA002'),
-('CC009', '2024-02-10 08:35:00', 'Check in', '35 minutes late', 'NV009', 'CA003'),
-('CC010', '2024-02-15 08:50:00', 'Check in', '15 minutes late', 'NV010', 'CA001');
+INSERT INTO Attendance  (AttendanceID, CreatedTime, Statuss, AttendanceType, LateTime, EmployeeID,ShiftID) VALUES
+('CC001', '2024-01-01 08:00:00', 'Complete', 'Check in', ' ', 'NV001', 'CA001'),
+('CC002', '2024-01-05 13:15:00', 'Complete', 'Check in', '15 minutes late', 'NV002', 'CA002'),
+('CC003', '2024-01-10 07:30:00', 'Complete', 'Check in', '', 'NV003', 'CA001'),
+('CC004', '2024-01-10 12:30:00', 'Complete', 'Check out', '', 'NV003', 'CA001'),
+('CC005', '2024-01-15 12:05:00', 'Complete', 'Check out','5 minutes late ', 'NV004', 'CA001'),
+('CC006', '2024-01-20 17:05:00', 'Complete', 'Check out', '5 minutes late', 'NV005', 'CA002'),
+('CC007', '2024-01-25 18:05:00', 'Complete', 'Check in', '15 minutes late', 'NV006', 'CA003'),
+('CC008', '2024-02-01 08:20:00', 'Complete', 'Check in', '20 minutes late', 'NV007', 'CA001'),
+('CC009', '2024-02-05 17:10:00', 'Complete', 'Check out', '10 minutes late', 'NV008', 'CA002'),
+('CC0010', '2024-02-10 18:35:00', 'Complete', 'Check in', '35 minutes late', 'NV009', 'CA003'),
+('CC011', '2024-02-15 08:50:00', 'Complete', 'Check in', '15 minutes late', 'NV010', 'CA001');

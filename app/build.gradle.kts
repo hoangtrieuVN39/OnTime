@@ -9,7 +9,7 @@ android {
 	
 	defaultConfig {
 		applicationId = "com.example.checkin"
-		minSdk = 28
+		minSdk = 24
 		targetSdk = 34
 		versionCode = 1
 		versionName = "1.0"
@@ -51,7 +51,6 @@ android {
 }
 
 dependencies {
-	
 	implementation(libs.androidx.core.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx)
 	implementation(libs.androidx.activity.compose)
@@ -69,8 +68,9 @@ dependencies {
 	androidTestImplementation(libs.androidx.ui.test.junit4)
 	debugImplementation(libs.androidx.ui.tooling)
 	debugImplementation(libs.androidx.ui.test.manifest)
-	implementation("com.google.android.gms:play-services-maps:18.2.0")
-	implementation("com.google.android.gms:play-services-location:21.3.0")
+	implementation(libs.play.services.maps.v1900)
+	implementation(libs.play.services.location)
 	implementation(libs.androidx.fragment)
 	implementation(libs.androidx.fragment.ktx)
+	implementation(libs.androidx.material)
 }
