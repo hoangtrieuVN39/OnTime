@@ -1,35 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-    <style name="Theme.Checkin.Chip" parent="Theme.MaterialComponents">
-        <item name="chipIconTint">#FEF1B9</item>
-        <item name="chipBackgroundColor">@color/choice_chip_background_color</item>
-        <item name="chipCornerRadius">16dp</item>
-        <item name="chipStrokeWidth">2dp</item>
-        <item name="chipStrokeColor">@color/choice_chip_stroke_color</item>
-        <item name="checkedIconVisible">false</item>
-        <item name="android:checkable">true</item>
-    </style>
-
-    <style name="Theme.Checkin.ChipGroup" parent="Theme.MaterialComponents">
-    </style>
-
-    <style name="Theme.Checkin.Switch" parent="Theme.MaterialComponents">
-        <item name="android:thumb">@drawable/switch_thumb</item>
-        <item name="trackHeight">24dp</item>
-        <item name="android:track">@drawable/switch_track</item>
-    </style>
-
-    <style name="Theme.Checkin.Button.Primary" parent="Widget.AppCompat.ActionButton" tools:ignore="ResourceCycle">
-        <item name="background">@drawable/buttonprimary</item>
-    </style>
-
-    <style name="Theme.Checkin.Button.Outline" parent="Widget.AppCompat.ActionButton" tools:ignore="ResourceCycle">
-        <item name="background">@drawable/buttonoutline</item>
-    </style>
-
-    <style name="NavBar" parent="Theme.MaterialComponents.Light">
-    </style>
-
-
+    <style name="Theme.On_Time" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
