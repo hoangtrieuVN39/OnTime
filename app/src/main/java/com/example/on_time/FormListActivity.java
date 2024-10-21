@@ -125,7 +125,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         filteredForms.addAll(listForms);
     }
-
+// thuyen
     public void setListMonth() {
         listMonth.add(new MonthSpinner("Tất cả"));
         listMonth.add(new MonthSpinner("Tháng 1"));
