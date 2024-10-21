@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_corner"
+    android:layout_marginBottom="10dp"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/titleTypeform_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nghỉ không lương"
+        android:textColor="@android:color/black"
+        android:textSize="25dp"
+        android:textStyle="bold">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/ngaynghi_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ngày nghỉ:"
+        android:textSize="20dp">
+    </TextView>
+    <TextView
+        android:id="@+id/lydo_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lý do:"
+        android:textSize="20dp">
+    </TextView>
+    <Button
+        android:id="@+id/pheduyet_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:text="Phê duyệt"
+        android:textSize="20dp"
+        android:textAllCaps="false">
+    </Button>
+</LinearLayout>
