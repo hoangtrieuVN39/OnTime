@@ -40,7 +40,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     MonthSpinnerAdapter msAdapter;
     ImageButton btn_addForm;
     ListView lvTypeForm;
-    DBManager DBManager;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -57,20 +56,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         filteredForms.addAll(listForms);
         btn_addForm = findViewById(R.id.addForm_btn);
 
-        try {
-            DBManager = new DBManager(this);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            DBManager.createdatabase();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 //        loadDataFromDatabase();
-
-        DBManager.open();
         fAdapter = new FormAdapter(this, filteredForms, this);
         lvForm.setAdapter(fAdapter);
 
@@ -208,11 +194,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     @Override
     public void onFormClick(String formName) {
         Toast.makeText(this, "Đơn từ: " + formName, Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        DBManager.close();
     }
 }
 
