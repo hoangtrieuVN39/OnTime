@@ -4,10 +4,12 @@ public class Form {
     String nameForm;
     String dateoff;
     String reason;
-    public Form(String nameForm, String dateoff, String reason){
+    String status;
+    public Form(String nameForm, String dateoff, String reason, String status){
         this.nameForm = nameForm;
         this.dateoff = dateoff;
         this.reason = reason;
+        this.status = status;
     }
 
     public String getNameForm(){
@@ -27,5 +29,11 @@ public class Form {
     }
     public void setReason(String reason){
         this.reason = reason;
+    }
+    public String getStatus(){
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
