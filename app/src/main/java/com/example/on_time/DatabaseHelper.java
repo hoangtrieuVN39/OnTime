@@ -57,7 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void copydatabase() throws IOException {
-        InputStream myinput = context.getAssets().open("db.db");
+        InputStream myinput = context.getAssets().open("dbase.db");
 
         String outfilename = DATABASE_PATH;
 
