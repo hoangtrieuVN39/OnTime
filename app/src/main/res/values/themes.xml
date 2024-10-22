@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.CheckinMain" parent="Theme.AppCompat.NoActionBar">
+    </style>
+    <style name="Theme.CheckinHistory" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    </style>
+
+    <style name="Theme.Checkin.Chip" parent="Theme.MaterialComponents">
+        <item name="chipIconTint">#FEF1B9</item>
+        <item name="chipBackgroundColor">@color/choice_chip_background_color</item>
+        <item name="chipCornerRadius">16dp</item>
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="chipStrokeColor">@color/choice_chip_stroke_color</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="android:checkable">true</item>
+    </style>
+
+    <style name="Theme.Checkin.ChipGroup" parent="Theme.MaterialComponents">
     <style name="Theme.Checkin" parent="Theme.AppCompat.NoActionBar">
 
 <!--    <style name="Theme.On_Time" parent="android:Theme.Material.Light.NoActionBar" >-->
@@ -23,4 +39,5 @@
     <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
         <item name="android:background">@null</item>
     </style>
+
 </resources>
