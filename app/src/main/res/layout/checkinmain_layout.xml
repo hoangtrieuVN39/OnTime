@@ -233,7 +233,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.example.checkin.checkinmain.TouchableLayout
+                <com.example.checkin.TouchableLayout
                     android:id="@+id/checkin_btn"
                     android:layout_width="160dp"
                     android:layout_height="160dp"
@@ -261,7 +261,7 @@
                         android:textAlignment="center"
                         android:textSize="20sp" />
 
-                </com.example.checkin.checkinmain.TouchableLayout>
+                </com.example.checkin.TouchableLayout>
 
                 <Space
                     android:layout_width="match_parent"
@@ -301,7 +301,7 @@
                         android:orientation="vertical"
                         android:padding="8dp">
 
-                        <com.example.checkin.checkinmain.ShowAllListView
+                        <com.example.checkin.ShowAllListView
                             android:id="@+id/list_shift"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"

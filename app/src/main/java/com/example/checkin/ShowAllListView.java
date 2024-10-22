@@ -1,4 +1,4 @@
-package com.example.checkin.checkinmain;
+package com.example.checkin;
 
 import android.content.Context;
 import android.util.AttributeSet;

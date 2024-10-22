@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rr4oy0qbc96r"
+    android:id="@+id/workcount"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/round_white_8dp"
@@ -11,7 +11,7 @@
         android:id="@+id/rb3me46ku6ka"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -23,7 +23,8 @@
             android:layout_weight="1"
             android:text="T2, 21/07/2024"
             android:textColor="#14161A"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/rb13x5knsofb"
@@ -35,7 +36,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/work_count"
+            android:id="@+id/workcount_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1"
@@ -43,13 +44,10 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/r0c4tx830jb1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_height="24dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -57,7 +55,7 @@
             android:id="@+id/rp9yscuq8otk"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="16dp"
             android:layout_weight="1"
             android:text="Tên ca"
             android:textColor="#575E72"
@@ -65,62 +63,32 @@
 
         <TextView
             android:id="@+id/rejutxsmyweo"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="42dp"
             android:text="Giờ check-in"
             android:textColor="#575E72"
             android:textSize="12sp" />
 
         <TextView
             android:id="@+id/rrr3408r6wjd"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:text="Giờ check-out"
             android:textColor="#575E72"
             android:textSize="12sp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E4E7ED"/>
 
-    <ListView
+
+    <com.example.checkin.NonScrollListView
         android:id="@+id/shift_lv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/rg6hgilkirog"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_marginTop="4dp"/>
 
-        <TextView
-            android:id="@+id/rrsr653a04sk"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:layout_weight="1"
-            android:text="Ca chiều"
-            android:textColor="#2E333D"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/r1pz9f9fez97"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="57dp"
-            android:text="12:55:00"
-            android:textColor="#2E333D"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/rtkk3bea8yt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18:05:00"
-            android:textColor="#2E333D"
-            android:textSize="16sp" />
-    </LinearLayout>
 </LinearLayout>

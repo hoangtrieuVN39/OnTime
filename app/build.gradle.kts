@@ -47,7 +47,6 @@ android {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
 		}
 	}
-	buildToolsVersion = "30.0.3"
 }
 
 dependencies {
@@ -61,7 +60,8 @@ dependencies {
 	implementation(libs.androidx.material3)
 	implementation(libs.play.services.location)
 	implementation(libs.androidx.appcompat)
-	testImplementation(libs.junit)
+    implementation(libs.material)
+    testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)
 	androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -73,4 +73,7 @@ dependencies {
 	implementation(libs.androidx.fragment)
 	implementation(libs.androidx.fragment.ktx)
 	implementation(libs.androidx.material)
+	implementation(libs.androidx.core.splashscreen)
+	implementation(libs.androidx.lifecycle.viewmodel.ktx)
+	implementation(libs.androidx.lifecycle.runtime.ktx.v286)
 }

@@ -40,17 +40,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void createdatabase() throws IOException {
         boolean dbexist = checkdatabase();
-        if(!dbexist) {
-            if (mDatabase != null && !mDatabase.isOpen())
-                this.open();
+        if (!dbexist) {
+            if (mDatabase != null && !mDatabase.isOpen()) this.open();
             this.getReadableDatabase();
             this.close();
             try {
                 copydatabase();
                 this.getReadableDatabase();
-                if (mDatabase != null && !mDatabase.isOpen())
-                    this.open();
-            } catch(IOException e) {
+                if (mDatabase != null && !mDatabase.isOpen()) this.open();
+            } catch (IOException e) {
                 throw e;
             }
         }
@@ -85,7 +83,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return checkdb;
     }
 
-    public void open(){
+    public void open() {
         String mypath = DATABASE_PATH;
         mDatabase = SQLiteDatabase.openDatabase(mypath, null, SQLiteDatabase.OPEN_READWRITE);
     }
@@ -103,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             this.createdatabase();
             open();
-        }catch(Exception ex){
+        } catch (Exception ex) {
         }
     }
 
@@ -131,7 +129,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             for (int i = 0; i < cursor.getColumnCount(); i++) {
                 result.add(cursor.getString(i));
             }
-            ;
             results.add(result);
         }
 

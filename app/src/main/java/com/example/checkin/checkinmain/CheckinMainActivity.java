@@ -75,7 +75,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkinmain_layout);
 
-
         TextView currentshift = findViewById(R.id.currentshift_txt);
         TextView currenttime = findViewById(R.id.currenttime_txt);
         TextView currentdate = findViewById(R.id.currentdate_txt);
@@ -91,7 +90,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
                 }
             }
         });
-
 
         onCreateMap();
 
@@ -217,7 +215,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
                 }
             }
         });
-
     }
 
     @Override

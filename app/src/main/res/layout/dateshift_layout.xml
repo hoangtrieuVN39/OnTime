@@ -5,7 +5,6 @@
     android:id="@+id/r3ecg836zxln"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
@@ -13,7 +12,7 @@
         android:id="@+id/shift_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="16dp"
         android:layout_weight="1"
         android:text="Ca sáng"
         android:textColor="#2E333D"
@@ -21,18 +20,22 @@
 
     <TextView
         android:id="@+id/Checkin_time"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="58dp"
+        android:gravity="start"
         android:text="07:55:00"
         android:textColor="#2E333D"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/Checkout_time"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:gravity="start"
         android:text="12:10:00"
         android:textColor="#2E333D"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textStyle="bold" />
 </LinearLayout>
