@@ -5,15 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static String DATABASE_PATH = "";
-    private static final String DATABASE_NAME = "dbase.db";
+    private static final String DATABASE_NAME = "db.db";
 
     private Context context;
     SQLiteDatabase mDatabase;
@@ -57,7 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void copydatabase() throws IOException {
-        InputStream myinput = context.getAssets().open("dbase.db");
+        InputStream myinput = context.getAssets().open("db.db");
 
         String outfilename = DATABASE_PATH;
 
@@ -139,4 +136,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return results;
     }
+    public SQLiteDatabase getReadableDatabase() {
+        return this.getWritableDatabase();
+    }
+
 }

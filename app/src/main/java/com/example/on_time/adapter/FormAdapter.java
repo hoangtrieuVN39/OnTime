@@ -49,11 +49,12 @@ public class FormAdapter extends BaseAdapter {
         TextView txtNameForm = view.findViewById(R.id.titleTypeform_txt);
         TextView txtDateoff = view.findViewById(R.id.ngaynghi_txt);
         TextView txtReason = view.findViewById(R.id.lydo_txt);
-        Button btnApprove = view.findViewById(R.id.pheduyet_btn);
+        TextView txtStatus = view.findViewById(R.id.status_txt);
 
         txtNameForm.setText(fForm.get(i).getNameForm());
         txtDateoff.setText(fForm.get(i).getDateoff());
         txtReason.setText(fForm.get(i).getReason());
+        txtStatus.setText(fForm.get(i).getStatus());
 
 //        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
 //        if (layoutParams != null) {
