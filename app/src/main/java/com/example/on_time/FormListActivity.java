@@ -27,6 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FormListActivity extends Activity implements OnFormClickListener {
     ListView lvForm;
@@ -48,7 +49,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.forms_layout);
 
-        setForms();
+//        setForms();
         setListMonth();
         setTypeForms();
         setListStatus();
@@ -56,6 +57,12 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         lvForm = findViewById(R.id.form_lv);
         filteredForms.addAll(listForms);
         btn_addForm = findViewById(R.id.addForm_btn);
+
+        try {
+            DBHelper = new DatabaseHelper(this, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 //        loadDataFromDatabase();
         fAdapter = new FormAdapter(this, filteredForms, this);
@@ -88,18 +95,21 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         });
     }
 
-//    private void loadDataFromDatabase() {
-//        Cursor cursor = DBManager.getAllLeaveRequests();
-//        if (cursor.moveToFirst()) {
-//            do {
-//                String nameForm = cursor.getString(cursor.getColumnIndex("LeaveTypeName"));
-//                String dateOff = cursor.getString(cursor.getColumnIndex("CreatedTime"));
-//                String reason = cursor.getString(cursor.getColumnIndex("Statuss"));
-//                listForms.add(new Form(nameForm, dateOff, reason));
-//            } while (cursor.moveToNext());
-//        }
-//        cursor.close();
-//    }
+    private void loadDataFromDatabase() {
+        // Lấy dữ liệu từ bảng 'LeaveRequest' (ví dụ)
+        List<List> leaveRequests = DBHelper.loadDataHandler("LeaveRequest", null, null);
+
+        listForms.clear();
+        for (List<String> row : leaveRequests) {
+            String nameForm = row.get(0); // cột LeaveTypeName
+            String dateOff = row.get(1); // cột CreatedTime
+            String reason = row.get(2); // cột Statuss
+            listForms.add(new Form(nameForm, dateOff, reason));
+        }
+
+        filteredForms.addAll(listForms);
+        fAdapter.notifyDataSetChanged(); // Cập nhật ListView
+    }
 
     public void setForms() {
         listForms.add(new Form("Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024", "Đi trễ"));
