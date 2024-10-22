@@ -40,6 +40,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     MonthSpinnerAdapter msAdapter;
     ImageButton btn_addForm;
     ListView lvTypeForm;
+    DatabaseHelper DBHelper;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
