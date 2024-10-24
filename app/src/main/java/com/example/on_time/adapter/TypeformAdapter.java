@@ -1,6 +1,7 @@
 package com.example.on_time.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.Button;
 
 import com.example.on_time.OnFormClickListener;
 import com.example.on_time.R;
+import com.example.on_time.activity.CreateFormActivity;
 import com.example.on_time.models.TypeForm;
 
 import java.util.ArrayList;
@@ -52,7 +54,10 @@ public class TypeformAdapter extends BaseAdapter {
         btnTypeForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tfListener.onFormClick(tForm.get(i).getNameTypeform());
+                Intent intent = new Intent(tfContext, CreateFormActivity.class);
+                intent.putExtra("TYPEFORM_NAME", tForm.get(i).getNameTypeform());
+                tfContext.startActivity(intent);
+//                tfListener.onFormClick(tForm.get(i).getNameTypeform());
             }
         });
 

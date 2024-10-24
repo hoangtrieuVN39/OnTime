@@ -366,9 +366,9 @@
         android:id="@+id/button_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thu hồi"
+        android:text="Tạo đơn từ"
         android:textAllCaps="false"
-        android:textColor="#BB1B1B"
-        android:background="@drawable/round_corner_red"
+        android:textColor="@color/black"
+        android:background="@drawable/rc_button_create"
         android:layout_alignParentBottom="true" />
 </RelativeLayout>

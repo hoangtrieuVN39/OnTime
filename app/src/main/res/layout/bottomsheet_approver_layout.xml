@@ -61,7 +61,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="821dp"
+            android:layout_height="650dp"
             android:layout_margin="20dp"
             android:background="@drawable/rc_color"
             android:orientation="vertical"
@@ -70,7 +70,8 @@
             <ListView
                 android:id="@+id/approver_name_lv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="613dp">
+
             </ListView>
         </LinearLayout>
     </LinearLayout>

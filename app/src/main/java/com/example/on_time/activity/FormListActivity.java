@@ -1,11 +1,14 @@
 
-package com.example.on_time;
+package com.example.on_time.activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +20,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.example.on_time.DatabaseHelper;
+import com.example.on_time.OnFormClickListener;
+import com.example.on_time.R;
 import com.example.on_time.adapter.FormAdapter;
 import com.example.on_time.adapter.MonthSpinnerAdapter;
 import com.example.on_time.adapter.StatusSpinnerAdapter;
@@ -26,10 +32,21 @@ import com.example.on_time.models.MonthSpinner;
 import com.example.on_time.models.StatusSpinner;
 import com.example.on_time.models.TypeForm;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.ChronoField;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 
 public class FormListActivity extends Activity implements OnFormClickListener {
     ListView lvForm;
@@ -52,14 +69,9 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.forms_layout);
 
-//        setForms();
         setListMonth();
-//        setTypeForms();
         setListStatus();
 
-        lvForm = findViewById(R.id.form_lv);
-        filteredForms.addAll(listForms);
-        btn_addForm = findViewById(R.id.addForm_btn);
 
         try {
             DBHelper = new DatabaseHelper(this, null);
@@ -69,8 +81,11 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         loadDataFromDatabase();
         loadDataTypeFormFromDatabase();
-        fAdapter = new FormAdapter(this, filteredForms, this);
-        lvForm.setAdapter(fAdapter);
+        DBHelper.syncDataToFirebase();
+
+        lvForm = findViewById(R.id.form_lv);
+        filteredForms.addAll(listForms);
+        btn_addForm = findViewById(R.id.addForm_btn);
 
         spTrangThai = findViewById(R.id.status_spinner);
         spThang = findViewById(R.id.month_spinner);
@@ -79,7 +94,8 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
-
+        fAdapter = new FormAdapter(this, filteredForms, this);
+        lvForm.setAdapter(fAdapter);
 
         spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -110,32 +126,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         });
 
 
-//        spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                MonthSpinner month = listMonth.get(position);
-//                String selectedMonth = month.getNameMonth();
-//                filterFormsByMonth(selectedMonth);
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//            }
-//        });
-//
-//        spTrangThai.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                StatusSpinner status = listStatus.get(position);
-//                String selectedStatus = status.getNameStatus();
-//                filterFormsByStatus(selectedStatus);
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//            }
-//        });
-
         btn_addForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,9 +134,9 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         });
     }
 
+
     private void loadDataTypeFormFromDatabase() {
         List<List> leaveType = DBHelper.loadDataHandler("LeaveType", null, null);
-
             ListtypeForm.clear();
         for (List<String> row : leaveType) {
             String nameTypeform = row.get(1);
@@ -173,7 +163,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
             "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
             "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-            "LeaveRequest.Statuss AS Statuss, " +
+            "LeaveRequest.Status AS Status, " +
             "LeaveRequest.Reason AS Reason " +
             "FROM LeaveRequest " +
             "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID";
@@ -188,7 +178,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
             int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
             int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
             int reasonIndex = cursor.getColumnIndex("Reason");
-            int statussIndex = cursor.getColumnIndex("Statuss");
+            int statussIndex = cursor.getColumnIndex("Status");
 
             if (nameFormIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
                 String nameForm = cursor.getString(nameFormIndex);
@@ -197,7 +187,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                 String reason = cursor.getString(reasonIndex);
                 String status = cursor.getString(statussIndex);
 
-                // Định dạng LeaveStartTime và LeaveEndTime
                 String dateOff = leaveStartTime + " - " + leaveEndTime;
 
                 listForms.add(new Form(nameForm, dateOff, reason, status));
@@ -205,58 +194,32 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         } while (cursor.moveToNext());
     }
 
+
     if (cursor != null) {
         cursor.close();
     }
-    filteredForms.addAll(listForms);
+        filteredForms.clear();
+        filteredForms.addAll(listForms);
+//        fAdapter.notifyDataSetChanged();
     }
 
 
-
-
-    //    public void setForms() {
-//        listForms.add(new Form("Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024", "Đi trễ","Pending approval"));
-//        listForms.add(new Form("Nghỉ không lương", "15/02/2024", "Nghỉ không lương","Accept"));
-//        listForms.add(new Form("Nghỉ phép - gửi trước 24h", "05/03/2024", "Nghỉ phép","Refused"));
-//        listForms.add(new Form("Cưới/ tang", "10/04/2024", "Cưới","Accept"));
-//        listForms.add(new Form("Công tác", "23/05/2024", "Công tác","Pending approval"));
-//        listForms.add(new Form("Làm việc từ xa", "30/06/2024", "Làm việc từ xa","Accept"));
-//        listForms.add(new Form("Giải trình công", "07/07/2024", "Giải trình công","Refused"));
-//
-//        filteredForms.addAll(listForms);
-//    }
-// thuyen
     public void setListMonth() {
-        listMonth.add(new MonthSpinner("Tất cả"));
-        listMonth.add(new MonthSpinner("Tháng 1"));
-        listMonth.add(new MonthSpinner("Tháng 2"));
-        listMonth.add(new MonthSpinner("Tháng 3"));
-        listMonth.add(new MonthSpinner("Tháng 4"));
-        listMonth.add(new MonthSpinner("Tháng 5"));
-        listMonth.add(new MonthSpinner("Tháng 6"));
-        listMonth.add(new MonthSpinner("Tháng 7"));
-        listMonth.add(new MonthSpinner("Tháng 8"));
-        listMonth.add(new MonthSpinner("Tháng 9"));
-        listMonth.add(new MonthSpinner("Tháng 10"));
-        listMonth.add(new MonthSpinner("Tháng 11"));
-        listMonth.add(new MonthSpinner("Tháng 12"));
+        listMonth.add(new MonthSpinner("Chọn thời gian"));
+        listMonth.add(new MonthSpinner("Tuần này"));
+        listMonth.add(new MonthSpinner("Tuần trước"));
+        listMonth.add(new MonthSpinner("Tháng này"));
+        listMonth.add(new MonthSpinner("Tháng trước"));
+        listMonth.add(new MonthSpinner("Năm này"));
+        listMonth.add(new MonthSpinner("Năm trước"));
     }
     public void setListStatus(){
-        listStatus.add(new StatusSpinner("All"));
-        listStatus.add(new StatusSpinner("Approved"));
-        listStatus.add(new StatusSpinner("Pending"));
-        listStatus.add(new StatusSpinner("Rejected"));
+        listStatus.add(new StatusSpinner("Chọn trạng thái"));
+        listStatus.add(new StatusSpinner("Đồng ý"));
+        listStatus.add(new StatusSpinner("Chưa phê duyệt"));
+        listStatus.add(new StatusSpinner("Loại bỏ"));
     }
 
-//    public void setTypeForms() {
-//        ListtypeForm.add(new TypeForm("Đi trễ/ về sớm"));
-//        ListtypeForm.add(new TypeForm("Nghỉ không lương"));
-//        ListtypeForm.add(new TypeForm("Nghỉ phép"));
-//        ListtypeForm.add(new TypeForm("Công tác"));
-//        ListtypeForm.add(new TypeForm("Làm việc từ xa"));
-//        ListtypeForm.add(new TypeForm("Giải trình công"));
-//        ListtypeForm.add(new TypeForm("Cưới/ tang"));
-//    }
 
     private void showBottomSheetDialog() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(FormListActivity.this);
@@ -275,37 +238,168 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         TypeformAdapter typeformAdapter = new TypeformAdapter(this, ListtypeForm, this);
         lvTypeForm.setAdapter(typeformAdapter);
 
+        lvTypeForm.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TypeForm selectedTypeForm = ListtypeForm.get(position);
+
+                Intent intent = new Intent(FormListActivity.this, CreateFormActivity.class);
+                intent.putExtra("selectedType", selectedTypeForm.getNameTypeform());
+                startActivity(intent);
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+
         bottomSheetDialog.setContentView(sheetView);
         bottomSheetDialog.show();
     }
 
-    private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
-        filteredForms.clear();
-        boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Tất cả"));
-        boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("All"));
+//    private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
+//        filteredForms.clear();
+//        boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Tất cả"));
+//        boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("All"));
+//
+//        for (Form form : listForms) {
+//            boolean matchesMonth = true;
+//            boolean matchesStatus = true;
+//
+//            if (filterByMonth) {
+//                String monthNumber = getMonthNumberFromSpinner(selectedMonth);
+//                String formMonth = form.getDateoff().substring(5, 7);
+//                matchesMonth = formMonth.equals(monthNumber);
+//            }
+//
+//            if (filterByStatus) {
+//                matchesStatus = form.getStatus().equals(selectedStatus);
+//            }
+//
+//            if (matchesMonth && matchesStatus) {
+//                filteredForms.add(form);
+//            }
+//        }
+//
+//        fAdapter.notifyDataSetChanged();
+//    }
+@RequiresApi(api = Build.VERSION_CODES.O)
+private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
+    filteredForms.clear();
+    boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
+    boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
 
-        for (Form form : listForms) {
-            boolean matchesMonth = true;
-            boolean matchesStatus = true;
+    for (Form form : listForms) {
+        boolean matchesMonth = true;
+        boolean matchesStatus = true;
 
-            if (filterByMonth) {
-                String monthNumber = getMonthNumberFromSpinner(selectedMonth);
-                // Chọn phần tháng từ dateOff, dựa trên định dạng YYYY-MM-DD HH:MM:SS
-                String formMonth = form.getDateoff().substring(5, 7);
-                matchesMonth = formMonth.equals(monthNumber);
-            }
-
-            if (filterByStatus) {
-                matchesStatus = form.getStatus().equals(selectedStatus);
-            }
-
-            if (matchesMonth && matchesStatus) {
-                filteredForms.add(form);
+        if (filterByMonth) {
+            String formDate = form.getDateoff().substring(0, 10);
+            switch (selectedMonth) {
+                case "Tuần này":
+                    matchesMonth = isDateInCurrentWeek(formDate);
+                    break;
+                case "Tuần trước":
+                    matchesMonth = isDateInPreviousWeek(formDate);
+                    break;
+                case "Tháng này":
+                    matchesMonth = isDateInCurrentMonth(formDate);
+                    break;
+                case "Tháng trước":
+                    matchesMonth = isDateInPreviousMonth(formDate);
+                    break;
+                case "Năm này":
+                    matchesMonth = isDateInCurrentYear(formDate);
+                    break;
+                case "Năm trước":
+                    matchesMonth = isDateInPreviousYear(formDate);
+                    break;
+                default:
+                    String monthNumber = getMonthNumberFromSpinner(selectedMonth);
+                    String formMonth = form.getDateoff().substring(5, 7);
+                    matchesMonth = formMonth.equals(monthNumber);
+                    break;
             }
         }
 
-        fAdapter.notifyDataSetChanged();
+        if (filterByStatus) {
+            matchesStatus = form.getStatus().equals(selectedStatus);
+        }
+
+        if (matchesMonth && matchesStatus) {
+            filteredForms.add(form);
+        }
     }
+    fAdapter.notifyDataSetChanged();
+}
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean isDateInCurrentWeek(String date) {
+        LocalDate inputDate = LocalDate.parse(date);
+        LocalDate today = LocalDate.now();
+
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+        int currentWeekNumber = today.get(weekFields.weekOfWeekBasedYear());
+        int inputWeekNumber = inputDate.get(weekFields.weekOfWeekBasedYear());
+
+        return currentWeekNumber == inputWeekNumber && today.getYear() == inputDate.getYear();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean isDateInPreviousWeek(String date) {
+        LocalDate inputDate = LocalDate.parse(date);
+        LocalDate today = LocalDate.now();
+
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+        int currentWeekNumber = today.get(weekFields.weekOfWeekBasedYear());
+        int inputWeekNumber = inputDate.get(weekFields.weekOfWeekBasedYear());
+
+        return (currentWeekNumber - 1) == inputWeekNumber && today.getYear() == inputDate.getYear();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean isDateInCurrentMonth(String date) {
+        LocalDate inputDate = LocalDate.parse(date);
+        LocalDate today = LocalDate.now();
+        return today.getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean isDateInPreviousMonth(String date) {
+        LocalDate inputDate = LocalDate.parse(date);
+        LocalDate today = LocalDate.now();
+        return today.minusMonths(1).getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean isDateInCurrentYear(String date) {
+        LocalDate inputDate = LocalDate.parse(date);
+        LocalDate today = LocalDate.now();
+        return today.getYear() == inputDate.getYear();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean isDateInPreviousYear(String date) {
+        LocalDate inputDate = LocalDate.parse(date);
+        LocalDate today = LocalDate.now();
+        return (today.getYear() - 1) == inputDate.getYear();
+    }
+
+//    private String getMonthNumberFromSpinner(String selectedMonth)
+//        switch (selectedMonth) {
+//            case "Tháng 1": return "01";
+//            case "Tháng 2": return "02";
+//            case "Tháng 3": return "03";
+//            case "Tháng 4": return "04";
+//            case "Tháng 5": return "05";
+//            case "Tháng 6": return "06";
+//            case "Tháng 7": return "07";
+//            case "Tháng 8": return "08";
+//            case "Tháng 9": return "09";
+//            case "Tháng 10": return "10";
+//            case "Tháng 11": return "11";
+//            case "Tháng 12": return "12";
+//            default: return "";
+//        }
+//    }
 
 
 
@@ -317,6 +411,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
             String monthNumber = getMonthNumberFromSpinner(selectedMonth);
 
             for (Form form : listForms) {
+
 //                String[] dateParts = form.getDateoff().split("/");
 //                String formMonth = dateParts[1];
                 String formMonth = form.getDateoff().substring(5, 7);

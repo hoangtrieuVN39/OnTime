@@ -88,7 +88,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:background="@drawable/br_edittext"/>
 
             <Spinner
                 android:id="@+id/month_spinner"
@@ -96,7 +97,8 @@
                 android:layout_height="wrap_content"
                 android:spinnerMode="dialog"
                 android:layout_marginBottom="16dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:background="@drawable/br_edittext"/>
         </LinearLayout>
 
         <LinearLayout
@@ -108,7 +110,7 @@
             <ListView
                 android:id="@+id/form_lv"
                 android:layout_width="match_parent"
-                android:layout_height="700dp" />
+                android:layout_height="613dp" />
         </LinearLayout>
     </LinearLayout>
     <ImageButton
