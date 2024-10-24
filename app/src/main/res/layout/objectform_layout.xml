@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/round_corner"
-    android:layout_marginBottom="10dp"
+    android:layout_margin="10dp"
     android:padding="10dp">
 
     <TextView
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Nghỉ không lương"
         android:textColor="@android:color/black"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="bold">
 
     </TextView>
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ngày nghỉ:"
-            android:textSize="20dp"
+            android:textSize="15dp"
             android:layout_gravity="center">
         </TextView>
     </LinearLayout>
@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Lý do:"
-            android:textSize="20dp"
+            android:textSize="15dp"
             android:layout_gravity="center">
         </TextView>
     </LinearLayout>
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:text="Phê duyệt"
-            android:textSize="30dp"
+            android:textSize="25dp"
             android:textAllCaps="false"
             android:textAlignment="center">
         </TextView>

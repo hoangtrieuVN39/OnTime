@@ -118,7 +118,7 @@
             <ListView
                 android:id="@+id/formApprove_lv"
                 android:layout_width="match_parent"
-                android:layout_height="700dp" />
+                android:layout_height="610dp" />
         </LinearLayout>
     </LinearLayout>
 
