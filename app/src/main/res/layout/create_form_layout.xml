@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="15dp">
 
         <ImageButton
             android:id="@+id/back_btn"
@@ -24,11 +25,12 @@
 
         <TextView
             android:id="@+id/titleCreateForm_txt"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Tạo đơn từ"
-            android:textSize="25dp"
-            android:textAlignment="center"
+            android:textSize="22dp"
+            android:gravity="center"
             android:textStyle="bold"
             android:textColor="@android:color/black" />
     </LinearLayout>
@@ -45,11 +47,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <Spinner
-                android:id="@+id/typeForm_spinner"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/br_edittext"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/titleForm_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Loại đơn từ"
+                    android:layout_marginStart="10dp"
+                    android:textSize="17sp"
+                    android:layout_gravity="center">
+                </TextView>
+
+                <Spinner
+                    android:id="@+id/typeForm_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_weight="6"
+                    android:paddingStart="5dp"/>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/titleApplyTime_txt"
@@ -63,15 +85,17 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp">
 
                 <Button
                     android:id="@+id/shiftMorning_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/round_corner2"
                     android:text="Ca sáng"
                     android:textAllCaps="false"
-                    android:background="@drawable/round_corner2" />
+                    android:textColor="#575E72" />
 
                 <Button
                     android:id="@+id/shiftAfternoon_btn"
@@ -80,7 +104,8 @@
                     android:text="Ca chiều"
                     android:textAllCaps="false"
                     android:background="@drawable/round_corner2"
-                    android:layout_marginStart="10dp" />
+                    android:layout_marginStart="10dp"
+                    android:textColor="#575E72"/>
 
                 <Button
                     android:id="@+id/shiftNight_btn"
@@ -89,7 +114,8 @@
                     android:text="Ca tối"
                     android:textAllCaps="false"
                     android:background="@drawable/round_corner2"
-                    android:layout_marginStart="10dp" />
+                    android:layout_marginStart="10dp"
+                    android:textColor="#575E72"/>
             </LinearLayout>
 
             <TextView
@@ -105,7 +131,7 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/br_edittext">
@@ -114,7 +140,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/calendar"
-                        android:layout_gravity="center"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginStart="5dp"/>
 
                     <EditText
@@ -123,11 +149,14 @@
                         android:layout_height="wrap_content"
                         android:hint="Chọn ngày"
                         android:textColorHint="#9E9E9E"
-                        android:focusable="false" />
+                        android:background="@null"
+                        android:focusable="false"
+                        android:layout_gravity="center_vertical"
+                        android:padding="9dp"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/br_edittext"
@@ -146,7 +175,9 @@
                         android:layout_height="wrap_content"
                         android:hint="Chọn giờ"
                         android:textColorHint="#9E9E9E"
-                        android:focusable="false" />
+                        android:focusable="false"
+                        android:background="@null"
+                        android:padding="9dp"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -161,10 +192,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginBottom="10dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/br_edittext">
@@ -182,11 +213,13 @@
                         android:layout_height="wrap_content"
                         android:hint="Chọn ngày"
                         android:textColorHint="#9E9E9E"
-                        android:focusable="false" />
+                        android:focusable="false"
+                        android:background="@null"
+                        android:padding="9dp"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/br_edittext"
@@ -205,7 +238,9 @@
                         android:layout_height="wrap_content"
                         android:hint="Chọn giờ"
                         android:textColorHint="#9E9E9E"
-                        android:focusable="false" />
+                        android:focusable="false"
+                        android:padding="9dp"
+                        android:background="@null"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -217,13 +252,14 @@
                 android:textSize="25dp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
-                android:layout_marginTop="10dp" />
+                android:layout_marginBottom="10dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rc_color"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginBottom="15dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -242,29 +278,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="3"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp">
-
-                    <TextView
-                        android:id="@+id/sumShiftReal_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Tổng ngày nghỉ thực tế" />
-
-                    <TextView
-                        android:id="@+id/numberShiftReal_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="3"
+                        android:text="0"
                         android:textStyle="bold"
                         android:textColor="@android:color/black" />
                 </LinearLayout>
@@ -275,10 +289,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Lý do"
-                android:textSize="20dp"
+                android:textSize="16dp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:layout_margin="10dp" />
+                android:textColor="#575E72"/>
 
             <EditText
                 android:id="@+id/reason_tedit"
@@ -286,10 +299,12 @@
                 android:layout_height="wrap_content"
                 android:hint="Nhập lý do"
                 android:textColorHint="#9E9E9E"
-                android:background="@drawable/rounded_border_black"
+                android:background="@drawable/br_edittext"
                 android:padding="10dp"
-                android:focusable="false"
-                android:clickable="false" />
+                android:focusable="true"
+                android:clickable="true"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="15dp"/>
 
             <TextView
                 android:id="@+id/approveFlow_txt"
@@ -299,9 +314,10 @@
                 android:textSize="25dp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
-                android:layout_marginTop="10dp" />
+                android:layout_marginBottom="5dp" />
 
             <LinearLayout
+                android:id="@+id/flowApprove_linearlayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -314,7 +330,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:src="@drawable/add_circle_outline"
-                android:contentDescription="Add Approver" />
+                    android:contentDescription="Add Approver" />
 
                 <!-- TextView tên người phê duyệt -->
                 <TextView
@@ -327,7 +343,7 @@
                     android:textColor="#4367FC"
                     android:layout_marginStart="8dp"
                     android:clickable="true"
-                    android:focusable="true" />
+                    android:focusable="true"/>
             </LinearLayout>
 
             <!-- Phần Hoàn tất phê duyệt -->
@@ -366,9 +382,9 @@
         android:id="@+id/button_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thu hồi"
+        android:text="Tạo đơn từ"
         android:textAllCaps="false"
-        android:textColor="#BB1B1B"
-        android:background="@drawable/round_corner_red"
+        android:textColor="@color/black"
+        android:background="@drawable/rc_button_create"
         android:layout_alignParentBottom="true" />
 </RelativeLayout>

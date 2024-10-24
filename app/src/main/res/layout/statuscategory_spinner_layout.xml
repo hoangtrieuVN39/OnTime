@@ -10,8 +10,7 @@
         android:text="Phê duyệt"
         android:textSize="20dp"
         android:layout_margin="5dp"
-        android:padding="5dp"
-        android:background="@drawable/round_corner_buttonblack">
+        android:padding="5dp">
     </TextView>
 
 </LinearLayout>
