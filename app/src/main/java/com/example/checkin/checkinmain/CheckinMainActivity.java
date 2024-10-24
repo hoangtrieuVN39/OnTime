@@ -93,17 +93,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
 
         requestLocationButton = findViewById(R.id.request_btn_layout);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            requestLocationButton.setVisibility(View.INVISIBLE);
-            onCreateMap();
-        }
-        else {
-            Button requestLocationButton = findViewById(R.id.request_btn);
-            requestLocationButton.setOnClickListener((l)->{
-                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-            });
-        }
-
         currentshift_txt = findViewById(R.id.currentshift_txt);
         currenttime_txt = findViewById(R.id.currenttime_txt);
         currentdate_txt = findViewById(R.id.currentdate_txt);
@@ -152,6 +141,17 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
                 }
                 return false;
             }});
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            requestLocationButton.setVisibility(View.INVISIBLE);
+            onCreateMap();
+        }
+        else {
+            Button requestLocationButton = findViewById(R.id.request_btn);
+            requestLocationButton.setOnClickListener((l)->{
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            });
+        }
     }
 
     private void onCheckBtnClicked() throws ParseException {
