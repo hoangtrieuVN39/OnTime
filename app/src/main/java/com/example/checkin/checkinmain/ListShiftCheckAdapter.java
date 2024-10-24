@@ -7,12 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
-import com.example.checkin.Check;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.Shift;
+import com.example.checkin.classs.Shift;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,11 +24,15 @@ public class ListShiftCheckAdapter extends BaseAdapter {
     List<Shift> mShift;
     List<String[]> checkArray;
     DatabaseHelper dbHelper;
+    String employee;
+    Date date;
 
-    public ListShiftCheckAdapter(DatabaseHelper dbHelper, Context context, List<Shift> mShift){
+    public ListShiftCheckAdapter(DatabaseHelper dbHelper, Context context, List<Shift> mShift, String employee, Date date){
         this.mContext = context;
         this.mShift = mShift;
         this.dbHelper = dbHelper;
+        this.employee = employee;
+        this.date = date;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class ListShiftCheckAdapter extends BaseAdapter {
         View v = inf.inflate(R.layout.shift_layout, null);
 
         try {
-            checkArray = getCheckList("10/01/2024", mShift.get(position), "NV003");
+            checkArray = getCheckList(date, mShift.get(position), employee);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
@@ -71,7 +73,7 @@ public class ListShiftCheckAdapter extends BaseAdapter {
         return v;
     }
 
-    private List<String[]> getCheckList(String date, Shift shift, String employee) throws ParseException {
+    private List<String[]> getCheckList(Date date, Shift shift, String employee) throws ParseException {
         checkArray = new ArrayList<>();
 
         List<String[]> checkList = getListCheck(date, shift, employee);
@@ -102,15 +104,13 @@ public class ListShiftCheckAdapter extends BaseAdapter {
         return checkArray;
     }
 
-    private List<String[]> getListCheck(String date, Shift shift, String employee) throws ParseException {
+    private List<String[]> getListCheck(Date date, Shift shift, String employee) throws ParseException {
         List<String[]> checkList = new ArrayList<>();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date datee = sdf.parse(date);
-        sdf.applyPattern("yyyy-MM-dd");
-        date = sdf.format(datee);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String datefilter = sdf.format(date);
 
-        String filter = "ShiftID = '" + shift.getShift_id() + "' AND CreatedTime like '" + date + "%' AND EmployeeID = '" + employee + "'";
+        String filter = "ShiftID = '" + shift.getShift_id() + "' AND CreatedTime like '" + datefilter + "%' AND EmployeeID = '" + employee + "'";
 
         List<List> table = dbHelper.loadDataHandler("Attendance", filter, new String[]{"CreatedTime", "AttendanceType"});
 

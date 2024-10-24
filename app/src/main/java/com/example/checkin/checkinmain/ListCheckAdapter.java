@@ -9,11 +9,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.checkin.Check;
 import com.example.checkin.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 

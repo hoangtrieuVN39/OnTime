@@ -2,7 +2,8 @@ package com.example.checkin.checkinhistory;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.ViewParent;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -10,13 +11,11 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.example.checkin.DatabaseHelper;
-import com.example.checkin.MyFilterObserver;
 import com.example.checkin.R;
-import com.example.checkin.Shift;
+import com.example.checkin.classs.Shift;
 import com.google.android.material.chip.ChipGroup;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,74 +34,66 @@ public class CheckinHistoryActivity extends Activity implements LifecycleOwner {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkinhistory_layout);
 
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
         lvShift = this.findViewById(R.id.date_lv);
         ChipGroup filterChips = this.findViewById(R.id.chips);
-        updateShiftCheck(filterChips.getCheckedChipId());
-        filterChips.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            updateShiftCheck(filterChips.getCheckedChipId());
+
+        runCheckReloadBackground(executor, filterChips.getCheckedChipId());
+        filterChips.setOnCheckedStateChangeListener((group, checkedIds) -> runCheckReloadBackground(executor, filterChips.getCheckedChipId()));
+    };
+
+    private void runCheckReloadBackground(ExecutorService executor, int filterid){
+        executor.execute(() -> {
+            List<Date> listDates = getDates(filterid);
+            new Handler(Looper.getMainLooper()).post(()-> {
+                try {
+                    onCreateShiftCheck(listDates);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         });
-
-        getLifecycle().addObserver(new MyFilterObserver());
-
     }
 
-    private void updateShiftCheck(int id) {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Calendar cal = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                List<String> dates = new ArrayList<>();
-                if (id == R.id.thisweek_chip) {
-                    cal.setTime(new Date());
-                    for (int i = Calendar.MONDAY; i < Calendar.SATURDAY; i++){
-                        cal.set(Calendar.DAY_OF_WEEK, i);
-                        dates.add(sdf.format(cal.getTime()));
-                    }
-                }
-                else if (id == R.id.lastweek_chip){
-                    cal.add(Calendar.DAY_OF_YEAR, -7);
-                    for (int i = Calendar.MONDAY; i < Calendar.SATURDAY; i++){
-                        cal.set(Calendar.DAY_OF_WEEK, i);
-                        dates.add(sdf.format(cal.getTime()));
-                    }
-
-                }
-                else if (id == R.id.thismonth_chip){
-                    cal.setTime(new Date());
-                    for (int i = 1; i < cal.getActualMaximum(Calendar.DAY_OF_MONTH); i++){
-                        cal.set(Calendar.DAY_OF_MONTH, i);
-                        dates.add(sdf.format(cal.getTime()));
-                    }
-
-                }
-                else {
-                    cal.add(Calendar.DAY_OF_YEAR, -30);
-                    for (int i = 1; i < cal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-                        cal.set(Calendar.DAY_OF_MONTH, i);
-                        dates.add(sdf.format(cal.getTime()));
-                    }
-                }
-
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            onCreateShiftCheck(dates);
-                            ViewParent layout = lvShift.getParent();
-                            layout.requestLayout();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
+    private List<Date> getDates(int id){
+        Calendar cal = Calendar.getInstance();
+        List<Date> dates = new ArrayList<>();
+        if (id == R.id.thisweek_chip) {
+            cal.setTime(new Date());
+            for (int i = Calendar.MONDAY; i < Calendar.SATURDAY; i++){
+                cal.set(Calendar.DAY_OF_WEEK, i);
+                dates.add(cal.getTime());
+            }
+        }
+        else if (id == R.id.lastweek_chip){
+            cal.add(Calendar.DAY_OF_YEAR, -7);
+            for (int i = Calendar.MONDAY; i < Calendar.SATURDAY; i++){
+                cal.set(Calendar.DAY_OF_WEEK, i);
+                dates.add(cal.getTime());
             }
 
-        });
+        }
+        else if (id == R.id.thismonth_chip){
+            cal.setTime(new Date());
+            for (int i = 1; i < cal.getActualMaximum(Calendar.DAY_OF_MONTH); i++){
+                cal.set(Calendar.DAY_OF_MONTH, i);
+                dates.add(cal.getTime());
+            }
+
+        }
+        else {
+            cal.add(Calendar.DAY_OF_YEAR, -30);
+            for (int i = 1; i < cal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
+                cal.set(Calendar.DAY_OF_MONTH, i);
+                dates.add(cal.getTime());
+            }
+        }
+        return dates;
     }
 
-    private void onCreateShiftCheck(List<String> listDates) throws IOException {
+
+    private void onCreateShiftCheck(List<Date> listDates) throws IOException {
         ListDateAdapter shiftAdapter = new ListDateAdapter(this,
                 listDates,
                 new DatabaseHelper(this, null),
@@ -113,7 +104,6 @@ public class CheckinHistoryActivity extends Activity implements LifecycleOwner {
 
     private List<Shift> getListShift() throws IOException {
 
-        dbHelper = new DatabaseHelper(this, null);
         List<Shift> shiftList = new ArrayList<>();
 
         List<List> table = dbHelper.loadDataHandler("WorkShift", null, null);

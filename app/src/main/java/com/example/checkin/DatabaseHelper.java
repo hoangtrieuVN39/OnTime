@@ -85,7 +85,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void open() {
         String mypath = DATABASE_PATH;
-        mDatabase = SQLiteDatabase.openDatabase(mypath, null, SQLiteDatabase.OPEN_READWRITE);
+        try{
+        mDatabase = SQLiteDatabase.openDatabase(mypath, null, SQLiteDatabase.OPEN_READWRITE);}
+        catch (Exception e){
+        }
     }
 
     public synchronized void close() {
@@ -133,7 +136,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        return results;
+    }
+
+    public void insertDataHandler(String TABLE_NAME, String[] COLUMNS, String[] VALUES) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "INSERT INTO " + TABLE_NAME;
+        if (COLUMNS != null){
+            query += " (" + String.join(", ", COLUMNS) + ")";
+        }
+        query += " VALUES (";
+        query += String.join(", ", VALUES);
+        query += ")";
+        db.execSQL(query);
+    }
+
+    public List<String> getLast(String TABLE_NAME, String FILTER, String[] SELECTION_ARGS) {
+        List<String> results = new ArrayList<>();
+
+        String query = "SELECT * FROM " + TABLE_NAME;
+        if (SELECTION_ARGS != null) {
+            query = "SELECT " + String.join(", ", SELECTION_ARGS) + " FROM " + TABLE_NAME;
+        }
+        if (FILTER != null) {
+            query += " WHERE " + FILTER;
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        cursor.moveToLast();
+        for (int i = 0; i < cursor.getColumnCount(); i++) {
+            results.add(cursor.getString(i));
+        }
+        cursor.close();
         return results;
     }
 }

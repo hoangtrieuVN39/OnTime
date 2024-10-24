@@ -1,4 +1,4 @@
-package com.example.checkin;
+package com.example.checkin.classs;
 
 public class Shift {
     String shift_id;

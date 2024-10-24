@@ -1,21 +1,16 @@
 package com.example.checkin.checkinmain;
 
-import static android.os.Build.VERSION_CODES.N;
-import static java.lang.Character.FORMAT;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -30,33 +25,32 @@ import androidx.core.content.ContextCompat;
 import com.example.checkin.ActivityBase;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.Shift;
+import com.example.checkin.classs.Attendance;
+import com.example.checkin.classs.Shift;
+import com.example.checkin.Utils;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapColorScheme;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallback {
 
@@ -64,68 +58,126 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
     private GoogleMap gMap;
     FusedLocationProviderClient fusedLocationProviderClient;
     Location clocation;
-    SupportMapFragment mapFragment;
+
     DatabaseHelper dbHelper;
 
     Date current = new Date();
-    List<Shift> shifts;
+    public static List<Shift> shifts;
+    Shift currentshift;
+    TextView currentshift_txt;
+    TextView currenttime_txt;
+    TextView currentdate_txt;
+    boolean isCheckedIn = false;
 
+    String employeeID = "NV003";
+    LinearLayout requestLocationButton;
+
+    private Runnable uiTimeUpdateRunnable;
+    private final Handler uiHandler = new Handler(Looper.getMainLooper());
+
+    SupportMapFragment mapFragment;
+    LocationRequest mLocationRequest;
+
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkinmain_layout);
 
-        TextView currentshift = findViewById(R.id.currentshift_txt);
-        TextView currenttime = findViewById(R.id.currenttime_txt);
-        TextView currentdate = findViewById(R.id.currentdate_txt);
-
-        backgroundUIThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    currentshift.setText(currentShift());
-                    currentdate.setText(currentDate());
-                    currenttime.setText(new SimpleDateFormat("HH:mm:ss").format(current.getTime()));
-                } catch (Exception e) {
-                }
-            }
-        });
-
-        onCreateMap();
-
         try {
-            shifts = getListShift();
-            onCreateListCheck();
+            dbHelper = new DatabaseHelper(this, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        requestLocationButton = findViewById(R.id.request_btn_layout);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            requestLocationButton.setVisibility(View.INVISIBLE);
+            onCreateMap();
+        }
+        else {
+            Button requestLocationButton = findViewById(R.id.request_btn);
+            requestLocationButton.setOnClickListener((l)->{
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            });
+        }
+
+        currentshift_txt = findViewById(R.id.currentshift_txt);
+        currenttime_txt = findViewById(R.id.currenttime_txt);
+        currentdate_txt = findViewById(R.id.currentdate_txt);
+
+        loadShiftsInBackground();
+
+        uiTimeUpdateRunnable = () -> {
+            current = new Date();
+            try {
+                isCheckedIn = Utils.isCheckedIn(employeeID, dbHelper, current);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                currentshift = currentShift();
+                currentshift_txt.setText(currentshift.getShift_name());
+                currentdate_txt.setText(currentDate());
+                currenttime_txt.setText(new SimpleDateFormat("HH:mm:ss").format(current.getTime()));
+            } catch (Exception e) {
+            }
+            uiHandler.postDelayed(uiTimeUpdateRunnable, 1000); // Update every 1000ms (1 second)
+        };
+
+        uiHandler.post(uiTimeUpdateRunnable);
+
         Switch sw = findViewById(R.id.map_sw);
         sw.setOnCheckedChangeListener(this::switchMap);
 
+        LinearLayout check_btn = findViewById(R.id.checkin_btn);
+        check_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    check_btn.setElevation(0);
+                    check_btn.setTranslationZ(0);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    check_btn.setElevation(10);
+                    check_btn.setTranslationZ(5);
+                    try {
+                        onCheckBtnClicked();
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return true;
+                }
+                return false;
+            }});
     }
 
-    private void backgroundUIThread(Runnable runnable) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                while (true) { // Loop indefinitely
-                    current = new Date();
-                    runOnUiThread(runnable);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        break; // Exit loop if interrupted
-                    }
-                }
-            }
-        });
+    private void onCheckBtnClicked() throws ParseException {
+        int maxID = Integer.valueOf(dbHelper.getLast("Attendance", null, new String[]{"AttendanceID"}).get(0).toString().substring(2));
+        int newID = maxID+1;
+        String attendanceID = "CC"+String.format("%03d", newID);
+        String attendanceTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current.getTime());
+        Boolean isCheckedIn = Utils.isCheckedIn(employeeID, dbHelper, current);
+        String attendanceType;
+        if (isCheckedIn){
+            attendanceType = "Check out";
+        }
+        else {
+            attendanceType = "Check in";
+        }
+        String[] insert = {attendanceID, attendanceTime, "Complete", attendanceType, "", employeeID, currentshift.getShift_id()};
+        for (int i = 0; i < insert.length; i++){
+            insert[i] = '"' + insert[i] + '"';
+        }
+        dbHelper.insertDataHandler("Attendance", null, insert);
+
+        loadShiftsInBackground();
     }
 
     private String currentDate() {
-        String currentDate = new SimpleDateFormat("dd:MM:yyyy").format(current.getTime());
+        String currentDate = new SimpleDateFormat("dd/MM/yyyy").format(current.getTime());
         String dateOfWeek = new SimpleDateFormat("EEEE").format(current.getTime());
         String DOW;
         if (dateOfWeek.equals("Monday")) {
@@ -147,7 +199,7 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
         return DOW += ", " + currentDate;
     }
 
-    private String currentShift() throws IOException, ParseException {
+    private Shift currentShift() throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String ctime = sdf.format(current.getTime());
 
@@ -156,10 +208,10 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
         for (Shift shift : shifts) {
             Date d2 = sdf.parse(shift.getShift_time_end());
             if (d2.getTime() - d1.getTime() >= 0) {
-                return shift.getShift_name();
+                return shift;
             }
         }
-        return "Không có ca làm";
+        return null;
     }
 
     private void switchMap(CompoundButton buttonView, boolean isChecked) {
@@ -170,21 +222,14 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
         }
     }
 
-    private void onCreateMap() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        getLastLocation();
-    }
-
     private void onCreateListCheck() throws IOException {
         List<Shift> listShift = shifts;
-        ListView lvShift = (ListView) this.findViewById(R.id.list_shift);
-        ListShiftCheckAdapter shiftAdapter = new ListShiftCheckAdapter(dbHelper, this, listShift);
+        ListView lvShift = this.findViewById(R.id.list_shift);
+        ListShiftCheckAdapter shiftAdapter = new ListShiftCheckAdapter(dbHelper, this, listShift, employeeID, current);
         lvShift.setAdapter(shiftAdapter);
     }
 
     private ArrayList<Shift> getListShift() throws IOException {
-
-        dbHelper = new DatabaseHelper(this, null);
         ArrayList<Shift> shiftList = new ArrayList<>();
 
         List<List> table = dbHelper.loadDataHandler("WorkShift", null, null);
@@ -198,53 +243,68 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
     }
 
 
-    private void getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_PERMISSION_REQUEST_CODE);
-            return;
-        }
-        Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-        locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful()) {
-                    clocation = task.getResult();
-                    mapFragment = SupportMapFragment.newInstance(new GoogleMapOptions().mapType(GoogleMap.MAP_TYPE_NORMAL).mapColorScheme(MapColorScheme.LIGHT));
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_map, mapFragment).commit();
-                    mapFragment.getMapAsync(CheckinMainActivity.this);
-                }
+    private void loadShiftsInBackground() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            try {
+                shifts = getListShift();
+                runOnUiThread(() -> {
+                    try {
+                        onCreateListCheck();
+                    } catch (IOException e) {
+                    }
+                });
+            } catch (IOException e) {
             }
         });
     }
 
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        gMap = googleMap;
-        float zoom = 19;
-        LatLng location = new LatLng(clocation.getLatitude(), clocation.getLongitude());
-//        gMap.addMarker(new MarkerOptions().position(location).title("Vietnam"));
-        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.latitude - 0.00005, location.longitude), zoom));
-        enableMyLocation();
-
-    }
-
-    @SuppressLint("MissingPermission")
-    private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            gMap.setMyLocationEnabled(true);
+    private void onCreateMap() {
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
         }
     }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(15000);
+        mLocationRequest.setFastestInterval(10000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        gMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+        gMap.setMyLocationEnabled(true);
+    }
+
+    LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(@NonNull LocationResult locationResult) {
+            super.onLocationResult(locationResult);
+            Location lastLocation = locationResult.getLastLocation();
+            if (lastLocation != null) {
+                clocation = lastLocation;
+                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), 19));
+                requestLocationButton.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == FINE_LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation();
-                enableMyLocation();
-            } else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                onCreateMap();
             }
         }
     }
+
 }

@@ -65,7 +65,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.example.checkin.NonScrollListView
+            <com.example.checkin.ShowAllListView
                 android:id="@+id/date_lv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -27,22 +27,22 @@
         <activity
             android:name=".checkinmain.CheckinMainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="ChecinMain"
             android:theme="@style/Theme.CheckinMain"
-            android:foregroundServiceType="location">
-
-        </activity>
-
-        <activity android:name=".checkinhistory.CheckinHistoryActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.CheckinHistory"
             android:foregroundServiceType="location">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".checkinhistory.CheckinHistoryActivity"
+            android:exported="true"
+            android:label="CheckinHistory"
+            android:theme="@style/Theme.CheckinHistory"
+            android:foregroundServiceType="location">
+        </activity>
+
     </application>
 
 

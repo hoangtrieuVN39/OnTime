@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.Shift;
+import com.example.checkin.classs.Shift;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,13 +19,13 @@ import java.util.Date;
 import java.util.List;
 
 public class ListDateAdapter extends BaseAdapter {
-    private List<String> dates;
+    private List<Date> dates;
     private Context context;
     private DatabaseHelper dbHelper;
     private List<Shift> listShift;
     private String employee;
 
-    public ListDateAdapter(Context context, List<String> dates, DatabaseHelper dbHelper, List<Shift> listShift, String employee) {
+    public ListDateAdapter(Context context, List<Date> dates, DatabaseHelper dbHelper, List<Shift> listShift, String employee) {
         this.dates = dates;
         this.context = context;
         this.dbHelper = dbHelper;
@@ -59,27 +59,24 @@ public class ListDateAdapter extends BaseAdapter {
 
         Double work_per_shift = 1.0;
         String DOW = "T2";
-        try {
-            DOW = dateFormat(dates.get(position), "dd/MM/yyyy", "EEEE");
-            if (DOW.equals("Monday")) {
-                DOW = "T2";
-            } else if (DOW.equals("Tuesday")) {
-                DOW = "T3";
-            } else if (DOW.equals("Wednesday")) {
-                DOW = "T4";
-            } else if (DOW.equals("Thursday")) {
-                DOW = "T5";
-            } else if (DOW.equals("Friday")) {
-                DOW = "T6";
-            } else if (DOW.equals("Saturday")) {
-                DOW = "T7";
-            } else {
-                DOW = "CN";
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
+
+        DOW = new SimpleDateFormat("EEEE").format(dates.get(position));
+        if (DOW.equals("Monday")) {
+            DOW = "T2";
+        } else if (DOW.equals("Tuesday")) {
+            DOW = "T3";
+        } else if (DOW.equals("Wednesday")) {
+            DOW = "T4";
+        } else if (DOW.equals("Thursday")) {
+            DOW = "T5";
+        } else if (DOW.equals("Friday")) {
+            DOW = "T6";
+        } else if (DOW.equals("Saturday")) {
+            DOW = "T7";
+        } else {
+            DOW = "CN";
         }
-        date_txt.setText(DOW + ", " + dates.get(position));
+        date_txt.setText(DOW + ", " + new SimpleDateFormat("dd/MM/yyyy").format(dates.get(position)));
 
         List<String[]> shiftchecks = new ArrayList<>();
         List<Shift> shifts;
@@ -118,12 +115,12 @@ public class ListDateAdapter extends BaseAdapter {
         return v;
     }
 
-    private List<String[]> getListCheck(String date, Shift shift, String employee) throws ParseException {
+    private List<String[]> getListCheck(Date date, Shift shift, String employee) throws ParseException {
         List<String[]> checkList = new ArrayList<>();
 
-        date = dateFormat(date, "dd/MM/yyyy", "yyyy-MM-dd");
+        String date_s = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        String filter = "ShiftID = '" + shift.getShift_id() + "' AND CreatedTime like '" + date + "%' AND EmployeeID = '" + employee + "'";
+        String filter = "ShiftID = '" + shift.getShift_id() + "' AND CreatedTime like '" + date_s + "%' AND EmployeeID = '" + employee + "'";
 
         List<List> table = dbHelper.loadDataHandler("Attendance", filter, new String[]{"CreatedTime", "AttendanceType"});
         for (int i = 0; i < table.size(); i++) {

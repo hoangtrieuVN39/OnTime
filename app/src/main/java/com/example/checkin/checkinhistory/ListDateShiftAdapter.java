@@ -1,21 +1,14 @@
 package com.example.checkin.checkinhistory;
 
-import static java.lang.System.in;
-
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.checkin.Check;
 import com.example.checkin.R;
-import com.example.checkin.Shift;
-import com.example.checkin.checkinmain.ListCheckAdapter;
 
 import java.util.List;
 

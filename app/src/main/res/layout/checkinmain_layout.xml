@@ -2,9 +2,9 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="top"
     android:background="#FFFFFF"
     tools:context=".checkinmain.CheckinMainActivity">
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top"
-        android:fillViewport="true">
+        android:fillViewport="false">
 
 
         <LinearLayout
@@ -55,10 +55,14 @@
                         android:orientation="horizontal"
                         android:padding="12dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <Space
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical">
 
                             <LinearLayout
@@ -74,8 +78,12 @@
                                     android:layout_weight="0"
                                     app:srcCompat="@drawable/outline_location_on_24" />
 
+                                <Space
+                                    android:layout_width="8dp"
+                                    android:layout_height="11dp"
+                                    android:layout_weight="0" />
+
                                 <TextView
-                                    android:id="@+id/currentcheckpoint_txt"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -102,7 +110,12 @@
                                     android:layout_width="16dp"
                                     android:layout_height="16dp"
                                     android:layout_weight="0"
-                                    app:srcCompat="@drawable/outline_info_24" />
+                                    app:srcCompat="@drawable/baseline_info_outline_24" />
+
+                                <Space
+                                    android:layout_width="8dp"
+                                    android:layout_height="11dp"
+                                    android:layout_weight="0" />
 
                                 <TextView
                                     android:id="@+id/currentplace_txt"
@@ -110,10 +123,15 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="Ngoài vị trí"
-                                    android:textColor="#4BEC83" />
+                                    android:textColor="#1BDC65" />
                             </LinearLayout>
 
                         </LinearLayout>
+
+                        <Space
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="2"/>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -128,12 +146,26 @@
                                 android:text="Bản đồ"
                                 android:textColor="@color/black" />
 
+                            <Space
+                                android:layout_width="8dp"
+                                android:layout_height="11dp"
+                                android:layout_weight="1" />
+
                             <Switch
                                 android:id="@+id/map_sw"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:checked="true" />
+                                android:checked="true"
+                                android:track="@drawable/switch_track"
+                                android:thumb="@drawable/switch_thumb" />
+
                         </LinearLayout>
+
+                        <Space
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"/>
+
                     </LinearLayout>
 
                     <Space
@@ -148,23 +180,25 @@
                         android:background="@drawable/roundgradient"
                         android:gravity="center"
                         android:orientation="horizontal"
-                        android:paddingLeft="32dp"
-                        android:paddingTop="12dp"
-                        android:paddingRight="32dp"
-                        android:paddingBottom="12dp"
+                        android:padding="12dp"
                         android:visibility="visible">
 
+                        <Space
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"/>
+
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start|center_vertical"
+                            android:gravity="center"
                             android:orientation="vertical">
 
                             <TextView
                                 android:id="@+id/currentdate_txt"
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:gravity="center"
                                 android:text="Thứ 6, 19/10/2024"
                                 android:textColor="@color/black"
@@ -176,27 +210,33 @@
 
                             <TextView
                                 android:id="@+id/currenttime_txt"
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="09:35:24a"
+                                android:text="09:35:24"
                                 android:textColor="@color/black"
                                 android:textSize="32sp"
                                 android:textStyle="bold" />
 
                         </LinearLayout>
 
+                        <Space
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="2"/>
+
                         <LinearLayout
                             android:id="@+id/lyt3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|end"
                             android:gravity="center"
                             android:orientation="vertical">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="right"
                                 android:baselineAligned="false"
                                 android:gravity="center"
                                 android:orientation="horizontal"
@@ -209,16 +249,27 @@
                                     android:layout_weight="0"
                                     app:srcCompat="@drawable/baseline_outlined_flag_24" />
 
+                                <Space
+                                    android:layout_width="8dp"
+                                    android:layout_height="11dp"
+                                    android:layout_weight="0" />
+
                                 <TextView
                                     android:id="@+id/currentshift_txt"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="80dp"
                                     android:layout_height="wrap_content"
-                                    android:text="Ca sáng"
+                                    android:text="Không có ca làm"
                                     android:textColor="@color/black"
                                     android:textSize="16sp" />
                             </LinearLayout>
 
                         </LinearLayout>
+
+                        <Space
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"/>
+
                     </LinearLayout>
                 </LinearLayout>
 
@@ -233,13 +284,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.example.checkin.TouchableLayout
+                <LinearLayout
                     android:id="@+id/checkin_btn"
                     android:layout_width="160dp"
                     android:layout_height="160dp"
                     android:layout_gravity="center"
                     android:background="@drawable/checkin_btn"
-                    android:elevation="4dp"
+                    android:clickable="true"
+                    android:elevation="10dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:translationZ="5dp">
@@ -259,9 +311,10 @@
                         android:layout_height="wrap_content"
                         android:text="Check in"
                         android:textAlignment="center"
+                        android:textColor="#FFFFFF"
                         android:textSize="20sp" />
 
-                </com.example.checkin.TouchableLayout>
+                </LinearLayout>
 
                 <Space
                     android:layout_width="match_parent"
@@ -275,7 +328,7 @@
                     android:elevation="20dp"
                     android:orientation="vertical"
                     android:paddingLeft="16dp"
-                    android:paddingTop="24dp"
+                    android:paddingTop="16dp"
                     android:paddingRight="16dp"
                     android:paddingBottom="16dp"
                     android:translationZ="5dp">
@@ -315,5 +368,42 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout android:id="@+id/request_btn_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="48dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Để thực hiện chấm công, vui lòng cấp quyền vị trí."
+            android:textColor="#2E333D"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            app:srcCompat="@drawable/cuate" />
+
+        <Button
+            android:id="@+id/request_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
+            android:text="Cấp quyền"
+            android:background="@drawable/round_yellow_2"/>
+    </LinearLayout>
 
 </FrameLayout>

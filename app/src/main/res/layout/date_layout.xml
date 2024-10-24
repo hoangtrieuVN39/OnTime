@@ -85,7 +85,7 @@
         android:background="#E4E7ED"/>
 
 
-    <com.example.checkin.NonScrollListView
+    <com.example.checkin.ShowAllListView
         android:id="@+id/shift_lv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
