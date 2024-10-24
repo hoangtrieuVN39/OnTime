@@ -13,7 +13,7 @@
         android:theme="@style/Theme.On_Time"
         tools:targetApi="31">
         <activity
-            android:name=".activity.FormListActivity"
+            android:name=".activity.CreateFormActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.On_Time">
@@ -23,8 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.CreateFormActivity" />
-
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />

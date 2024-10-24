@@ -273,4 +273,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 }
 
+         // Lặp lại tương tự cho các bảng khác như WorkShift, Employee, Account, LeaveType, LeaveRequest, Attendance, LeaveRequestApproval
+//    public void syncFromFirebase() {
+//        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("forms");
+//
+//        databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                SQLiteDatabase localDB = getWritableDatabase();
+//                localDB.execSQL("DELETE FROM LeaveRequest"); // Xóa tất cả dữ liệu trước khi thêm mới
+//
+//                for (DataSnapshot formSnapshot : dataSnapshot.getChildren()) {
+//                    String nameForm = formSnapshot.child("LeaveTypeName").getValue(String.class);
+//                    String startTime = formSnapshot.child("LeaveStartTime").getValue(String.class);
+//                    String endTime = formSnapshot.child("LeaveEndTime").getValue(String.class);
+//                    String status = formSnapshot.child("Statuss").getValue(String.class);
+//                    String reason = formSnapshot.child("Reason").getValue(String.class);
+//
+//                    ContentValues values = new ContentValues();
+//                    values.put("LeaveTypeName", nameForm);
+//                    values.put("LeaveStartTime", startTime);
+//                    values.put("LeaveEndTime", endTime);
+//                    values.put("Statuss", status);
+//                    values.put("Reason", reason);
+//
+//                    localDB.insert("LeaveRequest", null, values);
+//                }
+//
+//                localDB.close();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.w("FirebaseSync", "Error getting data.", databaseError.toException());
+//            }
+//        });
+//    }
 

@@ -104,15 +104,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp"
-            android:background="@drawable/rc_color">
+            android:background="#FBF7EF"
+            android:padding="10dp">
 
             <ListView
                 android:id="@+id/form_lv"
                 android:layout_width="match_parent"
-                android:layout_height="613dp"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="8dp"/>
+                android:layout_height="613dp" />
         </LinearLayout>
     </LinearLayout>
     <ImageButton
@@ -126,86 +124,86 @@
         android:src="@drawable/button_add"
         android:background="@android:color/transparent"/>
 
-<!--    <LinearLayout-->
-<!--        android:id="@+id/nav_footer"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true">-->
+    <LinearLayout
+        android:id="@+id/nav_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:orientation="vertical">-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-<!--            <ImageView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:src="@drawable/clock">-->
-<!--            </ImageView>-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/clock">
+            </ImageView>
 
-<!--            <Button-->
-<!--                android:id="@+id/button_chamcong"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@color/white"-->
-<!--                android:text="Chấm công"-->
-<!--                android:textAllCaps="false"-->
-<!--                android:textSize="15dp">-->
-<!--            </Button>-->
-<!--        </LinearLayout>-->
+            <Button
+                android:id="@+id/button_chamcong"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:text="Chấm công"
+                android:textAllCaps="false"
+                android:textSize="15dp">
+            </Button>
+        </LinearLayout>
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:orientation="vertical">-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-<!--            <ImageView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:src="@drawable/history">-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/history">
 
-<!--            </ImageView>-->
+            </ImageView>
 
-<!--            <Button-->
-<!--                android:id="@+id/button_lichsu"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@color/white"-->
-<!--                android:text="Lịch sử"-->
-<!--                android:textAllCaps="false"-->
-<!--                android:textSize="15dp">-->
+            <Button
+                android:id="@+id/button_lichsu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:text="Lịch sử"
+                android:textAllCaps="false"
+                android:textSize="15dp">
 
-<!--            </Button>-->
-<!--        </LinearLayout>-->
+            </Button>
+        </LinearLayout>
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:orientation="vertical">-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-<!--            <ImageView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:src="@drawable/form">-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/form">
 
-<!--            </ImageView>-->
+            </ImageView>
 
-<!--            <Button-->
-<!--                android:id="@+id/button_dontu"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@color/white"-->
-<!--                android:text="Đơn từ"-->
-<!--                android:textAllCaps="false"-->
-<!--                android:textSize="15dp">-->
+            <Button
+                android:id="@+id/button_dontu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:text="Đơn từ"
+                android:textAllCaps="false"
+                android:textSize="15dp">
 
-<!--            </Button>-->
-<!--        </LinearLayout>-->
-<!--    </LinearLayout>-->
+            </Button>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
