@@ -6,13 +6,13 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
-    <show-object-properties value="true" />
+    <show-object-properties value="false" />
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
@@ -31,6 +31,175 @@ declare @IDM varchar(10) = substring(@IDMax, 2, len(@IDMax)
 print @IDM
 --print dbo.fT_IDGen()]]></console>
     </connection>
+    <connection id="a69f27a1-a94c-4c2d-9114-7d8b241209c4">
+      <console name="new db" type="STANDARD" schema="db" session="Main"><![CDATA[-- Bảng Place
+CREATE TABLE Place (
+    PlaceID VARCHAR(10) PRIMARY KEY,
+    Latitude DECIMAL(9, 6), 
+    Longitude DECIMAL(9, 6)
+);
+
+-- Bảng WorkShift
+CREATE TABLE WorkShift (
+    ShiftID VARCHAR(10) PRIMARY KEY,
+    ShiftName VARCHAR(50),
+    StartTime TIME,
+    EndTime TIME
+);
+
+-- Bảng Employee
+CREATE TABLE Employee (
+    EmployeeID VARCHAR(10) PRIMARY KEY,
+    EmployeeName VARCHAR(100),
+    Phone VARCHAR(15),
+    Email VARCHAR(100)
+);
+
+-- Bảng Account
+CREATE TABLE Account (
+    AccountID VARCHAR(10) PRIMARY KEY,
+    Passwordd VARCHAR(255),
+    Email VARCHAR(100),
+    EmployeeID VARCHAR(10),
+    FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)
+);
+
+-- Bảng LeaveType
+CREATE TABLE LeaveType (
+    LeaveTypeID VARCHAR(10) PRIMARY KEY,
+    LeaveTypeName VARCHAR(100)
+);
+
+-- Bảng LeaveRequest
+CREATE TABLE LeaveRequest (
+    LeaveID VARCHAR(10) PRIMARY KEY,
+    CreatedTime DATETIME,
+    Status VARCHAR(50),
+    LeaveTypeID VARCHAR(10),
+    EmployeeID VARCHAR(10),
+    LeaveStartTime DATETIME,
+    LeaveEndTime DATETIME,
+    Reason TEXT,
+    FOREIGN KEY (LeaveTypeID) REFERENCES LeaveType(LeaveTypeID),
+    FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)
+);
+
+-- Bảng Attendance
+CREATE TABLE Attendance (
+    AttendanceID VARCHAR(7) PRIMARY KEY,
+    CreatedTime DATETIME,
+    AttendanceType VARCHAR(50),
+    EmployeeID VARCHAR(10),
+    ShiftID VARCHAR(10),
+    PlaceID VARCHAR(10),
+    Latitude DECIMAL(9, 6), 
+    Longitude DECIMAL(9, 6), 
+    FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
+    FOREIGN KEY (ShiftID) REFERENCES WorkShift(ShiftID),
+    FOREIGN KEY (PlaceID) REFERENCES Place(PlaceID)
+);
+
+-- Bảng LeaveRequestApproval
+CREATE TABLE LeaveRequestApproval (
+    LeaveApprovalID VARCHAR(10) PRIMARY KEY,
+    LeaveID VARCHAR(10),
+    EmployeeID VARCHAR(10),
+    Status VARCHAR(50),
+    FOREIGN KEY (LeaveID) REFERENCES LeaveRequest(LeaveID),
+    FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)
+);
+
+-- Thêm dữ liệu mẫu cho bảng Place
+INSERT INTO Place (PlaceID, Latitude, Longitude) VALUES
+('VT001', 16.04590, 108.24151),
+('VT002', 16.04821, 108.23918);
+
+
+-- Thêm dữ liệu mẫu cho bảng WorkShift
+INSERT INTO WorkShift (ShiftID, ShiftName, StartTime, EndTime) VALUES
+('CA001', 'Ca sáng', '08:00:00', '12:00:00'),
+('CA002', 'Ca chiều', '13:00:00', '17:00:00'),
+('CA003', 'Ca tối', '18:00:00', '22:00:00');
+
+
+-- Thêm dữ liệu mẫu cho bảng Employee
+INSERT INTO Employee (EmployeeID, EmployeeName, Phone, Email) VALUES
+('NV001', 'Nguyễn Văn Anh', '0901234567', 'nva@example.com'),
+('NV002', 'Lê Thị Bình', '0902345678', 'ltb@example.com'),
+('NV003', 'Trần Văn Cường', '0903456789', 'tvc@example.com'),
+('NV004', 'Phạm Thị Dung', '0904567890', 'ptd@example.com'),
+('NV005', 'Hoàng Văn Anh', '0905678901', 'hve@example.com'),
+('NV006', 'Nguyễn Thị Lê', '0906789012', 'ntf@example.com'),
+('NV007', 'Lê Văn Giang', '0907890123', 'lvg@example.com'),
+('NV008', 'Trần Thị Hương', '0908901234', 'tth@example.com'),
+('NV009', 'Phạm Văn Anh', '0909012345', 'pvi@example.com'),
+('NV010', 'Hoàng Thị Kiên', '0910123456', 'htk@example.com');
+
+-- Thêm dữ liệu mẫu cho bảng Account
+INSERT INTO Account (AccountID, Passwordd, Email, EmployeeID) VALUES
+('TK001', 'password1','nva@example.com','NV001'),
+('TK002', 'password2','ltb@example.com','NV002'),
+('TK003', 'password3','tvc@example.com','NV003'),
+('TK004', 'password4','ptd@example.com','NV004'),
+('TK005', 'password5','hve@example.com','NV005'),
+('TK006', 'password6','ntf@example.com','NV006'),
+('TK007', 'password7','lvg@example.com','NV007'),
+('TK008', 'password8','tth@example.com','NV008'),
+('TK009', 'password9','pvi@example.com','NV009'),
+('TK010', 'password10','htk@example.com','NV010');
+
+-- Thêm dữ liệu mẫu cho bảng LeaveType
+INSERT INTO LeaveType (LeaveTypeID, LeaveTypeName) VALUES
+('LDT001', 'Đi trễ/ về sớm (trong vòng 1h)'),
+('LDT002', 'Nghỉ không lương'),
+('LDT003', 'Nghỉ phép - gửi trước 24h'),
+('LDT004', 'Cưới/tang'),
+('LDT005', 'Công tác'),
+('LDT006', 'Làm việc từ xa'),
+('LDT007', 'Giải trình công'),
+('LDT008', 'Nghỉ phép có lương'),
+('LDT009', 'Nghỉ phép ốm'),
+('LDT010', 'Nghỉ thai sản');
+
+-- Thêm dữ liệu mẫu cho bảng LeaveRequest
+INSERT INTO LeaveRequest (LeaveID, CreatedTime, Status, LeaveTypeID, EmployeeID, LeaveStartTime, LeaveEndTime, Reason) VALUES
+('DT001', '2024-01-01 08:00:00', 'Đồng ý', 'LDT001', 'NV001', '2024-09-02 08:00:00', '2024-09-05 18:00:00', 'Lý do y tế'),
+('DT002', '2024-09-10 10:00:00', 'Chưa phê duyệt', 'LDT002', 'NV002', '2024-09-11 08:00:00', '2024-09-12 18:00:00', 'Gia đình khẩn cấp'),
+('DT003', '2024-09-15 11:00:00', 'Đồng ý', 'LDT003', 'NV003', '2024-09-16 08:00:00', '2025-02-28 18:00:00', 'Nghỉ thai sản'),
+('DT004', '2024-09-20 12:00:00', 'Loại bỏ', 'LDT004', 'NV004', '2024-09-25 08:00:00', '2024-09-26 18:00:00', ''),
+('DT005', '2024-10-01 13:00:00', 'Chưa phê duyệt', 'LDT005', 'NV005', '2024-10-02 08:00:00', '2024-10-03 18:00:00', 'Chuyến công tác'),
+('DT006', '2024-10-05 14:00:00', 'Đồng ý', 'LDT006', 'NV006', '2024-10-10 08:00:00', '2024-10-20 18:00:00', 'Nghỉ phép'),
+('DT007', '2024-10-08 15:00:00', 'Chưa phê duyệt', 'LDT007', 'NV007', '2024-10-11 08:00:00', '2024-10-12 18:00:00', ''),
+('DT008', '2024-10-10 16:00:00', 'Đồng ý', 'LDT008', 'NV008', '2024-10-15 08:00:00', '2024-10-20 18:00:00', 'Nghỉ phép'),
+('DT009', '2024-10-15 17:00:00', 'Chưa phê duyệt', 'LDT009', 'NV009', '2024-10-16 08:00:00', '2024-10-20 18:00:00', ''),
+('DT010', '2024-10-20 18:00:00', 'Đồng ý', 'LDT010', 'NV010', '2024-10-21 08:00:00', '2024-10-24 18:00:00', 'Nghỉ phép');
+
+-- Thêm dữ liệu mẫu cho bảng Attendance
+INSERT INTO Attendance (AttendanceID, CreatedTime, AttendanceType, EmployeeID, ShiftID, PlaceID, Latitude, Longitude) VALUES
+('AT001', '2024-10-01 08:00:00', 'checkin', 'NV001', 'CA001', 'VT001',  16.04590, 108.24151),
+('AT002', '2024-10-01 12:00:00', 'checkout', 'NV001', 'CA001', 'VT001', 16.04590, 108.24151),
+('AT003', '2024-10-01 13:00:00', 'checkin', 'NV002', 'CA002', 'VT002',  16.04590, 108.24151),
+('AT004', '2024-10-01 17:00:00', 'checkout', 'NV002', 'CA002', 'VT002',  16.04590, 108.24151),
+('AT005', '2024-10-01 08:00:00', 'checkin', 'NV003', 'CA001', 'VT003',  16.04590, 108.24151),
+('AT006', '2024-10-01 12:00:00', 'checkout', 'NV003', 'CA001', 'VT003',  16.04590, 108.24151),
+('AT007', '2024-10-01 13:00:00', 'checkin', 'NV004', 'CA002', 'VT004',  16.04590, 108.24151),
+('AT008', '2024-10-01 17:00:00', 'checkout', 'NV004', 'CA002', 'VT004',  16.04590, 108.24151),
+('AT009', '2024-10-01 08:00:00', 'checkin', 'NV005', 'CA001', 'VT005',  16.04590, 108.24151),
+('AT010', '2024-10-01 12:00:00', 'checkout', 'NV005', 'CA001', 'VT005',  16.04590, 108.24151);
+
+-- Thêm dữ liệu mẫu cho bảng LeaveRequestApproval
+INSERT INTO LeaveRequestApproval (LeaveApprovalID, LeaveID, EmployeeID, Status) VALUES
+('LAP001', 'DT001', 'NV006', 'Đồng ý'),
+('LAP002', 'DT002', 'NV007', 'Chưa phê duyệt'),
+('LAP003', 'DT003', 'NV008', 'Đồng ý'),
+('LAP004', 'DT004', 'NV009', 'Đồng ý'),
+('LAP005', 'DT005', 'NV010', 'Chưa phê duyệt'),
+('LAP006', 'DT006', 'NV006', 'Đồng ý'),
+('LAP007', 'DT007', 'NV007', 'Chưa phê duyệt'),
+('LAP008', 'DT008', 'NV008', 'Đồng ý'),
+('LAP009', 'DT009', 'NV009', 'Chưa phê duyệt'),
+('LAP010', 'DT010', 'NV010', 'Đồng ý');]]></console>
+    </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
@@ -40,6 +209,7 @@ print @IDM
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="d1fc7ae1-1262-439d-a3f9-8da78dc2155f" />
+    <connection id="a69f27a1-a94c-4c2d-9114-7d8b241209c4" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="d1fc7ae1-1262-439d-a3f9-8da78dc2155f" dataset="main.LeaveType" active-filter-id="EMPTY_FILTER">
@@ -57,7 +227,7 @@ print @IDM
     <retain-sticky-names value="false" />
   </component>
   <component name="DBNavigator.Project.FileConnectionMappingManager">
-    <mapping file-url="file://$PROJECT_DIR$/app/src/main/assets/OnTime.sql" connection-id="virtual-sqlite-connection" session-id="MAIN" current-schema="" />
+    <mapping file-url="file://$PROJECT_DIR$/app/src/main/assets/OnTime.sql" connection-id="a69f27a1-a94c-4c2d-9114-7d8b241209c4" session-id="MAIN" current-schema="db" />
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
@@ -88,6 +258,103 @@ print @IDM
           <tns-profile value="" />
           <files>
             <file path="D:\AndroidProjects\Checkin\app\src\main\assets\dbase.db" schema="main" />
+          </files>
+          <type value="NONE" />
+          <user value="" />
+          <deprecated-pwd value="" />
+        </database>
+        <properties>
+          <auto-commit value="false" />
+        </properties>
+        <ssh-settings>
+          <active value="false" />
+          <proxy-host value="" />
+          <proxy-port value="22" />
+          <proxy-user value="" />
+          <deprecated-proxy-pwd value="" />
+          <auth-type value="PASSWORD" />
+          <key-file value="" />
+          <key-passphrase value="" />
+        </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
+        <details>
+          <charset value="UTF-8" />
+          <session-management value="true" />
+          <ddl-file-binding value="true" />
+          <database-logging value="true" />
+          <connect-automatically value="true" />
+          <restore-workspace value="true" />
+          <restore-workspace-deep value="false" />
+          <environment-type value="default" />
+          <connectivity-timeout value="30" />
+          <idle-time-to-disconnect value="30" />
+          <idle-time-to-disconnect-pool value="5" />
+          <credential-expiry-time value="10" />
+          <max-connection-pool-size value="7" />
+          <alternative-statement-delimiter value="" />
+        </details>
+        <debugger>
+          <compile-dependencies value="true" />
+          <tcp-driver-tunneling value="false" />
+          <tcp-host-address value="" />
+          <tcp-port-from value="4000" />
+          <tcp-port-to value="4999" />
+          <debugger-type value="ASK" />
+        </debugger>
+        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false" hide-audit-columns="false">
+          <object-filters />
+          <object-type-filter use-master-settings="true">
+            <object-type name="SCHEMA" enabled="true" />
+            <object-type name="USER" enabled="true" />
+            <object-type name="ROLE" enabled="true" />
+            <object-type name="PRIVILEGE" enabled="true" />
+            <object-type name="CHARSET" enabled="true" />
+            <object-type name="TABLE" enabled="true" />
+            <object-type name="VIEW" enabled="true" />
+            <object-type name="MATERIALIZED_VIEW" enabled="true" />
+            <object-type name="NESTED_TABLE" enabled="true" />
+            <object-type name="COLUMN" enabled="true" />
+            <object-type name="INDEX" enabled="true" />
+            <object-type name="CONSTRAINT" enabled="true" />
+            <object-type name="DATASET_TRIGGER" enabled="true" />
+            <object-type name="DATABASE_TRIGGER" enabled="true" />
+            <object-type name="SYNONYM" enabled="true" />
+            <object-type name="SEQUENCE" enabled="true" />
+            <object-type name="PROCEDURE" enabled="true" />
+            <object-type name="FUNCTION" enabled="true" />
+            <object-type name="PACKAGE" enabled="true" />
+            <object-type name="TYPE" enabled="true" />
+            <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+            <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="DIMENSION" enabled="true" />
+            <object-type name="CLUSTER" enabled="true" />
+            <object-type name="DBLINK" enabled="true" />
+          </object-type-filter>
+        </object-filters>
+      </connection>
+      <connection id="a69f27a1-a94c-4c2d-9114-7d8b241209c4" active="true" signed="true">
+        <database>
+          <name value="new db" />
+          <description value="" />
+          <database-type value="SQLITE" />
+          <config-type value="BASIC" />
+          <database-version value="3.45" />
+          <driver-source value="BUNDLED" />
+          <driver-library value="" />
+          <driver value="" />
+          <url-type value="FILE" />
+          <host value="" />
+          <port value="" />
+          <database value="" />
+          <tns-folder value="" />
+          <tns-profile value="" />
+          <files>
+            <file path="db.db" schema="db" />
           </files>
           <type value="NONE" />
           <user value="" />
