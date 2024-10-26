@@ -62,13 +62,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LATETIME = "LateTime";
     private static final String COLUMN_EMPLOYEEID_REF = "EmployeeID";
     private static final String COLUMN_SHIFTID_REF = "ShiftID";
+    private static final String COLUMN_LATITUDE ="Latitude";
+    private static final String COLUMN_LONGITUDE="Longitude ";
+
 
 
     // Table Vị trí chấm công
-    private static final String TABLE_LOCATION = "Location";
-    private static final String COLUMN_LOCATIONID = "LocationID";
-    private static final String COLUMN_LONGITUDE = "Longitude";
-    private static final String COLUMN_LATITUDE = "Latitude";
+    private static final String TABLE_PLACE = "Place";
+    private static final String COLUMN_PLACEID = "PlaceID";
+    private static final String COLUMN_LOCATION_LONGITUDE = "Longitude";
+    private static final String COLUMN_LOCATION_LATITUDE = "Latitude";
+
+
+    // Table LeaveRequestApproval
+    private static final String TABLE_LEAVE_REQUEST_APPROVAL = "LeaveRequestApproval";
+    private static final String COLUMN_LEAVE_APPROVAL_ID = "LeaveApprovalID";
+    private static final String COLUMN_LEAVE_ID = "LeaveID";
+    private static final String COLUMN_EMPLOYEE_ID = "EmployeeID";
+    private static final String COLUMN_STATUS = "Status";
 
     private Context context;
     //phương thức khởi tạo
@@ -87,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_ACCOUNT);
         db.execSQL(CREATE_TABLE_LEAVEREQUEST);
         db.execSQL(CREATE_TABLE_ATTENDANCE);
-        db.execSQL(CREATE_TABLE_LOCATION);
+        db.execSQL(CREATE_TABLE_PLACE);
     }
 
     private static final String CREATE_TABLE_EMPLOYEE = "CREATE TABLE " + TABLE_EMPLOYEE + " ("
@@ -120,6 +131,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_LEAVETYPEID_REF  + " VARCHAR(10), "
             + COLUMN_EMPLOYEEEMAIL_REF + " VARCHAR(100), "
             + COLUMN_PERMISSIONLEVEL + " VARCHAR(10), "
+            +COLUMN_REASON + " TEXT,"
             + "FOREIGN KEY (" + COLUMN_LEAVETYPEID_REF + ") REFERENCES " + TABLE_LEAVETYPE + "(" + COLUMN_LEAVETYPEID + "), "
             + "FOREIGN KEY (" + COLUMN_EMPLOYEEEMAIL_REF + ") REFERENCES " + TABLE_EMPLOYEE + "(" + COLUMN_EMPLOYEEEMAIL + "))";
 
@@ -130,14 +142,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_LATETIME + " VARCHAR(10), "
             + COLUMN_EMPLOYEEID + " VARCHAR(10), "
             + COLUMN_SHIFTID_REF + " VARCHAR(10), "
+            + COLUMN_LONGITUDE + " DECIMAL(9, 6), "
+            + COLUMN_LATITUDE + " DECIMAL(9, 6),"
             + "FOREIGN KEY (" + COLUMN_EMPLOYEEID + ") REFERENCES " + TABLE_EMPLOYEE + "(" + COLUMN_EMPLOYEEID + "), "
             + "FOREIGN KEY (" + COLUMN_SHIFTID_REF + ") REFERENCES " + TABLE_WORKSHIFT + "(" + COLUMN_SHIFTID  + "))";
 
-    private static final String CREATE_TABLE_LOCATION = "CREATE TABLE " + TABLE_LOCATION + " ("
-            + COLUMN_LOCATIONID + " VARCHAR(10) PRIMARY KEY, "
-            + COLUMN_LONGITUDE + " DECIMAL(10, 8), "
-            + COLUMN_LATITUDE + " DECIMAL(10, 8))";
+    private static final String CREATE_TABLE_PLACE = "CREATE TABLE " + TABLE_PLACE + " ("
+            + COLUMN_PLACEID+ " VARCHAR(10) PRIMARY KEY, "
+            + COLUMN_LOCATION_LONGITUDE + " DECIMAL(9, 6), "
+            + COLUMN_LOCATION_LATITUDE + " DECIMAL(9, 6))";
 
+    private static final String CREATE_TABLE_LEAVE_REQUEST_APPROVAL = "CREATE TABLE " + TABLE_LEAVE_REQUEST_APPROVAL + " ("
+            + COLUMN_LEAVE_APPROVAL_ID + " VARCHAR(10) PRIMARY KEY, "
+            + COLUMN_LEAVE_ID + " VARCHAR(10), "
+            + COLUMN_EMPLOYEE_ID + " VARCHAR(10), "
+            + COLUMN_STATUS + " VARCHAR(50), "
+            + "FOREIGN KEY (" + COLUMN_LEAVE_ID + ") REFERENCES LeaveRequest(" + COLUMN_LEAVE_ID + "), "
+            + "FOREIGN KEY (" + COLUMN_EMPLOYEE_ID + ") REFERENCES Employee(" + COLUMN_EMPLOYEE_ID + ") "
+            + ");";
+
+    // Thực thi câu lệnh tạo bảng
+//db.execSQL(CREATE_TABLE_PLACE);
+//db.execSQL(CREATE_LEAVEREQUESTAPPROVAL_TABLE);
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion,
                           int newVersion) {
@@ -206,7 +232,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Insert into ChamCong
-    public long insertAttendance(String attendanceID, String createdTime, String status, String attendanceType, String lateTime, String employeeID, String shiftID) {
+    public long insertAttendance(String attendanceID, String createdTime, String status, String attendanceType, String lateTime, String employeeID, String shiftID, String Latitude ,String Longitude) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_ATTENDANCEID, attendanceID);
@@ -216,23 +242,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_LATETIME, lateTime);
         values.put(COLUMN_EMPLOYEEID_REF, employeeID);
         values.put(COLUMN_SHIFTID_REF, shiftID);
+        values.put(COLUMN_LATITUDE,Latitude);
+        values.put(COLUMN_LONGITUDE, Longitude);
 
         return db.insert(TABLE_ATTENDANCE, null, values);
     }
+    //Insert into Place
+    public long insertPlace(String PlaceID, String Latitude, String Longitude) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PLACEID, PlaceID);
+        values.put(COLUMN_LOCATION_LATITUDE, Latitude);
+        values.put(COLUMN_LOCATION_LONGITUDE, Longitude);
+        return db.insert(TABLE_PLACE, null, values);
+    }
+
+    //
+    public long insertLeaveRequestApproval(String leaveApprovalID, String leaveID, String employeeID, String status) {
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LEAVE_APPROVAL_ID, leaveApprovalID);
+        values.put(COLUMN_LEAVE_ID, leaveID);
+        values.put(COLUMN_EMPLOYEE_ID, employeeID);
+        values.put(COLUMN_STATUS, status);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.insert(TABLE_LEAVE_REQUEST_APPROVAL, null, values);
+
+        db.close();
+
+        return result;
+    }
+
 
     public String loadDataHandler(String TABLE_NAME) {
-        String result = "";
-        String query = "SELECT* FROM " + TABLE_NAME;
+        StringBuilder result = new StringBuilder();
+        String query = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
+
         while (cursor.moveToNext()) {
             int result_0 = cursor.getInt(0);
             String result_1 = cursor.getString(1);
-            result += String.valueOf(result_0) + " " + result_1 +
-                    System.getProperty("line.separator");
+            result.append(result_0).append(" ").append(result_1)
+                    .append(System.getProperty("line.separator"));
         }
+
         cursor.close();
         db.close();
-        return result;
+        return result.toString();
     }
 }

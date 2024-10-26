@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/work_detail_layout"
     tools:context=".MainActivity"
-    android:background="#FFFFFF">  <!-- Đặt màu nền trắng cho ConstraintLayout -->
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +15,7 @@
         android:orientation="vertical"
         android:padding="16dp"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-16dp">  <!-- Đặt màu nền trong suốt -->
+        tools:layout_editor_absoluteY="-16dp">
 
         <TextView
             android:drawableLeft="@drawable/ic_back"
@@ -40,6 +41,7 @@
             android:paddingBottom="12dp">
 
             <TextView
+                android:id="@+id/work_detail_date_txt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -50,6 +52,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/work_detail_num_working_txt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -80,6 +83,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/work_detail_morning_shift_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ca sáng"
@@ -100,6 +104,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/work_detail_afternoon_shift_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ca Chiều"
@@ -120,6 +125,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/work_detail_dinner_shift_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ca Tối"
@@ -142,7 +148,7 @@
             android:padding="1dp">
 
             <TextView
-                android:id="@+id/ca"
+                android:id="@+id/work_detail_shift_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="15dp"
@@ -152,7 +158,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/ca_time"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="."
@@ -162,7 +168,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/ca_time1"
+                android:id="@+id/work_detail_shift_time_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -188,7 +194,6 @@
                 android:padding="8dp">
 
                 <ImageView
-                    android:id="@+id/baseline_location_on"
                     android:layout_width="41dp"
                     android:layout_height="40dp"
                     android:layout_marginRight="10dp"
@@ -202,7 +207,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_shift_location_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Địa điểm: "
@@ -210,7 +214,7 @@
                         android:textSize="14sp" />
 
                     <TextView
-                        android:id="@+id/tv_shift_location"
+                        android:id="@+id/work_detail_location_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Văn phòng Đà Nẵng"
@@ -228,7 +232,7 @@
                 android:padding="8dp">
 
                 <ImageView
-                    android:id="@+id/topImage"
+
                     android:layout_width="41dp"
                     android:layout_height="40dp"
                     android:layout_marginRight="10dp"
@@ -241,7 +245,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/cong_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Công ghi nhận: "
@@ -249,7 +252,7 @@
                         android:textSize="14sp" />
 
                     <TextView
-                        android:id="@+id/cong_2"
+                        android:id="@+id/work_detail_work_record_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0 công"
@@ -261,7 +264,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_check_in"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -289,7 +291,7 @@
                 android:padding="8dp">
 
                 <TextView
-                    android:id="@+id/in_time"
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
@@ -305,7 +307,6 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/in_time1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="30dp"
@@ -314,7 +315,7 @@
                         android:textSize="14sp" />
 
                     <TextView
-                        android:id="@+id/tv_check_in_status"
+                        android:id="@+id/work_detail_checkin_time_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
@@ -324,7 +325,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tv_check_in_status_status"
+                        android:id="@+id/work_detail_checkin_late_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="( Trễ 55 phút)"
@@ -338,7 +339,6 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/in_time3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="30dp"
@@ -347,7 +347,7 @@
                         android:textSize="14sp" /> <!-- Thêm marginEnd để tạo khoảng cách -->
 
                     <TextView
-                        android:id="@+id/tv_check_in_status1"
+                        android:id="@+id/work_detail_checkin_valid_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="30dp"
@@ -371,7 +371,6 @@
                 android:padding="8dp">
 
                 <TextView
-                    android:id="@+id/tv_check_in_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
@@ -387,7 +386,6 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/in_time4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="30dp"
@@ -396,7 +394,7 @@
                         android:textSize="14sp" />
 
                     <TextView
-                        android:id="@+id/tv_check_in_status4"
+                        android:id="@+id/work_detail_checkout_time_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="40dp"
@@ -414,7 +412,6 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/in_time5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="30dp"
@@ -423,7 +420,7 @@
                         android:textSize="14sp" /> <!-- Thêm marginEnd để tạo khoảng cách -->
 
                     <TextView
-                        android:id="@+id/tv_check_in_status5"
+                        android:id="@+id/work_detail_checkout_valid_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="30dp"
@@ -457,13 +454,13 @@
                 tools:ignore="ExtraText">
 
                 <ImageView
-                    android:id="@+id/iconNavHome"
+
                     android:layout_width="39dp"
                     android:layout_height="29dp"
                     android:src="@drawable/ic_clock" />
 
                 <TextView
-                    android:id="@+id/tvNavHome"
+                    android:id="@+id/main_tabbar_timekeeping_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -487,14 +484,13 @@
                     android:background="#FBCC08" />
 
                 <ImageView
-                    android:id="@+id/iconNavProfile"
                     android:layout_width="35dp"
                     android:layout_height="29dp"
                     android:contentDescription="Profile Icon"
                     android:src="@drawable/ic_history" />
 
                 <TextView
-                    android:id="@+id/tvNavProfile"
+                    android:id="@+id/main_tabbar_history_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -513,14 +509,13 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/iconNavSettings"
                     android:layout_width="wrap_content"
                     android:layout_height="28dp"
                     android:contentDescription="Settings Icon"
                     android:src="@drawable/ic_requisition" />
 
                 <TextView
-                    android:id="@+id/tvNavSettings"
+                    android:id="@+id/main_tabbar_dispatch_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -536,3 +531,4 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

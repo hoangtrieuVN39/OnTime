@@ -18,7 +18,8 @@
         android:textColor="#14161A"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:background="@color/white"/>
+        android:background="@color/white"
+        android:padding="10dp"/>
 
 
     <HorizontalScrollView
@@ -35,6 +36,7 @@
             android:padding="10dp">
 
             <Button
+                android:id="@+id/history_day_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
@@ -47,6 +49,7 @@
                 android:textColor="@android:color/black" />
 
             <Button
+                android:id="@+id/history_last_week_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
@@ -55,10 +58,12 @@
                 android:stateListAnimator="@null"
                 android:text="Tuần trước"
                 android:textColor="@android:color/black"
-                android:textSize="14dp" />
+                android:textSize="14sp" />
+
 
 
             <Button
+                android:id="@+id/history_thismonth_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
@@ -70,6 +75,7 @@
                 android:textColor="@android:color/black" />
 
             <Button
+                android:id="@+id/histpry_last_month_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
@@ -111,300 +117,315 @@
         android:layout_weight="6"
         >
         <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="8dp">
-
-        <!-- Khung Check-in -->
-        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="#FFFFFF"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="8dp">
+
+            <!-- Khung Check-in -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="#FFFFFF"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:id="@+id/historydate_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:paddingLeft="1dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="8dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:id="@+id/history_detail_date_txt"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="T3, 22/07/2024"
+                        android:textColor="#14161A"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/history_detail_num_working_txt"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="Số công ngày: "
+                        android:textSize="16sp" />
+
+
+                    <TextView
+                        android:id="@+id/workinghistory1_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="0"
+                        android:textColor="#2E333D"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:stretchColumns="2">
+
+                    <TableRow
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tên ca"
+                            android:textColor="#575E72"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Giờ check-in"
+                            android:textColor="#575E72"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Giờ check-out"
+                            android:textColor="#575E72"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ca sáng"
+                            android:textColor="#2E333D"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/checkin_txt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="07:55:00"
+                            android:textColor="#BB1B1B"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/checkout_txt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="12:10:00"
+                            android:textColor="#2E333D"
+                            android:textSize="16sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ca chiều"
+                            android:textColor="#2E333D"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/checkin1_txt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="08:55:00"
+                            android:textColor="#2E333D"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/checkout1_txt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Chưa có"
+                            android:textColor="#BB1B1B"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@color/white"
-                android:orientation="horizontal"
-                android:paddingLeft="1dp"
-                android:paddingTop="5dp"
-                android:paddingRight="8dp"
-                android:paddingBottom="2dp">
+                android:layout_marginBottom="8dp"
+                android:background="#FFFFFF"
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:id="@+id/dayhistory1_txt"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="T3, 22/07/2024"
-                    android:textColor="#14161A"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="Số công ngày: "
-                    android:textSize="16sp" />
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="0"
-                    android:textColor="#2E333D"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:stretchColumns="2">
-
-                <TableRow
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
+                    android:layout_marginBottom="20dp"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:paddingLeft="1dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="8dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Tên ca"
-                        android:textColor="#575E72"
-                        android:textSize="12sp"
+                        android:gravity="left"
+                        android:text="T4, 23/07/2024"
+                        android:textColor="#14161A"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/workinghistory2_txt"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Giờ check-in"
-                        android:textColor="#575E72"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Giờ check-out"
-                        android:textColor="#575E72"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Ca sáng"
-                        android:textColor="#2E333D"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="07:55:00"
-                        android:textColor="#BB1B1B"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="12:10:00"
-                        android:textColor="#2E333D"
-                        android:textSize="16sp" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Ca chiều"
-                        android:textColor="#2E333D"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="08:55:00"
-                        android:textColor="#2E333D"
+                        android:gravity="right"
+                        android:text="Số công ngày: "
                         android:textSize="16sp" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Chưa có"
-                        android:textColor="#BB1B1B"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
-                </TableRow>
-            </TableLayout>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="#FFFFFF"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@color/white"
-                android:orientation="horizontal"
-                android:paddingLeft="1dp"
-                android:paddingTop="5dp"
-                android:paddingRight="8dp"
-                android:paddingBottom="2dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:text="T3, 22/07/2024"
-                    android:textColor="#14161A"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="Số công ngày: "
-                    android:textSize="16sp" />
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="0"
-                    android:textColor="#2E333D"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:stretchColumns="2">
-
-                <TableRow
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:id="@+id/workinghistory3_txt"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Tên ca"
-                        android:textColor="#575E72"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Giờ check-in"
-                        android:textColor="#575E72"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Giờ check-out"
-                        android:textColor="#575E72"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Ca sáng"
-                        android:textColor="#2E333D"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="07:55:00"
+                        android:gravity="right"
+                        android:text="0"
                         android:textColor="#2E333D"
                         android:textSize="16sp" />
+                </LinearLayout>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="12:10:00"
-                        android:textColor="#2E333D"
-                        android:textSize="16sp" />
-                </TableRow>
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:stretchColumns="2">
 
-                <TableRow
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
+                    <TableRow
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Ca chiều"
-                        android:textColor="#2E333D"
-                        android:textSize="14sp" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tên ca"
+                            android:textColor="#575E72"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="08:55:00"
-                        android:textColor="#2E333D"
-                        android:textSize="16sp" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Giờ check-in"
+                            android:textColor="#575E72"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="12:10:00"
-                        android:textColor="#2E333D"
-                        android:textSize="16sp" />
-                </TableRow>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Giờ check-out"
+                            android:textColor="#575E72"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ca sáng"
+                            android:textColor="#2E333D"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/checkin2_txt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="07:55:00"
+                            android:textColor="#2E333D"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/checkout2_txt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="12:10:00"
+                            android:textColor="#2E333D"
+                            android:textSize="16sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ca chiều"
+                            android:textColor="#2E333D"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/checkin3_txt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="08:55:00"
+                            android:textColor="#2E333D"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/checkout3_txt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="12:10:00"
+                            android:textColor="#2E333D"
+                            android:textSize="16sp" />
+                    </TableRow>
                 </TableLayout>
             </LinearLayout>
         </LinearLayout>
@@ -422,13 +443,13 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/iconNavHome"
+
                 android:layout_width="39dp"
                 android:layout_height="29dp"
                 android:src="@drawable/ic_clock" />
 
             <TextView
-                android:id="@+id/tvNavHome"
+                android:id="@+id/history_chamxcong_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -453,14 +474,14 @@
                 android:background="#FBCC08" />
 
             <ImageView
-                android:id="@+id/iconNavProfile"
+
                 android:layout_width="35dp"
                 android:layout_height="29dp"
                 android:contentDescription="Profile Icon"
                 android:src="@drawable/ic_history" />
 
             <TextView
-                android:id="@+id/tvNavProfile"
+                android:id="@+id/history_lichsu_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -472,29 +493,29 @@
         </LinearLayout>
 
         <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/iconNavSettings"
             android:layout_width="wrap_content"
-            android:layout_height="28dp"
-            android:contentDescription="Settings Icon"
-            android:src="@drawable/ic_requisition" />
-
-        <TextView
-            android:id="@+id/tvNavSettings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center"
-            android:padding="8dp"
-            android:text="Đơn từ"
-            android:textColor="#8891A5"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
+
+            <ImageView
+
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:contentDescription="Settings Icon"
+                android:src="@drawable/ic_requisition" />
+
+            <TextView
+                android:id="@+id/history_dontu_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Đơn từ"
+                android:textColor="#8891A5"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
