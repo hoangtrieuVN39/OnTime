@@ -11,7 +11,7 @@ public class Attendance {
     String att_employee;
     Shift shift;
 
-    public Attendance(String att_id, String att_type, Date att_time, String att_status, String att_latetime, String att_employee, Shift shift){
+    public Attendance(String att_id, Date att_time, String att_status, String att_type, String att_latetime, String att_employee, Shift shift){
         this.att_id = att_id;
         this.att_type = att_type;
         this.att_time = att_time;

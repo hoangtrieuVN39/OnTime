@@ -166,6 +166,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
 
         cursor.moveToLast();
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+        for (int i = 0; i < cursor.getColumnCount(); i++) {
+            results.add(cursor.getString(i));
+        }
+        cursor.close();
+        return results;
+    }
+
+    public List<String> getFirst(String TABLE_NAME, String FILTER, String[] SELECTION_ARGS) {
+        List<String> results = new ArrayList<>();
+
+        String query = "SELECT * FROM " + TABLE_NAME;
+        if (SELECTION_ARGS != null) {
+            query = "SELECT " + String.join(", ", SELECTION_ARGS) + " FROM " + TABLE_NAME;
+        }
+        if (FILTER != null) {
+            query += " WHERE " + FILTER;
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        cursor.moveToFirst();
         for (int i = 0; i < cursor.getColumnCount(); i++) {
             results.add(cursor.getString(i));
         }

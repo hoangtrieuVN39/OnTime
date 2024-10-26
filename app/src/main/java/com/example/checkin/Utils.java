@@ -9,6 +9,7 @@ import com.example.checkin.classs.Shift;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -17,25 +18,49 @@ public class Utils {
 
     public static final String API_KEY = "YOUR_API_KEY";
 
-    public static String dateFormat(String date, String oldFormat, String newFormat) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat(oldFormat);
-        Date datee = sdf.parse(date);
-        sdf.applyPattern(newFormat);
-        return sdf.format(datee);
-    }
-
-    public static Boolean isCheckedIn(String employeeID, DatabaseHelper dbHelper, Date current) throws ParseException {
-        String filter = " EmployeeID = '" + employeeID + "'";
-        Boolean isCheckedIn = false;
+    public static List isCheckedInAndCurrentShift(String employeeID, DatabaseHelper dbHelper, Date current, List<Shift> shifts) throws ParseException {
+        List result = new ArrayList();
+        String filter = " EmployeeID = '" + employeeID + "' AND CreatedTime like '" + new SimpleDateFormat("yyyy-MM-dd").format(current) + "%'";
+        boolean isCheckedIn = false;
         List<String> lastAtt = dbHelper.getLast("Attendance", filter, null);
-        Attendance lastAttendance = new Attendance(lastAtt.get(0), lastAtt.get(3), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(lastAtt.get(1)), lastAtt.get(2) , lastAtt.get(4), lastAtt.get(5), getShift(lastAtt.get(6)));
-        if (Objects.equals(lastAttendance.getAtt_type(), "Check in") && lastAttendance.getAtt_time().equals(current.getTime())) {
-            isCheckedIn = true;
+        Shift currentShift = null;
+        if (lastAtt == null){
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            for (Shift shift : shifts){
+                Date d2 = sdf.parse(shift.getShift_time_end());
+                if (d2.getTime() - current.getTime() >= 0) {
+                    currentShift = shift;
+                    break;
+                }
+            }
         }
-        return isCheckedIn;
+        else {
+            Attendance lastAttendance = new Attendance(lastAtt.get(0),
+                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(lastAtt.get(1)),
+                    lastAtt.get(2),
+                    lastAtt.get(3),
+                    lastAtt.get(4),
+                    lastAtt.get(5),
+                    getShift(lastAtt.get(6)));
+            for (Shift shift : shifts) {
+                if (shift.getShift_id().equals(lastAttendance.getShift().getShift_id()) && lastAttendance.getAtt_type() != "Check out") {
+                    currentShift = shift;
+                    break;
+                }
+            }
+            if (Objects.equals(lastAttendance.getAtt_type(), "Check in")) {
+                if (new SimpleDateFormat("yyyy-MM-dd").format(lastAttendance.getAtt_time()).equals(new SimpleDateFormat("yyyy-MM-dd").format(current))) {
+                    isCheckedIn = true;
+                }
+            }
+
+        }
+        result.add(currentShift);
+        result.add(isCheckedIn);
+        return result;
     }
 
-    private static Shift getShift(String shiftID){
+    public static Shift getShift(String shiftID){
         for (Shift shift : CheckinMainActivity.shifts) {
             if (shift.getShift_id().equals(shiftID)) {
                 return shift;
