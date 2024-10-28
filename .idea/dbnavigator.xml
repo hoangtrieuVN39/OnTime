@@ -48,6 +48,7 @@ print @IDM
       </filter>
     </filter-actions>
     <filter-actions connection-id="d1fc7ae1-1262-439d-a3f9-8da78dc2155f" dataset="main.Attendance" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="d1fc7ae1-1262-439d-a3f9-8da78dc2155f" dataset="main.Place" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="d1fc7ae1-1262-439d-a3f9-8da78dc2155f" dataset="main.WorkShift" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="d1fc7ae1-1262-439d-a3f9-8da78dc2155f" dataset="main.Account" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="d1fc7ae1-1262-439d-a3f9-8da78dc2155f" dataset="main.Employee" active-filter-id="EMPTY_FILTER" />
