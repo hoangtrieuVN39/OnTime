@@ -117,7 +117,7 @@ public class Utils {
     }
 
     public static boolean isLocationValid(double distance){
-        return distance <= 1 ;
+        return distance <= 100 ;
     }
 
     public static Double getDistance(Double lat1, Double lng1, Double lat2, Double lng2) {

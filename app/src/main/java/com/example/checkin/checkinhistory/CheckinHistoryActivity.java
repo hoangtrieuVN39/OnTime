@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CheckinHistoryActivity extends Activity implements LifecycleOwner {
+public class CheckinHistoryActivity extends Activity {
 
     DatabaseHelper dbHelper;
     ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -35,6 +35,12 @@ public class CheckinHistoryActivity extends Activity implements LifecycleOwner {
         setContentView(R.layout.checkinhistory_layout);
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        try {
+            dbHelper = new DatabaseHelper(this, null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         lvShift = this.findViewById(R.id.date_lv);
         ChipGroup filterChips = this.findViewById(R.id.chips);
@@ -96,7 +102,7 @@ public class CheckinHistoryActivity extends Activity implements LifecycleOwner {
     private void onCreateShiftCheck(List<Date> listDates) throws IOException {
         ListDateAdapter shiftAdapter = new ListDateAdapter(this,
                 listDates,
-                new DatabaseHelper(this, null),
+                dbHelper,
                 getListShift(),
                 "NV003");
         lvShift.setAdapter(shiftAdapter);
@@ -111,20 +117,8 @@ public class CheckinHistoryActivity extends Activity implements LifecycleOwner {
         for (int i = 0; i < table.size(); i++) {
             Shift shift = new Shift(table.get(i).get(0).toString(), table.get(i).get(1).toString(), table.get(i).get(2).toString(), table.get(i).get(3).toString());
             shiftList.add(shift);
-
         }
 
         return shiftList;
-    }
-
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return null;
-    }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-        super.onPointerCaptureChanged(hasCapture);
     }
 }
