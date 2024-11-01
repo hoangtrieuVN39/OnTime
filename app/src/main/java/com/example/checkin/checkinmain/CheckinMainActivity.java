@@ -184,11 +184,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
                 check_btn.setOnTouchListener(CheckBtnListener);
             }
             else {
-                checkInvalidDialog = new CheckInvalidDialog(context);
-                checkInvalidDialog.showDialog(
-                        "Vị trí không hợp lệ"
-                );
-
                 check_btn.setBackgroundResource(R.drawable.checkfailed_btn);
                 checkin_txt.setText("Vị trí không hợp lệ");
                 check_btn.setOnTouchListener(null);
@@ -212,14 +207,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
                     check_btn.setElevation(10);
                     check_btn.setTranslationZ(5);
                     try {
-                        if (isCheckedIn){
-                            if (!Utils.isLocationValid(distance)){
-                                checkInvalidDialog = new CheckInvalidDialog(context);
-                                checkInvalidDialog.showDialog(
-                                        "Vị trí không hợp lệ"
-                                );
-                            }
-                        }
                         onCheckBtnClicked();
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
