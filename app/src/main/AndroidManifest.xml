@@ -31,10 +31,9 @@
             android:label="ChecinMain"
             android:theme="@style/Theme.CheckinMain"
             android:foregroundServiceType="location">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
+
+
         </activity>
 
         <activity android:name=".checkinhistory.CheckinHistoryActivity"
@@ -42,6 +41,12 @@
             android:label="CheckinHistory"
             android:theme="@style/Theme.CheckinHistory"
             android:foregroundServiceType="location">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
         </activity>
         <activity android:name=".activity.CreateFormActivity"/>
         <activity android:name=".activity.AllFormListActivity"/>
