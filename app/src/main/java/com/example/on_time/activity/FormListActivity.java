@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -89,8 +90,11 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         spTrangThai = findViewById(R.id.status_spinner);
         spThang = findViewById(R.id.month_spinner);
+
         msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
+        msAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spThang.setAdapter(msAdapter);
+
 
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);

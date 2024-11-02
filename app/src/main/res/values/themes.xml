@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.On_Time" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.On_Time" parent="android:Theme.Material.Light.NoActionBar" >
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
 
     <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
