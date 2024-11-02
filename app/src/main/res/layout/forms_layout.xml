@@ -80,25 +80,35 @@
         <LinearLayout
             android:id="@+id/filter_month_status"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="5dp">
-
-            <Spinner
-                android:id="@+id/status_spinner"
-                android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="15dp">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_weight="1"
-                android:background="@drawable/br_edittext"/>
+                android:background="@drawable/br_edittext"
+                android:layout_marginEnd="5dp">
+                <Spinner
+                    android:id="@+id/status_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
-            <Spinner
-                android:id="@+id/month_spinner"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:spinnerMode="dialog"
-                android:layout_marginBottom="16dp"
                 android:layout_weight="1"
-                android:background="@drawable/br_edittext"/>
+                android:background="@drawable/br_edittext">
+                <Spinner
+                    android:id="@+id/month_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1"/> <!--android:spinnerMode="dialog"-->
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

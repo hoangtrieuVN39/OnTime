@@ -266,7 +266,7 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
             selectedButton = null; // Đặt lại selectedButton
         } else {
             resetButtons();
-            newButton.setBackgroundResource(R.drawable.rc_button_create);
+            newButton.setBackgroundResource(R.drawable.rc_button_chosen);
             selectedButton = newButton;
 
             WorkShift shift = getShiftByType(shiftType);

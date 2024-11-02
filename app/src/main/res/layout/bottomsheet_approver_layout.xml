@@ -11,14 +11,14 @@
         android:layout_margin="10dp"
         android:orientation="horizontal"
         android:padding="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp">
 
         <TextView
             android:id="@+id/title_approve_txt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
+            android:layout_weight="12"
             android:text="Người phê duyệt"
             android:textSize="25sp"
             android:textStyle="bold"
@@ -26,13 +26,13 @@
 
         <ImageButton
             android:id="@+id/close_btn"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
+            android:layout_width="1dp"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:src="@drawable/close_button"
             android:layout_gravity="center"
-            android:contentDescription="Back" />
+            android:layout_weight="1"
+            android:background="@null"
+            android:contentDescription="Back"
+            android:src="@drawable/close_button" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,16 +44,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp">
-
-
+            android:layout_margin="15dp">
             <SearchView
                 android:id="@+id/nhanvien_search"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/br_edittext"
-                android:layout_marginStart="5dp"
                 android:queryHint="Tìm nhân viên"/>
         </LinearLayout>
 
@@ -61,7 +58,8 @@
             android:id="@+id/ll_approver_name"
             android:layout_width="match_parent"
             android:layout_height="678dp"
-            android:layout_margin="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:background="@drawable/rc_color"
             android:orientation="vertical"
             android:padding="10dp">
