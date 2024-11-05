@@ -1,4 +1,4 @@
-package com.example.on_time.models.modelsdatabase;
+package com.example.on_time.models.modelsfirebase;
 
 public class WorkShift {
     private String ShiftID;

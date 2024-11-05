@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="510dp"
     android:background="@drawable/round_corner"
     android:orientation="vertical"
     android:padding="16dp">
@@ -27,22 +27,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:src="@drawable/close_button"
+            android:src="@drawable/ic_close"
             android:layout_gravity="center"
             android:contentDescription="Back" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="424dp"
         android:padding="5dp"
         android:orientation="vertical"
         android:background="@drawable/rc_color">
+
         <ListView
             android:id="@+id/typeForm_lv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="424dp"
             android:divider="@android:color/transparent"
-            android:dividerHeight="8dp"/>
+            android:dividerHeight="8dp" />
     </LinearLayout>
 </LinearLayout>
