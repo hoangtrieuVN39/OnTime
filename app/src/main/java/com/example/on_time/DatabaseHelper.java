@@ -1,9 +1,6 @@
 package com.example.on_time;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -17,15 +14,15 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.on_time.models.modelsdatabase.Account;
-import com.example.on_time.models.modelsdatabase.Attendance;
-import com.example.on_time.models.modelsdatabase.Employee;
-import com.example.on_time.models.modelsdatabase.LeaveRequest;
-import com.example.on_time.models.modelsdatabase.LeaveRequestApproval;
-import com.example.on_time.models.modelsdatabase.LeaveType;
-import com.example.on_time.models.modelsdatabase.Place;
-import com.example.on_time.models.modelsdatabase.TableInfo;
-import com.example.on_time.models.modelsdatabase.WorkShift;
+import com.example.on_time.models.modelsfirebase.Account;
+import com.example.on_time.models.modelsfirebase.Attendance;
+import com.example.on_time.models.modelsfirebase.Employee;
+import com.example.on_time.models.modelsfirebase.LeaveRequest;
+import com.example.on_time.models.modelsfirebase.LeaveRequestApproval;
+import com.example.on_time.models.modelsfirebase.LeaveType;
+import com.example.on_time.models.modelsfirebase.Place;
+import com.example.on_time.models.modelsfirebase.TableInfo;
+import com.example.on_time.models.modelsfirebase.WorkShift;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 

@@ -12,16 +12,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="15dp">
+        android:layout_marginBottom="15dp"
+        android:elevation="4dp">
 
         <ImageButton
             android:id="@+id/back_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:src="@drawable/back_button"
             android:layout_gravity="center"
-            android:contentDescription="Back" />
+            android:background="@null"
+            android:contentDescription="Back"
+            android:padding="10dp"
+            android:src="@drawable/ic_back" />
 
         <TextView
             android:id="@+id/titleCreateForm_txt"
@@ -124,6 +126,7 @@
                 android:layout_height="wrap_content"
                 android:text="Thời gian bắt đầu"
                 android:textStyle="bold"
+                android:textSize="16dp"
                 android:layout_marginTop="10dp" />
 
             <LinearLayout
@@ -166,7 +169,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/clock2"
+                        android:src="@drawable/access_time"
                         android:layout_gravity="center"
                         android:layout_marginStart="5dp"/>
                     <EditText
@@ -187,6 +190,7 @@
                 android:layout_height="wrap_content"
                 android:text="Thời gian kết thúc"
                 android:textStyle="bold"
+                android:textSize="16dp"
                 android:layout_marginTop="10dp" />
 
             <LinearLayout
@@ -228,7 +232,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/clock2"
+                        android:src="@drawable/access_time"
                         android:layout_gravity="center"
                         android:layout_marginStart="5dp"/>
 
@@ -315,63 +319,70 @@
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
                 android:layout_marginBottom="5dp" />
-
             <LinearLayout
-                android:id="@+id/flowApprove_linearlayout"
+                android:id="@+id/flowApprover_lnl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <!-- Button dấu cộng -->
-                <ImageButton
-                    android:id="@+id/add_approver_button"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/flowApprove_linearlayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:src="@drawable/add_circle_outline"
-                    android:contentDescription="Add Approver" />
+                    android:orientation="horizontal">
 
-                <!-- TextView tên người phê duyệt -->
-                <TextView
-                    android:id="@+id/approver_name_text"
+                    <!-- Button dấu cộng -->
+                    <ImageButton
+                        android:id="@+id/add_approver_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:src="@drawable/add_circle_approver"
+                        android:contentDescription="Add Approver" />
+
+                    <!-- TextView tên người phê duyệt -->
+                    <TextView
+                        android:id="@+id/approver_name_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="Thêm người phê duyệt"
+                        android:textColor="#4367FC"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="12dp"
+                    android:background="#4367FC"
+                    android:layout_marginStart="11dp" />
+                <!-- Phần Hoàn tất phê duyệt -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thêm người phê duyệt"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#4367FC"
-                    android:layout_marginStart="8dp"
-                    android:clickable="true"
-                    android:focusable="true"/>
+                    android:orientation="horizontal">
+
+                    <!-- Icon tròn hoàn tất phê duyệt -->
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/radio_button_checked"
+                        android:contentDescription="Complete Approval" />
+
+                    <!-- TextView Hoàn tất phê duyệt -->
+                    <TextView
+                        android:id="@+id/complete_approval_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hoàn tất phê duyệt"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/black"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
             </LinearLayout>
-
-            <!-- Phần Hoàn tất phê duyệt -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <!-- Icon tròn hoàn tất phê duyệt -->
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/radio_button_checked"
-                android:contentDescription="Complete Approval" />
-
-                <!-- TextView Hoàn tất phê duyệt -->
-                <TextView
-                    android:id="@+id/complete_approval_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hoàn tất phê duyệt"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:layout_marginStart="8dp" />
-            </LinearLayout>
-
 
         </LinearLayout>
 
@@ -386,5 +397,6 @@
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:background="@drawable/rc_button_create"
+        android:textStyle="bold"
         android:layout_alignParentBottom="true" />
 </RelativeLayout>

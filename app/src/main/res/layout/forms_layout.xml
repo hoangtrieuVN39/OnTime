@@ -19,7 +19,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:src="@drawable/back_button"
+                android:src="@drawable/ic_back"
+                android:padding="10dp"
                 android:layout_gravity="center"
                 android:contentDescription="Back" />
             <TextView
@@ -122,7 +123,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="613dp"
                 android:divider="@android:color/transparent"
-                android:dividerHeight="8dp"/>
+                android:dividerHeight="8dp" />
         </LinearLayout>
     </LinearLayout>
     <ImageButton
@@ -131,9 +132,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="0dp"
         android:layout_marginBottom="100dp"
-        android:src="@drawable/button_add"
+        android:src="@drawable/add_circle"
         android:background="@android:color/transparent"/>
 
 <!--    <LinearLayout-->

@@ -2,15 +2,12 @@ package com.example.on_time.activity;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,18 +21,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.on_time.CustomBottomSheetDialog;
 import com.example.on_time.DatabaseHelper;
 import com.example.on_time.OnFormClickListener;
 import com.example.on_time.R;
 import com.example.on_time.adapter.ApproverBTAdapter;
-import com.example.on_time.adapter.TypeformAdapter;
 import com.example.on_time.models.ApproverBT;
-import com.example.on_time.models.Form;
-import com.example.on_time.models.TypeForm;
-import com.example.on_time.models.modelsdatabase.WorkShift;
+import com.example.on_time.models.modelsfirebase.WorkShift;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -43,11 +34,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class CreateFormActivity extends Activity implements OnFormClickListener {
@@ -64,11 +55,20 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
     ArrayList<ApproverBT> ListApproverForm = new ArrayList<>();
     TextView approverNameText;
     ListView lvApproverForm;
+    private LinearLayout flowApproveLayout;
+    private LayoutInflater inflater;
+
+    private HashSet<String> selectedApprovers = new HashSet<>(); // Danh sách những người phê duyệt đã chọn
+    private ApproverBTAdapter ABTadapter;
+    private ArrayList<ApproverBT> approverList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_form_layout);
+
+        inflater = LayoutInflater.from(this);
+        flowApproveLayout = findViewById(R.id.flowApprover_lnl);
 
         typeformNameSpinner = findViewById(R.id.typeForm_spinner);
         titleApplyTime = findViewById(R.id.titleApplyTime_txt);
@@ -84,8 +84,8 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
         reasonEditText = findViewById(R.id.reason_tedit);
         approverNameText = findViewById(R.id.approver_name_text);
 
-
 //        ListApproverForm = new ArrayList<>();
+
 
         try {
             DBHelper = new DatabaseHelper(this, null);
@@ -110,6 +110,14 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
 
         }
 
+        approverList = getApprovers();
+        ABTadapter = new ApproverBTAdapter(this, approverList, approverName -> {
+            // Thêm người phê duyệt vào danh sách đã chọn
+            selectedApprovers.add(approverName);
+            // Cập nhật giao diện hoặc xử lý sự kiện sau khi chọn người phê duyệt
+            updateApproversFlow();
+        });
+
 //        shiftMorningBtn.setOnClickListener(v -> selectShift(shiftMorningBtn));
 //
 //        shiftAfternoonBtn.setOnClickListener(v -> selectShift(shiftAfternoonBtn));
@@ -122,22 +130,6 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
         startHourEditText.setOnClickListener(v -> showTimePicker(startHourEditText));
         endHourEditText.setOnClickListener(v -> showTimePicker(endHourEditText));
 //        calculateTotalWorkShifts();
-
-//        startDateEditText.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (!hasFocus) calculateDays();
-//        });
-//
-//        startHourEditText.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (!hasFocus) calculateDays();
-//        });
-//
-//        endDateEditText.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (!hasFocus) calculateDays();
-//        });
-//
-//        endHourEditText.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (!hasFocus) calculateDays();
-//        });
         reasonEditText.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
             }
@@ -153,6 +145,15 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
         });
     }
 
+    private ArrayList<ApproverBT> getApprovers() {
+        return new ArrayList<>();
+    }
+
+    private void updateApproversFlow() {
+        // Cập nhật giao diện hiển thị những người phê duyệt đã chọn
+        // Giả sử bạn có một TextView để hiển thị danh sách người phê duyệt đã chọn
+        // Cập nhật ở đây theo cách bạn muốn
+    }
 
     private void showDatePicker(EditText editText) {
         Calendar calendar = Calendar.getInstance();
@@ -182,37 +183,6 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
         timePickerDialog.show();
     }
 
-
-//    private void calculateDays() {
-//        String startDateStr = startDateEditText.getText().toString();
-//        String startHourStr = startHourEditText.getText().toString();
-//        String endDateStr = endDateEditText.getText().toString();
-//        String endHourStr = endHourEditText.getText().toString();
-//
-//        if (startDateStr.isEmpty() || startHourStr.isEmpty() || endDateStr.isEmpty() || endHourStr.isEmpty()) {
-//            // Nếu một trong các trường bị trống, không tính toán
-//            return;
-//        }
-//
-//        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-//
-//        try {
-//            // Tạo chuỗi datetime từ ngày và giờ
-//            Date startDateTime = dateTimeFormat.parse(startDateStr + " " + startHourStr);
-//            Date endDateTime = dateTimeFormat.parse(endDateStr + " " + endHourStr);
-//
-//            if (startDateTime != null && endDateTime != null) {
-//                // Tính toán số ngày
-//                long diffInMillis = endDateTime.getTime() - startDateTime.getTime();
-//                long diffInDays = diffInMillis / (1000 * 60 * 60 * 24);
-//
-//                // Cập nhật kết quả vào TextView
-//                numberShiftSubmitText.setText(String.valueOf(diffInDays));
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     private List<String> getLeaveTypes() {
         List<String> leaveTypes = new ArrayList<>();
@@ -377,10 +347,12 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
         lvApproverForm = sheetView.findViewById(R.id.approver_name_lv);
 
         SearchView nhanvienSearchView = sheetView.findViewById(R.id.nhanvien_search);
-
-        nhanvienSearchView.setQueryHint("Tìm nhân viên");
+        Button confirmBtn = sheetView.findViewById(R.id.confirm_btn);
 
         ImageButton closeButton = sheetView.findViewById(R.id.close_btn);
+        Button cancelButton = sheetView.findViewById(R.id.cancel_btn);
+        ApproverBTAdapter approverBTAdapter = new ApproverBTAdapter(this, ListApproverForm, this);
+        lvApproverForm.setAdapter(approverBTAdapter);
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -389,8 +361,24 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
             }
         });
 
-        ApproverBTAdapter approverBTAdapter = new ApproverBTAdapter(this, ListApproverForm, this);
-        lvApproverForm.setAdapter(approverBTAdapter);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+
+        confirmBtn.setOnClickListener(v -> {
+            String selectedApprover = approverBTAdapter.getSelectedApproverName();
+            if (selectedApprover != null) {
+//                approverNameText.setText(selectedApprover);
+                addApproverToLayout(selectedApprover);
+                bottomSheetDialog.dismiss();// Display the selected approver's name
+            }
+        });
+
+
 
         nhanvienSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -408,46 +396,38 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
         lvApproverForm.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String approverName = ListApproverForm.get(position).getNameApproveform(); // Giả sử bạn có một phương thức getName() trong model
-
+                String approverName = ListApproverForm.get(position).getNameApproveform();
                 Toast.makeText(CreateFormActivity.this, "Đã chọn: " + approverName, Toast.LENGTH_SHORT).show();
             }
         });
-
-//        bottomSheetDialog.show(getSupportFragmentManager(), "CustomBottomSheetDialog");
-
-//        bottomSheetDialog.setOnShowListener(dialog -> {
-//            BottomSheetDialog d = (BottomSheetDialog) dialog;
-//            FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-//            if (bottomSheet != null) {
-//                BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
-//                behavior.setPeekHeight(BottomSheetBehavior.PEEK_HEIGHT_AUTO);
-//                // Set peek height to automatically adjust
-//                behavior.setDraggable(false); // Prevent collapsing the sheet
-//
-//                // Constrain listview height to ensure buttons are visible
-//                LinearLayout contentLayout = sheetView.findViewById(R.id.ll_approver_name);  // Assuming a layout with ID 'content_layout' holding the listview
-//                contentLayout.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;  // Set listview height to match parent
-//
-//                // Set button container layout params (adjust as needed based on your layout)
-//                LinearLayout buttonContainer = sheetView.findViewById(R.id.ll_button);  // Assuming a layout with ID 'button_container' holding the buttons
-//                buttonContainer.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-////                buttonContainer.getLayoutParams().weight = 0;  // Remove weight to prevent unwanted resizing
-//            }
-//        });
+        ABTadapter.setSelectedApprovers(selectedApprovers);
         bottomSheetDialog.setContentView(sheetView);
-//        bottomSheetDialog.setOnShowListener(dialog -> {
-//            BottomSheetDialog d = (BottomSheetDialog) dialog;
-//            FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-//            if (bottomSheet != null) {
-//                BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-//
-//                // Đặt chiều cao cố định là 60% của màn hình
-////                bottomSheetBehavior.setPeekHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.7));
-////                bottomSheetBehavior.setDraggable(false); // Tắt khả năng vuốt
-//            }
-//        });
+
+        bottomSheetDialog.setOnShowListener(dialog -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialog;
+            FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+                // Đặt chiều cao cố định là 60% của màn hình
+                bottomSheetBehavior.setPeekHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.9));
+                bottomSheetBehavior.setDraggable(false); // Tắt khả năng vuốt
+            }
+        });
+
         bottomSheetDialog.show();
+    }
+    private void addApproverToLayout(String approverName) {
+        View approverView = inflater.inflate(R.layout.lineapprove_layout, flowApproveLayout, false);
+
+        TextView approverNameText = approverView.findViewById(R.id.chosen_approval_text);
+        ImageButton removeButton = approverView.findViewById(R.id.remove_approver_button);
+
+        approverNameText.setText(approverName);
+        removeButton.setOnClickListener(v -> flowApproveLayout.removeView(approverView));
+
+        int index = flowApproveLayout.indexOfChild(flowApproveLayout.findViewById(R.id.flowApprove_linearlayout));
+        flowApproveLayout.addView(approverView, index);
     }
 
 
@@ -470,7 +450,7 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
         endTime.setText(formattedEndTime);
 
         // Set start and end dates to today's date
-        String today = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
         startDate.setText(today);
         endDate.setText(today);
 
@@ -528,7 +508,7 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
 
     @Override
     public void onFormClick(String nameApprover) {
-        Toast.makeText(this, "Người phê duyệt: " + nameApprover, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Người phê duyệt: " + nameApprover, Toast.LENGTH_SHORT).show();
     }
 }
 

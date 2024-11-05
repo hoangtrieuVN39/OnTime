@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -32,6 +33,7 @@ import com.example.on_time.models.Form;
 import com.example.on_time.models.MonthSpinner;
 import com.example.on_time.models.StatusSpinner;
 import com.example.on_time.models.TypeForm;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,7 +42,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import java.time.LocalDate;
@@ -63,6 +68,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     ImageButton btn_addForm;
     ListView lvTypeForm;
     DatabaseHelper DBHelper;
+    SQLiteDatabase db;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -76,6 +82,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         try {
             DBHelper = new DatabaseHelper(this, null);
+            db = DBHelper.getWritableDatabase();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,7 +105,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
-        fAdapter = new FormAdapter(this, filteredForms, this);
+        fAdapter = new FormAdapter(this, filteredForms, this,db);
         lvForm.setAdapter(fAdapter);
 
         spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -167,6 +174,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
             "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
             "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
+            "LeaveRequest.LeaveID AS LeaveID, " +
             "LeaveRequest.Status AS Status, " +
             "LeaveRequest.Reason AS Reason " +
             "FROM LeaveRequest " +
@@ -178,22 +186,27 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     if (cursor != null && cursor.moveToFirst()) {
         listForms.clear();
         do {
+            int formIDindex = cursor.getColumnIndex("LeaveID");
             int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
             int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
             int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
             int reasonIndex = cursor.getColumnIndex("Reason");
             int statussIndex = cursor.getColumnIndex("Status");
 
-            if (nameFormIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+            if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+                String formID = cursor.getString(formIDindex);
                 String nameForm = cursor.getString(nameFormIndex);
                 String leaveStartTime = cursor.getString(leaveStartTimeIndex);
                 String leaveEndTime = cursor.getString(leaveEndTimeIndex);
                 String reason = cursor.getString(reasonIndex);
                 String status = cursor.getString(statussIndex);
 
-                String dateOff = leaveStartTime + " - " + leaveEndTime;
+                String formattedStartTime = formatDateTime(leaveStartTime);
+                String formattedEndTime = formatDateTime(leaveEndTime);
 
-                listForms.add(new Form(nameForm, dateOff, reason, status));
+                String dateOff = formattedStartTime + " - " + formattedEndTime;
+
+                listForms.add(new Form(formID,nameForm, dateOff, reason, status));
             }
         } while (cursor.moveToNext());
     }
@@ -205,6 +218,19 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         filteredForms.clear();
         filteredForms.addAll(listForms);
 //        fAdapter.notifyDataSetChanged();
+    }
+
+    private String formatDateTime(String dateTime) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+        try {
+            Date date = inputFormat.parse(dateTime);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return dateTime;  // Trả về định dạng gốc nếu có lỗi
+        }
     }
 
 
@@ -256,6 +282,18 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
 
         bottomSheetDialog.setContentView(sheetView);
+
+        bottomSheetDialog.setOnShowListener(dialog -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialog;
+            FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+//                bottomSheetBehavior.setPeekHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.9));
+                bottomSheetBehavior.setDraggable(false); // Tắt khả năng vuốt
+            }
+        });
+
         bottomSheetDialog.show();
     }
 

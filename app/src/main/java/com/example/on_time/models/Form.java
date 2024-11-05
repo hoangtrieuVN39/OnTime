@@ -1,15 +1,23 @@
 package com.example.on_time.models;
 
 public class Form {
+    String FormID;
     String nameForm;
     String dateoff;
     String reason;
     String status;
-    public Form(String nameForm, String dateoff, String reason, String status){
+    public Form(String FormID, String nameForm, String dateoff, String reason, String status){
+        this.FormID = FormID;
         this.nameForm = nameForm;
         this.dateoff = dateoff;
         this.reason = reason;
         this.status = status;
+    }
+    public String getFormID(){
+        return FormID;
+    }
+    public void setFormID(String FormID) {
+        this.FormID = FormID;
     }
 
     public String getNameForm(){
