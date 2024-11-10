@@ -388,7 +388,7 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                approverBTAdapter.getFilter().filter(newText); // Lọc danh sách dựa trên từ khóa tìm kiếm
+                approverBTAdapter.getFilter().filter(newText);
                 return true;
             }
         });
@@ -409,9 +409,8 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
             if (bottomSheet != null) {
                 BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-                // Đặt chiều cao cố định là 60% của màn hình
                 bottomSheetBehavior.setPeekHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.9));
-                bottomSheetBehavior.setDraggable(false); // Tắt khả năng vuốt
+                bottomSheetBehavior.setDraggable(false);
             }
         });
 
