@@ -1,6 +1,8 @@
 package com.example.on_time.adapter;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.on_time.OnFormClickListener;
 import com.example.on_time.R;
+import com.example.on_time.models.Form;
 import com.example.on_time.models.FormApprove;
 
 import java.util.ArrayList;
@@ -19,11 +22,13 @@ public class FormApproveAdapter extends BaseAdapter {
     Context faContext;
     ArrayList<FormApprove> faForm;
     OnFormClickListener faListener;
+    private SQLiteDatabase database;
 
-    public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormClickListener falistener) {
+    public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormClickListener falistener, SQLiteDatabase db) {
         this.faContext = listFormApproveContext;
         this.faForm = faForm;
         this.faListener = falistener;
+        this.database = db;
     }
 
     @Override
@@ -47,19 +52,39 @@ public class FormApproveAdapter extends BaseAdapter {
             LayoutInflater inf = LayoutInflater.from(faContext);
             view = inf.inflate(R.layout.objectform_approve_layout, viewGroup, false);
         }
+
+        FormApprove formApprove = faForm.get(i);
+
         TextView txtNameFormApprove = view.findViewById(R.id.tenloaidontuApprove_txt);
-        TextView txtDateoffApprove = view.findViewById(R.id.ngaynghiApprove_txt);
-        TextView txtReasonApprove = view.findViewById(R.id.lydoApprove_txt);
+        TextView txtDateoffApprove = view.findViewById(R.id.ngaynghiApprover_txt);
+        TextView txtStatusApprove = view.findViewById(R.id.statusApprover_txt);
+        TextView txtReasonApprove = view.findViewById(R.id.lydoApprover_txt);
         TextView txtApprover = view.findViewById(R.id.nguoipheduyet_txt);
-        TextView txtDateApprove = view.findViewById(R.id.ngaypheduyet_txt);
-        Button btnReject = view.findViewById(R.id.reject_btn);
-        Button btnApprove = view.findViewById(R.id.approver_btn);
+        TextView txtCreateTime = view.findViewById(R.id.ngaytaodon_txt);
+        ViewGroup recallLayoutContainer = view.findViewById(R.id.recallApprover_btn);
+
+
+
 
         txtNameFormApprove.setText(faForm.get(i).getNameFormApprove());
         txtDateoffApprove.setText(faForm.get(i).getDateoffApprove());
         txtReasonApprove.setText(faForm.get(i).getReasonApprove());
         txtApprover.setText(faForm.get(i).getNameApprover());
-        txtDateApprove.setText(faForm.get(i).getDateApprove());
+        txtStatusApprove.setText(faForm.get(i).getStatusApprover());
+        txtCreateTime.setText(faForm.get(i).getCreateTimeApprover());
+
+        if ("Đồng ý".equals(formApprove.getStatusApprover())) {
+            txtStatusApprove.setText(formApprove.getStatusApprover());
+            txtStatusApprove.setTextColor(Color.parseColor("#D9AF03"));
+            txtStatusApprove.setVisibility(View.VISIBLE);
+            recallLayoutContainer.setVisibility(View.GONE);
+        }else{
+            txtStatusApprove.setVisibility(View.GONE);
+            recallLayoutContainer.setVisibility(View.VISIBLE);
+
+            Button btnReject = view.findViewById(R.id.reject_btn);
+            Button btnApprove = view.findViewById(R.id.approver_btn);
+        }
 
 
         view.setOnClickListener(new View.OnClickListener() {

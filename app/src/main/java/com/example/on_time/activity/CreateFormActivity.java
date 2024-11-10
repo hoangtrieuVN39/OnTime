@@ -204,6 +204,7 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
         }
         return leaveTypes;
     }
+
     private WorkShift getShiftByType(String shiftType) {
         SQLiteDatabase db = DBHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT ShiftID,StartTime, EndTime FROM WorkShift WHERE ShiftName = ?", new String[]{shiftType});
