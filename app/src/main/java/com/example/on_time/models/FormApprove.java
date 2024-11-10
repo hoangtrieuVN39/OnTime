@@ -1,39 +1,49 @@
 package com.example.on_time.models;
 
 public class FormApprove {
-    String nameFormApprove;
-    String dateoffApprove;
-    String reasonApprove;
+    String nameFormApprover;
+    String dateoffApprover;
+    String CreateTimeApprover;
+    String reasonApprover;
     String nameApprover;
-    String dateApprove;
+    String statusApprover;
 
-    public FormApprove(String nameFormApprove, String dateoffApprove, String reasonApprove, String nameApprover, String dateApprove){
-        this.nameFormApprove = nameFormApprove;
-        this.dateoffApprove = dateoffApprove;
-        this.reasonApprove = reasonApprove;
+    public FormApprove(String nameFormApprover, String dateoffApprover,String CreateTimeApprover, String reasonApprover, String nameApprover, String statusApprover){
+        this.nameFormApprover = nameFormApprover;
+        this.dateoffApprover = dateoffApprover;
+        this.CreateTimeApprover = CreateTimeApprover;
+        this.reasonApprover = reasonApprover;
         this.nameApprover = nameApprover;
-        this.dateApprove = dateApprove;
+        this.statusApprover = statusApprover;
     }
 
     public String getNameFormApprove(){
-        return nameFormApprove;
+        return nameFormApprover;
     }
     public void setNameFormApprove(String nameFormApprove){
-        this.nameFormApprove = nameFormApprove;
+        this.nameFormApprover = nameFormApprove;
     }
 
     public String getDateoffApprove(){
-        return dateoffApprove;
+        return dateoffApprover;
     }
     public void setDateoffApprove(String dateoffApprove) {
-        this.dateoffApprove = dateoffApprove;
+        this.dateoffApprover = dateoffApprove;
         }
 
+    public String getCreateTimeApprover() {
+        return CreateTimeApprover;
+    }
+
+    public void setCreateTimeApprover(String createTimeApprover) {
+        CreateTimeApprover = createTimeApprover;
+    }
+
     public String getReasonApprove(){
-        return reasonApprove;
+        return reasonApprover;
     }
     public void setReasonApprove(String reasonApprove){
-        this.reasonApprove = reasonApprove;
+        this.reasonApprover = reasonApprove;
     }
 
     public String getNameApprover() {
@@ -43,10 +53,11 @@ public class FormApprove {
         this.nameApprover = nameApprover;
     }
 
-    public String getDateApprove() {
-        return dateApprove;
+    public String getStatusApprover() {
+        return statusApprover;
     }
-    public void setDateApprove(String dateApprove) {
-        this.dateApprove = dateApprove;
+
+    public void setStatusApprover(String statusApprover) {
+        this.statusApprover = statusApprover;
     }
 }

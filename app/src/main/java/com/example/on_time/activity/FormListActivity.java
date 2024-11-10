@@ -324,58 +324,59 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 //
 //        fAdapter.notifyDataSetChanged();
 //    }
-@RequiresApi(api = Build.VERSION_CODES.O)
-private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
-    filteredForms.clear();
-    boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
-    boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
+        filteredForms.clear();
+        boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
+        boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
 
-//    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    //    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-    for (Form form : listForms) {
-        boolean matchesMonth = true;
-        boolean matchesStatus = true;
+        for (Form form : listForms) {
+            boolean matchesMonth = true;
+            boolean matchesStatus = true;
 
-        if (filterByMonth) {
-            String formDate = form.getDateoff().substring(0, 10);
-            switch (selectedMonth) {
-                case "Tuần này":
-                    matchesMonth = isDateInCurrentWeek(formDate);
-                    break;
-                case "Tuần trước":
-                    matchesMonth = isDateInPreviousWeek(formDate);
-                    break;
-                case "Tháng này":
-                    matchesMonth = isDateInCurrentMonth(formDate);
-                    break;
-                case "Tháng trước":
-                    matchesMonth = isDateInPreviousMonth(formDate);
-                    break;
-                case "Năm này":
-                    matchesMonth = isDateInCurrentYear(formDate);
-                    break;
-                case "Năm trước":
-                    matchesMonth = isDateInPreviousYear(formDate);
-                    break;
-                default:
-                    String monthNumber = getMonthNumberFromSpinner(selectedMonth);
-                    String formMonth = form.getDateoff().substring(5, 7);
-                    matchesMonth = formMonth.equals(monthNumber);
-                    break;
+            if (filterByMonth) {
+                String formDate = form.getDateoff().substring(0, 10);
+                switch (selectedMonth) {
+                    case "Tuần này":
+                        matchesMonth = isDateInCurrentWeek(formDate);
+                        break;
+                    case "Tuần trước":
+                        matchesMonth = isDateInPreviousWeek(formDate);
+                        break;
+                    case "Tháng này":
+                        matchesMonth = isDateInCurrentMonth(formDate);
+                        break;
+                    case "Tháng trước":
+                        matchesMonth = isDateInPreviousMonth(formDate);
+                        break;
+                    case "Năm này":
+                        matchesMonth = isDateInCurrentYear(formDate);
+                        break;
+                    case "Năm trước":
+                        matchesMonth = isDateInPreviousYear(formDate);
+                        break;
+                    default:
+                        String monthNumber = getMonthNumberFromSpinner(selectedMonth);
+                        String formMonth = form.getDateoff().substring(5, 7);
+                        matchesMonth = formMonth.equals(monthNumber);
+                        break;
+                }
+            }
+
+            if (filterByStatus) {
+                matchesStatus = form.getStatus().equals(selectedStatus);
+            }
+
+            if (matchesMonth && matchesStatus) {
+                filteredForms.add(form);
             }
         }
-
-        if (filterByStatus) {
-            matchesStatus = form.getStatus().equals(selectedStatus);
-        }
-
-        if (matchesMonth && matchesStatus) {
-            filteredForms.add(form);
-        }
+        fAdapter.notifyDataSetChanged();
     }
-    fAdapter.notifyDataSetChanged();
-}
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInCurrentWeek(String date) {
         LocalDate inputDate = LocalDate.parse(date,dateFormatter);
