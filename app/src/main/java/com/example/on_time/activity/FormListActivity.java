@@ -53,6 +53,7 @@ import java.time.Month;
 import java.time.temporal.ChronoField;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
+import java.time.format.DateTimeFormatter;
 
 public class FormListActivity extends Activity implements OnFormClickListener {
     ListView lvForm;
@@ -89,7 +90,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         loadDataFromDatabase();
         loadDataTypeFormFromDatabase();
-        DBHelper.syncDataToFirebase();
+//        DBHelper.syncDataToFirebase();
 
         lvForm = findViewById(R.id.form_lv);
         filteredForms.addAll(listForms);
@@ -329,6 +330,8 @@ private void filterFormsByMonthAndStatus(String selectedMonth, String selectedSt
     boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
     boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
 
+//    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
     for (Form form : listForms) {
         boolean matchesMonth = true;
         boolean matchesStatus = true;
@@ -372,10 +375,10 @@ private void filterFormsByMonthAndStatus(String selectedMonth, String selectedSt
     }
     fAdapter.notifyDataSetChanged();
 }
-
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInCurrentWeek(String date) {
-        LocalDate inputDate = LocalDate.parse(date);
+        LocalDate inputDate = LocalDate.parse(date,dateFormatter);
         LocalDate today = LocalDate.now();
 
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
@@ -387,7 +390,7 @@ private void filterFormsByMonthAndStatus(String selectedMonth, String selectedSt
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInPreviousWeek(String date) {
-        LocalDate inputDate = LocalDate.parse(date);
+        LocalDate inputDate = LocalDate.parse(date,dateFormatter);
         LocalDate today = LocalDate.now();
 
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
@@ -399,28 +402,49 @@ private void filterFormsByMonthAndStatus(String selectedMonth, String selectedSt
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInCurrentMonth(String date) {
-        LocalDate inputDate = LocalDate.parse(date);
+//        LocalDate inputDate = LocalDate.parse(date);
+//        LocalDate today = LocalDate.now();
+//        return today.getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
+        // Đảm bảo chỉ lấy phần ngày từ chuỗi "dd/MM/yyyy HH:mm" nếu có
+        String formattedDate = date.length() > 10 ? date.substring(0, 10) : date;
+        LocalDate inputDate = LocalDate.parse(formattedDate, dateFormatter);
         LocalDate today = LocalDate.now();
         return today.getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInPreviousMonth(String date) {
-        LocalDate inputDate = LocalDate.parse(date);
+//        LocalDate inputDate = LocalDate.parse(date);
+//        LocalDate today = LocalDate.now();
+//        return today.minusMonths(1).getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
+        String formattedDate = date.length() > 10 ? date.substring(0, 10) : date;
+        LocalDate inputDate = LocalDate.parse(formattedDate, dateFormatter);
         LocalDate today = LocalDate.now();
         return today.minusMonths(1).getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInCurrentYear(String date) {
-        LocalDate inputDate = LocalDate.parse(date);
+//        LocalDate inputDate = LocalDate.parse(date);
+//        LocalDate today = LocalDate.now();
+//        return today.getYear() == inputDate.getYear();
+        // Cắt chuỗi để chỉ lấy phần ngày "dd/MM/yyyy"
+        String formattedDate = date.length() > 10 ? date.substring(0, 10) : date;
+        LocalDate inputDate = LocalDate.parse(formattedDate, dateFormatter);
         LocalDate today = LocalDate.now();
         return today.getYear() == inputDate.getYear();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInPreviousYear(String date) {
-        LocalDate inputDate = LocalDate.parse(date);
+//        LocalDate inputDate = LocalDate.parse(date);
+//        LocalDate today = LocalDate.now();
+//        return (today.getYear() - 1) == inputDate.getYear();
+
+        // Cắt chuỗi để chỉ lấy phần ngày "dd/MM/yyyy"
+        String formattedDate = date.length() > 10 ? date.substring(0, 10) : date;
+        LocalDate inputDate = LocalDate.parse(formattedDate, dateFormatter);
         LocalDate today = LocalDate.now();
         return (today.getYear() - 1) == inputDate.getYear();
     }
