@@ -36,7 +36,8 @@
             android:layout_height="wrap_content"
             android:text="Ngày nghỉ:"
             android:textSize="16dp"
-            android:layout_gravity="center"> <!--android:alpha="0.5" -->
+            android:layout_gravity="center"
+            android:textColor="#2E333D"> <!--android:alpha="0.5" -->
         </TextView>
     </LinearLayout>
     <LinearLayout
@@ -57,7 +58,8 @@
             android:layout_height="wrap_content"
             android:text="Lý do:"
             android:textSize="15dp"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:textColor="#2E333D">
         </TextView>
     </LinearLayout>
 

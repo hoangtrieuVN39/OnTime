@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <Button
+        android:id="@+id/itemFilterTypeform_btn"
+        android:layout_width="92dp"
+        android:layout_height="36dp"
+        android:text="Không có"
+        android:padding="5dp"
+        android:layout_margin="10dp"
+        android:textSize="16dp"
+        android:background="@drawable/round_corner_buttonblack"
+        android:textColor="@android:color/black"
+        android:textAllCaps="false"/>
+</LinearLayout>

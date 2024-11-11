@@ -5,8 +5,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -17,13 +22,20 @@ import androidx.annotation.RequiresApi;
 import com.example.on_time.DatabaseHelper;
 import com.example.on_time.OnFormClickListener;
 import com.example.on_time.R;
+import com.example.on_time.adapter.FilterTypeFormAdapter;
 import com.example.on_time.adapter.MonthSpinnerAdapter;
 import com.example.on_time.adapter.StatusSpinnerAdapter;
+import com.example.on_time.models.FilterTypeForm;
 import com.example.on_time.models.Form;
 import com.example.on_time.models.FormApprove;
 import com.example.on_time.adapter.FormApproveAdapter;
 import com.example.on_time.models.MonthSpinner;
 import com.example.on_time.models.StatusSpinner;
+import com.example.on_time.models.TypeForm;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -32,8 +44,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class FormListApproveActivity extends Activity implements OnFormClickListener {
     ListView lvFormApprove;
@@ -42,11 +58,19 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
     ArrayList<StatusSpinner> listStatus = new ArrayList<>();
     ArrayList<FormApprove> listFormApprove = new ArrayList<>();
     ArrayList<FormApprove> listfilterFormApprove = new ArrayList<>();
+    ArrayList<FilterTypeForm> listfilterTypeForm= new ArrayList<>();
     Spinner spTrangThai, spThang;
     MonthSpinnerAdapter msAdapter;
     StatusSpinnerAdapter ssAdapter;
+    ImageButton btnFilter;
+    LinearLayout listFiltertypeform;
     DatabaseHelper DBHelper;
     SQLiteDatabase db;
+
+    // Khởi tạo selectedFilters (có thể là một List hoặc Set để lưu trữ các lựa chọn)
+//    private Set<String> selectedFilters = new HashSet<>();
+    private List<FormApprove> originalList = new ArrayList<>();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,16 +89,19 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
         }
 
         loadDataFromDatabase();
+        loadDataTypeFormFromDatabase();
+        loadInitialData();
         listfilterFormApprove.addAll(listFormApprove);
 
         spTrangThai = findViewById(R.id.approveStatus_spinner);
         spThang = findViewById(R.id.approveMonth_spinner);
+        btnFilter = findViewById(R.id.button_filter);
 
         msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
         msAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
         spThang.setAdapter(msAdapter);
-
-
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
 
@@ -108,7 +135,139 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        btnFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFilterBottomSheetDialog();
+            }
+        });
     }
+
+    private void showFilterBottomSheetDialog() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(FormListApproveActivity.this, R.style.BottomSheetDialogTheme);
+//        View sheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bottomsheet_filtertypeform_layout, null);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottomsheet_filtertypeform_layout, null);
+
+        ImageButton closeButton = sheetView.findViewById(R.id.closeFilter_btn);
+//        listFiltertypeform = sheetView.findViewById(R.id.chipTypeForm_ll);
+
+        ChipGroup chipGroup = sheetView.findViewById(R.id.chip_filter);
+
+        Chip allChip = new Chip(this);
+        allChip.setText("Tất cả");
+        allChip.setCheckable(true);
+        allChip.setChipBackgroundColorResource(R.color.selector_chip_background);
+        allChip.setChipStrokeColorResource(R.color.selector_chip_stroke);
+        allChip.setChipStrokeWidth(1f);
+        allChip.setTextColor(getResources().getColor(R.color.black));
+        allChip.setCheckedIcon(null);
+        chipGroup.addView(allChip);
+
+
+
+        List<String> leaveTypeNames = this.getLeaveTypeNames();
+
+        // Tạo Chip cho từng loại đơn từ và thêm vào ChipGroup
+        for (String leaveTypeName : leaveTypeNames) {
+            Chip chip = new Chip(this);
+            chip.setText(leaveTypeName);
+            chip.setCheckable(true);
+            chip.setChipBackgroundColorResource(R.color.selector_chip_background);
+            chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
+            chip.setChipStrokeWidth(1f);
+            chip.setTextColor(getResources().getColor(R.color.black));
+            chip.setCheckedIcon(null);
+
+//            if (isFilterSelected(leaveTypeName)) {  // Giả sử bạn có một hàm kiểm tra xem filter có được chọn không
+//                chip.setCheckable(true);
+//            }
+
+            chipGroup.addView(chip);
+        }
+//        FilterTypeFormAdapter filterTypeFormAdapter = new FilterTypeFormAdapter(this, listfilterTypeForm, this);
+//        listFiltertypeform.setAdapter(filterTypeFormAdapter);
+
+        // Xử lý sự kiện cho các nút trong BottomSheet
+        Button cancelButton = sheetView.findViewById(R.id.cancelFilter_btn);
+        Button confirmButton = sheetView.findViewById(R.id.confirmFilter_btn);
+
+        closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+
+        cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+        confirmButton.setOnClickListener(v -> {
+            List<String> selectedFilters = getSelectedFilters(chipGroup); // Lấy danh sách các filter đã chọn\
+            if (selectedFilters.isEmpty() || selectedFilters.contains("Tất cả")) {
+                selectedFilters.clear();
+                showAllItems();// Nếu "Tất cả" được chọn, bỏ qua bộ lọc
+            }else {
+                filterFormList(selectedFilters);  // Lọc dữ liệu trong ListView
+            }
+            bottomSheetDialog.dismiss();
+
+        });
+
+//        loadDataFilterTypeFormFromDatabase(listFiltertypeform);
+
+        bottomSheetDialog.setContentView(sheetView);
+
+        bottomSheetDialog.setOnShowListener(dialog -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialog;
+            FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+//                bottomSheetBehavior.setPeekHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.4));
+                bottomSheetBehavior.setDraggable(false); // Tắt khả năng vuốt
+            }
+        });
+        bottomSheetDialog.show();
+    }
+
+
+
+    private List<String> getSelectedFilters(ChipGroup chipGroup) {
+        List<String> selectedFilters = new ArrayList<>();
+        for (int i = 0; i < chipGroup.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroup.getChildAt(i);
+            if (chip.isChecked()) {
+                selectedFilters.add(chip.getText().toString()); // Thêm chip được chọn vào danh sách
+            }
+        }
+        return selectedFilters;
+    }
+
+    private void showAllItems() {
+        // Giả sử originalList chứa tất cả các item bạn muốn hiển thị trong ListView
+        listfilterFormApprove.clear(); // Xóa danh sách filter cũ
+        listfilterFormApprove.addAll(originalList); // Thêm toàn bộ dữ liệu gốc vào listfilterFormApprove
+        faAdapter.notifyDataSetChanged();  // Cập nhật lại ListView sau khi thay đổi dữ liệu
+    }
+
+    private void loadInitialData() {
+        // Giả sử bạn đã tải dữ liệu từ db.db vào listfilterFormApprove
+        originalList.clear();  // Đảm bảo rằng danh sách gốc không có dữ liệu cũ
+        originalList.addAll(listfilterFormApprove);  // Lưu toàn bộ dữ liệu gốc vào originalList
+    }
+
+    // Hàm lọc lại từ danh sách gốc (originalList)
+    private void filterFormList(List<String> selectedFilters) {
+        ArrayList<FormApprove> filteredList = new ArrayList<>();
+        for (FormApprove formApprove : originalList) {  // Lọc từ originalList thay vì listfilterFormApprove
+            if (selectedFilters.contains(formApprove.getNameFormApprove())) {
+                filteredList.add(formApprove);
+            }
+        }
+
+        // Cập nhật lại adapter với danh sách đã lọc
+        listfilterFormApprove.clear();
+        listfilterFormApprove.addAll(filteredList);
+        faAdapter.notifyDataSetChanged();
+    }
+    //    private boolean isFilterSelected(String leaveTypeName) {
+//        // Kiểm tra xem loại nghỉ có được chọn trước đó không
+//        return selectedFilters.contains(leaveTypeName); // Giả sử bạn lưu danh sách các filter đã chọn
+//    }
 
     public void setFormApprove(){
         listFormApprove.add(new FormApprove("Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024","12/10/2024" ,"Đi trễ","Trịnh Trần Phương Thắng","y"));
@@ -134,6 +293,39 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
         listStatus.add(new StatusSpinner("Đồng ý"));
         listStatus.add(new StatusSpinner("Chưa phê duyệt"));
     }
+
+    private void loadDataTypeFormFromDatabase() {
+        List<List> leaveType = DBHelper.loadDataHandler("LeaveType", null, null);
+        listfilterTypeForm.clear();
+        for (List<String> row : leaveType) {
+            String nameFilterTypeform = row.get(1);
+            listfilterTypeForm.add(new FilterTypeForm(nameFilterTypeform));
+        }
+//        fAdapter.notifyDataSetChanged();
+    }
+    public List<String> getLeaveTypeNames() {
+        List<String> leaveTypeNames = new ArrayList<>();
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT LeaveTypeName FROM LeaveType", null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+
+                if (nameFormIndex != -1 ) {
+                    String nameForm = cursor.getString(nameFormIndex);
+                    leaveTypeNames.add(nameForm);
+                }
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        return leaveTypeNames;
+    }
+
+
 
     private void loadDataFromDatabase() {
         String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
