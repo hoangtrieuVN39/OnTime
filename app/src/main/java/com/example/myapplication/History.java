@@ -1,7 +1,5 @@
 package com.example.myapplication;
 
-//import static android.os.Build.VERSION_CODES.R;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,10 +25,10 @@ public class History extends AppCompatActivity {
     private Button historyThisMonthBtn;
     private Button historyLastMonthBtn;
     private Calendar calendar;
-    private LinearLayout layout_item_click;
+    private LinearLayout layoutItemClick;
 
     @Override
-    protected void onCreate (Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lichsu);
 
@@ -48,27 +46,30 @@ public class History extends AppCompatActivity {
         historyDayBtn = findViewById(R.id.history_day_btn);
         historyLastWeekBtn = findViewById(R.id.history_last_week_btn);
         historyThisMonthBtn = findViewById(R.id.history_thismonth_btn);
-        historyLastMonthBtn = findViewById(R.id.histpry_last_month_btn); // Sửa lỗi chính tả
+        historyLastMonthBtn = findViewById(R.id.history_last_month_btn); // Sửa lỗi chính tả
+        // Thêm nút tuần sau
 
         // Khởi tạo Calendar
         calendar = Calendar.getInstance();
 
         // history_click_item_layout
-        layout_item_click = findViewById(R.id.history_click_item_layout); // Sửa lỗi chính tả
+        layoutItemClick = findViewById(R.id.history_click_item_layout); // Sửa lỗi chính tả
 
         // Thiết lập sự kiện click cho các nút
         historyDayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadDataForCurrentWeek(); // Gọi hàm tải dữ liệu cho ngày hôm nay
+                // Khi click vào nút, chuyển đến trang chi tiết
+                Intent intent = new Intent(History.this, Workdaydetails.class);
+                startActivity(intent);
             }
         });
 
-        layout_item_click.setOnClickListener(new View.OnClickListener() {
+        layoutItemClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("TAG", "onClick: clicked detail.");
-
+                // Chuyển đến trang chi tiết khi click vào layoutItemClick
                 Intent intent = new Intent(History.this, Workdaydetails.class);
                 startActivity(intent);
             }
@@ -77,30 +78,45 @@ public class History extends AppCompatActivity {
         historyLastWeekBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadDataForLastWeek(); // Gọi hàm tải dữ liệu cho tuần trước
+                // Khi click vào nút "Tuần trước", chuyển đến trang chi tiết
+                Intent intent = new Intent(History.this, Workdaydetails.class);
+                startActivity(intent);
             }
         });
+
+//        historyNextWeekBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Khi click vào nút "Tuần sau", chuyển đến trang chi tiết
+//                Intent intent = new Intent(History.this, Workdaydetails.class);
+//                startActivity(intent);
+//            }
+//        });
 
         historyLastMonthBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadDataForLastMonth(); // Gọi hàm tải dữ liệu cho tháng trước
+                // Khi click vào nút "Tháng trước", chuyển đến trang chi tiết
+                Intent intent = new Intent(History.this, Workdaydetails.class);
+                startActivity(intent);
             }
         });
 
         historyThisMonthBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadDataForCurrentMonth(); // Gọi hàm tải dữ liệu cho tháng này
+                // Khi click vào nút "Tháng này", chuyển đến trang chi tiết
+                Intent intent = new Intent(History.this, Workdaydetails.class);
+                startActivity(intent);
             }
         });
 
         // Tải dữ liệu mặc định (có thể là tuần này)
-        loadDataForCurrentWeek();
+        loadDataForCurrentDay();
     }
 
-    private void loadDataForCurrentWeek() {
-        // Dữ liệu cho tuần này
+    private void loadDataForCurrentDay() {
+        // Dữ liệu cho ngày hôm nay
         historyDetailDateTxt.setText("T3, 22/07/2024");
         workingHistory1Txt.setText("Số công ngày: ");
         workingHistory2Txt.setText("Số công ngày: ");
@@ -113,16 +129,49 @@ public class History extends AppCompatActivity {
 
     private void loadDataForLastWeek() {
         // Logic để tải dữ liệu cho tuần trước
-        // Cần thêm logic thực tế
+        historyDetailDateTxt.setText("T3, 15/07/2024");
+        workingHistory1Txt.setText("Số công ngày: ");
+        workingHistory2Txt.setText("Số công ngày: ");
+        workingHistory3Txt.setText("0");
+        checkinTxt.setText("08:00:00");
+        checkoutTxt.setText("12:05:00");
+        checkin1Txt.setText("09:00:00");
+        checkout1Txt.setText("Chưa có");
+    }
+
+    private void loadDataForNextWeek() {
+        // Logic để tải dữ liệu cho tuần sau
+        historyDetailDateTxt.setText("T3, 29/07/2024"); // Cập nhật ngày tuần sau
+        workingHistory1Txt.setText("Số công ngày: ");
+        workingHistory2Txt.setText("Số công ngày: ");
+        workingHistory3Txt.setText("0");
+        checkinTxt.setText("08:00:00");
+        checkoutTxt.setText("12:00:00");
+        checkin1Txt.setText("09:00:00");
+        checkout1Txt.setText("Chưa có");
     }
 
     private void loadDataForCurrentMonth() {
         // Logic để tải dữ liệu cho tháng này
-        // Cần thêm logic thực tế
+        historyDetailDateTxt.setText("Tháng 10, 2024");
+        workingHistory1Txt.setText("Số công tháng: ");
+        workingHistory2Txt.setText("Số công tháng: ");
+        workingHistory3Txt.setText("20");
+        checkinTxt.setText("08:00:00");
+        checkoutTxt.setText("17:30:00");
+        checkin1Txt.setText("08:30:00");
+        checkout1Txt.setText("17:45:00");
     }
 
     private void loadDataForLastMonth() {
         // Logic để tải dữ liệu cho tháng trước
-        // Cần thêm logic thực tế
+        historyDetailDateTxt.setText("Tháng 9, 2024");
+        workingHistory1Txt.setText("Số công tháng: ");
+        workingHistory2Txt.setText("Số công tháng: ");
+        workingHistory3Txt.setText("18");
+        checkinTxt.setText("08:10:00");
+        checkoutTxt.setText("17:25:00");
+        checkin1Txt.setText("09:00:00");
+        checkout1Txt.setText("Chưa có");
     }
 }

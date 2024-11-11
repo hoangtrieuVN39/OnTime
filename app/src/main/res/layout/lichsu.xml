@@ -75,7 +75,7 @@
                 android:textColor="@android:color/black" />
 
             <Button
-                android:id="@+id/histpry_last_month_btn"
+                android:id="@+id/history_last_month_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
@@ -86,27 +86,6 @@
                 android:text="Tháng trước"
                 android:textColor="@android:color/black" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/button_border"
-                android:backgroundTint="@color/white"
-                android:minHeight="40dp"
-                android:stateListAnimator="@null"
-                android:text="Tuần này"
-                android:textColor="@android:color/black" />
-
-            <TextView
-                android:id="@+id/tvTabLastMonth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/round"
-                android:padding="8dp"
-                android:text="Tuần trước"
-                android:textColor="#575E72"
-                android:textSize="14dp" />
         </LinearLayout>
     </HorizontalScrollView>
 
