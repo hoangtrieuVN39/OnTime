@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="compedittext">
+        <attr name="editTextType" format="integer" />
+    </declare-styleable>
+</resources>
