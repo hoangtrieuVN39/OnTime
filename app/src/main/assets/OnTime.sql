@@ -1,4 +1,4 @@
-﻿-- Bảng Place
+-- Bảng Place
 CREATE TABLE Place (
     PlaceID VARCHAR(10) PRIMARY KEY,
     Latitude DECIMAL(9, 6), 

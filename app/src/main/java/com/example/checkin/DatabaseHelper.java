@@ -41,13 +41,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void createdatabase() throws IOException {
         boolean dbexist = checkdatabase();
         if (!dbexist) {
-            if (mDatabase != null && !mDatabase.isOpen()) this.open();
             this.getReadableDatabase();
             this.close();
             try {
                 copydatabase();
                 this.getReadableDatabase();
-                if (mDatabase != null && !mDatabase.isOpen()) this.open();
             } catch (IOException e) {
                 throw e;
             }
@@ -83,12 +81,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return checkdb;
     }
 
-    public void open() {
+    private void copyDatabase() throws IOException {
+        try (InputStream input = context.getAssets().open(DATABASE_NAME);
+             OutputStream output = new FileOutputStream(DATABASE_PATH)) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = input.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+            output.flush();
+        }
+    }
+
+    public void open(){
         String mypath = DATABASE_PATH;
         try{
         mDatabase = SQLiteDatabase.openDatabase(mypath, null, SQLiteDatabase.OPEN_READWRITE);}
         catch (Exception e){
         }
+        mDatabase = SQLiteDatabase.openDatabase(mypath, null, SQLiteDatabase.OPEN_READWRITE);
     }
 
     public synchronized void close() {
@@ -104,7 +115,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             this.createdatabase();
             open();
-        } catch (Exception ex) {
+        }catch(Exception ex){
         }
     }
 
@@ -161,19 +172,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (FILTER != null) {
             query += " WHERE " + FILTER;
         }
+    }
 
+    public boolean checkAccountExists(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        cursor.moveToLast();
-        if (cursor.getCount() == 0) {
-            return null;
-        }
-        for (int i = 0; i < cursor.getColumnCount(); i++) {
-            results.add(cursor.getString(i));
+        String query = "SELECT * FROM Account WHERE EmployeeEmail = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+        if (cursor.getCount() >= 0) {
+            return true;
         }
         cursor.close();
-        return results;
+        db.close();
+        return false;
     }
 
     public List<String> getFirst(String TABLE_NAME, String FILTER, String[] SELECTION_ARGS) {
@@ -186,15 +196,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (FILTER != null) {
             query += " WHERE " + FILTER;
         }
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        cursor.moveToFirst();
-        for (int i = 0; i < cursor.getColumnCount(); i++) {
-            results.add(cursor.getString(i));
-        }
-        cursor.close();
         return results;
     }
+
+    public boolean checkLogin(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM Account WHERE Email = ? AND Passwordd = ?";
+        String[] selectionArgs = {email, password};
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+        boolean isValidUser = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+
+        return isValidUser;
+    }
+
+    public boolean addAccount(String fullName, String email, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        if (!isEmployeeValid(email)) {
+            db.close();
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("FullName", fullName);
+        values.put("Email", email);
+
+        String hashedPassword = HashUtils.hashPassword(password);
+        values.put("Passwordd", hashedPassword);
+        long result = db.insert("Account", null, values);
+
+        if (result == -1) {
+            Log.e("DatabaseHelper", "Failed to insert account data for: " + email);
+        } else {
+            Log.d("DatabaseHelper", "Account data inserted successfully.");
+        }
+
+        db.close();
+        return result != -1;
+    }
+
+    public boolean isEmployeeValid(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM Employee WHERE Email = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+
+        boolean isValid = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return isValid;
+    }
+
 }

@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="compbtn">
+        <attr name="btnType" format="integer" />
+    </declare-styleable>
+</resources>
