@@ -12,7 +12,7 @@ public class MainCompTedit extends AppCompatEditText {
 
     private int editTextType;
 
-    private final int[] clickBorderColors = {
+    private int[] clickBorderColors = {
             Color.parseColor("#FBCC08"),
             Color.parseColor("#BB1B1B"),
     };
