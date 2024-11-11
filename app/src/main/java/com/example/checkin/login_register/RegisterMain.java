@@ -11,7 +11,6 @@ import android.widget.Toast;
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.HashUtils;
-import com.example.checkin.Utils;
 
 import java.io.IOException;
 
@@ -65,12 +64,12 @@ public class RegisterMain extends Activity {
                     return;
                 }
 
-                if (!Utils.isEmployeeValid(email, databaseHelper)) {
+                if (!databaseHelper.isEmployeeValid(email)) {
                     Toast.makeText(RegisterMain.this, "Thông tin không khớp với bất kỳ nhân viên nào!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (Utils.addAccount(fullName, email, password, databaseHelper)) {
+                if (databaseHelper.addAccount(fullName, email, password)) {
                     Toast.makeText(RegisterMain.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
