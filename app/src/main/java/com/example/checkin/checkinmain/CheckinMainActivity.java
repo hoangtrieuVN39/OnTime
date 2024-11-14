@@ -4,6 +4,7 @@ import static java.lang.String.join;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -73,6 +74,7 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
     public static List<Place> places;
 
     Context context;
+    ProgressDialog dialog;
 
     Shift currentshift;
     TextView currentshift_txt;
@@ -104,6 +106,10 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
 
         requestLocationLayout = findViewById(R.id.request_btn_layout);
         requestLocationLayout.setVisibility(View.VISIBLE);
+        dialog = new ProgressDialog(this);
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setView(null);
 
         checkin_txt = findViewById(R.id.checkin_txt);
         currentshift_txt = findViewById(R.id.currentshift_txt);
@@ -157,7 +163,10 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
         ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            requestLocationLayout.setVisibility(View.INVISIBLE);
+            dialog.show();
             onCreateMap();
+
         }
         else {
             Button requestLocationButton = findViewById(R.id.request_btn);
@@ -329,6 +338,7 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
             clocation = locationResult.getLastLocation();
             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(clocation.getLatitude(), clocation.getLongitude()), 19));
             requestLocationLayout.setVisibility(View.INVISIBLE);
+            dialog.hide();
         }
     };
 
