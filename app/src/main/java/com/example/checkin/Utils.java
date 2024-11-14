@@ -24,40 +24,6 @@ public class Utils {
 
     public static final String API_KEY = "YOUR_API_KEY";
 
-//    public static List isCheckedInAndCurrentShift(String employeeID, DatabaseHelper dbHelper, Date current, List<Shift> shifts) throws ParseException {
-//        List result = new ArrayList();
-//        String filter = " EmployeeID = '" + employeeID + "' AND CreatedTime like '" + new SimpleDateFormat("yyyy-MM-dd").format(current) + "%'";
-//        boolean isCheckedIn = false;
-//        List<String> lastAtt = dbHelper.getLast("Attendance", filter, null);
-//        Shift currentShift = null;
-//        if (lastAtt == null){
-//            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-//            for (Shift shift : shifts){
-//                Date d2 = sdf.parse(shift.getShift_time_end());
-//                if (d2.getTime() - current.getTime() <= 0) {
-//                    currentShift = shift;
-//                    break;
-//                }
-//            }
-//        }
-//        else {
-//            for (Shift shift : shifts) {
-//                if (shift.getShift_id().equals(lastAtt.get(6)) && !Objects.equals(lastAtt.get(3), "Check out")) {
-//                    currentShift = shift;
-//                    break;
-//                }
-//            }
-//            if (Objects.equals(lastAtt.get(3), "Check in")) {
-//                if (Objects.equals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(lastAtt.get(1)), current)) {
-//                    isCheckedIn = true;
-//                }
-//            }
-//        }
-//        result.add(currentShift);
-//        result.add(isCheckedIn);
-//        return result;
-//    }
-
     public static List isCheckedInAndCurrentShift(String employeeID, DatabaseHelper dbHelper, Date current, List<Shift> shifts) throws ParseException {
         List result = new ArrayList();
         String filter = " EmployeeID = '" + employeeID + "' AND CreatedTime like '" + new SimpleDateFormat("yyyy-MM-dd").format(current) + "%'";
