@@ -5,6 +5,7 @@ import static java.lang.String.join;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +21,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -30,8 +31,8 @@ import androidx.core.content.ContextCompat;
 import com.example.checkin.ActivityBase;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.classes.Place;
-import com.example.checkin.classes.Shift;
+import com.example.checkin.classs.Place;
+import com.example.checkin.classs.Shift;
 import com.example.checkin.Utils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -160,7 +161,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
         ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            requestLocationLayout.setVisibility(View.INVISIBLE);
             onCreateMap();
         }
         else {
@@ -177,7 +177,7 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
     private void setCheck_btn(){
         if (currentshift != null){
             if (Utils.isLocationValid(distance)){
-                if (isCheckedIn) {
+                if (isCheckedIn){
                     check_btn.setBackgroundResource(R.drawable.checkout_btn);
                     checkin_txt.setText("Check out");
                 }

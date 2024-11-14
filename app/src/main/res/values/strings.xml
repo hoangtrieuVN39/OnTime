@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">On_Time</string>
-    <string name="app_name1">OnTime</string>
+    <string name="app_name">Checkin</string>
+    <string name="title_activity_main_test">MainActivityTest</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>
