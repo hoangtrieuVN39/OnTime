@@ -5,16 +5,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -22,16 +20,13 @@ import androidx.annotation.RequiresApi;
 import com.example.on_time.DatabaseHelper;
 import com.example.on_time.OnFormClickListener;
 import com.example.on_time.R;
-import com.example.on_time.adapter.FilterTypeFormAdapter;
+import com.example.on_time.adapter.AllFormAdapter;
 import com.example.on_time.adapter.MonthSpinnerAdapter;
 import com.example.on_time.adapter.StatusSpinnerAdapter;
-import com.example.on_time.models.FilterTypeForm;
 import com.example.on_time.models.Form;
 import com.example.on_time.models.FormApprove;
-import com.example.on_time.adapter.FormApproveAdapter;
 import com.example.on_time.models.MonthSpinner;
 import com.example.on_time.models.StatusSpinner;
-import com.example.on_time.models.TypeForm;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
@@ -44,73 +39,71 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class FormListApproveActivity extends Activity implements OnFormClickListener {
-    ListView lvFormApprove;
-    FormApproveAdapter faAdapter;
+public class AllFormListActivity extends Activity implements OnFormClickListener {
+    ListView lvAllForm;
+    AllFormAdapter afAdapter;
+    ArrayList<Object> listAllForm = new ArrayList<>();
+    ArrayList<Object> listfilterAllForm = new ArrayList<>();
     ArrayList<MonthSpinner> listMonth = new ArrayList<>();
     ArrayList<StatusSpinner> listStatus = new ArrayList<>();
-    ArrayList<FormApprove> listFormApprove = new ArrayList<>();
-    ArrayList<FormApprove> listfilterFormApprove = new ArrayList<>();
-    ArrayList<FilterTypeForm> listfilterTypeForm= new ArrayList<>();
     Spinner spTrangThai, spThang;
     MonthSpinnerAdapter msAdapter;
     StatusSpinnerAdapter ssAdapter;
     ImageButton btnFilter;
-    LinearLayout listFiltertypeform;
-    DatabaseHelper DBHelper;
-    SQLiteDatabase db;
+    SearchView searchView;
 
-    // Khởi tạo selectedFilters (có thể là một List hoặc Set để lưu trữ các lựa chọn)
-//    private Set<String> selectedFilters = new HashSet<>();
-    private List<FormApprove> originalList = new ArrayList<>();
-    private List<FormApprove> currentList = new ArrayList<>();
+
+    private List<Object> originalList = new ArrayList<>();
+    private List<Object> currentList = new ArrayList<>();
     private List<String> selectedChipFilters = new ArrayList<>();
 
+//    ArrayList<FormApprove> listFormApprove = new ArrayList<>();
+//    ArrayList<FormApprove> listfilterFormApprove = new ArrayList<>();
+//    ArrayList<Form> listForms = new ArrayList<>();
+//    ArrayList<Form> filteredForms = new ArrayList<>();
 
+    DatabaseHelper DBHelper;
+    SQLiteDatabase db;
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.listform_approve_layout);
+        setContentView(R.layout.listform_layout);
 
-        setListMonth();
-        setListStatus();
-
-//        setFormApprove();
-        lvFormApprove = findViewById(R.id.formApprove_lv);
         try {
             DBHelper = new DatabaseHelper(this, null);
             db = DBHelper.getWritableDatabase();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+//        loadDataFormFromDatabase();
         loadDataFAFromDatabase();
-        loadDataTypeFormFromDatabase();
         loadInitialData();
-        listfilterFormApprove.addAll(listFormApprove);
+        setListMonth();
+        setListStatus();
 
-        spTrangThai = findViewById(R.id.approveStatus_spinner);
-        spThang = findViewById(R.id.approveMonth_spinner);
-        btnFilter = findViewById(R.id.button_filter);
+        listfilterAllForm.addAll(listAllForm);
 
-        msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
-        msAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
-        spThang.setAdapter(msAdapter);
+        spTrangThai = findViewById(R.id.listStatus_spinner);
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
 
-        faAdapter = new FormApproveAdapter(this, listfilterFormApprove,this,db);
-        lvFormApprove.setAdapter(faAdapter);
+        spThang = findViewById(R.id.listMonth_spinner);
+        msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
+        spThang.setAdapter(msAdapter);
+
+
+        lvAllForm = findViewById(R.id.formList_lv);
+        afAdapter = new AllFormAdapter(this,listfilterAllForm,this);
+        lvAllForm.setAdapter(afAdapter);
+        btnFilter = findViewById(R.id.buttonlist_filter);
+        searchView = findViewById(R.id.nhanvienlist_search);
+
 
         spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -139,22 +132,112 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
         btnFilter.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 showFilterBottomSheetDialog();
             }
         });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false; // Không cần xử lý khi người dùng nhấn "submit"
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                afAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void loadDataFAFromDatabase() {
+        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
+                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
+                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
+                "LeaveRequest.LeaveID AS LeaveID, " +
+                "LeaveRequestApproval.Status AS Status, " +
+                "LeaveRequest.Reason AS Reason, " +
+                "LeaveRequest.CreatedTime AS CreatedTime, " +
+                "Employee.EmployeeName AS EmployeeName " +
+                "FROM LeaveRequest " +
+                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
+                "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
+                "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
+
+
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            listAllForm.clear();
+            do {
+                int formIDindex = cursor.getColumnIndex("LeaveID");
+                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+                int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
+                int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
+                int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
+                int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
+                int reasonIndex = cursor.getColumnIndex("Reason");
+                int statussIndex = cursor.getColumnIndex("Status");
+
+                if (nameFormIndex != -1  && formIDindex!= -1 && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+                    String formID = cursor.getString(formIDindex);
+                    String nameForm = cursor.getString(nameFormIndex);
+                    String employeeName = cursor.getString(employeeNameIndex);
+                    String createdTime = cursor.getString(createdTimeIndex);
+                    String leaveStartTime = cursor.getString(leaveStartTimeIndex);
+                    String leaveEndTime = cursor.getString(leaveEndTimeIndex);
+                    String reason = cursor.getString(reasonIndex);
+                    String status = cursor.getString(statussIndex);
+
+                    String formattedCreatedTime = FormListApproveActivity.formatDate(createdTime);
+                    String formattedStartTime = FormListActivity.formatDateTime(leaveStartTime);
+                    String formattedEndTime = FormListActivity.formatDateTime(leaveEndTime);
+
+                    String dateOff = formattedStartTime + " - " + formattedEndTime;
+
+//                    listFormApprove.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
+                    listAllForm.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
+                    listAllForm.add(new Form(formID,nameForm, dateOff, reason, status));
+                }
+            } while (cursor.moveToNext());
+        }
+
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        listfilterAllForm.clear();
+        listfilterAllForm.addAll(listAllForm);
+//        afAdapter.notifyDataSetChanged();
+    }
+
+    public void setListMonth() {
+        listMonth.add(new MonthSpinner("Chọn thời gian"));
+        listMonth.add(new MonthSpinner("Tuần này"));
+        listMonth.add(new MonthSpinner("Tuần trước"));
+        listMonth.add(new MonthSpinner("Tháng này"));
+        listMonth.add(new MonthSpinner("Tháng trước"));
+        listMonth.add(new MonthSpinner("Năm này"));
+        listMonth.add(new MonthSpinner("Năm trước"));
+    }
+
+    public void setListStatus(){
+        listStatus.add(new StatusSpinner("Chọn trạng thái"));
+        listStatus.add(new StatusSpinner("Đồng ý"));
+        listStatus.add(new StatusSpinner("Chưa phê duyệt"));
     }
 
     private void showFilterBottomSheetDialog() {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(FormListApproveActivity.this, R.style.BottomSheetDialogTheme);
-//        View sheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bottomsheet_filtertypeform_layout, null);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(AllFormListActivity.this, R.style.BottomSheetDialogTheme);
         View sheetView = getLayoutInflater().inflate(R.layout.bottomsheet_filtertypeform_layout, null);
 
         ImageButton closeButton = sheetView.findViewById(R.id.closeFilter_btn);
-//        listFiltertypeform = sheetView.findViewById(R.id.chipTypeForm_ll);
 
         ChipGroup chipGroup = sheetView.findViewById(R.id.chip_filter);
 
@@ -167,9 +250,8 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
         allChip.setTextColor(getResources().getColor(R.color.black));
 //        allChip.setCheckedIcon(null);
         allChip.setChecked(selectedChipFilters.contains("Tất cả"));
+
         chipGroup.addView(allChip);
-
-
 
         List<String> leaveTypeNames = this.getLeaveTypeNames();
 
@@ -178,22 +260,16 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
             Chip chip = new Chip(this);
             chip.setText(leaveTypeName);
             chip.setCheckable(true);
-            chip.setChecked(selectedChipFilters.contains(leaveTypeName));
             chip.setChipBackgroundColorResource(R.color.selector_chip_background);
             chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
             chip.setChipStrokeWidth(1f);
             chip.setTextColor(getResources().getColor(R.color.black));
 //            chip.setCheckedIcon(null);
-            ;
-
-//            if (isFilterSelected(leaveTypeName)) {  // Giả sử bạn có một hàm kiểm tra xem filter có được chọn không
-//                chip.setCheckable(true);
-//            }
+            chip.setChecked(selectedChipFilters.contains(leaveTypeName));
 
             chipGroup.addView(chip);
         }
-//        FilterTypeFormAdapter filterTypeFormAdapter = new FilterTypeFormAdapter(this, listfilterTypeForm, this);
-//        listFiltertypeform.setAdapter(filterTypeFormAdapter);
+
 
         // Xử lý sự kiện cho các nút trong BottomSheet
         Button cancelButton = sheetView.findViewById(R.id.cancelFilter_btn);
@@ -207,25 +283,27 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
 //            if (selectedFilters.isEmpty() || selectedFilters.contains("Tất cả")) {
 //                selectedFilters.clear();
 //                showAllItems();
-//                onChipAllSelected();// Nếu "Tất cả" được chọn, bỏ qua bộ lọc
+//                onChipAllSelected();
+//                afAdapter.updateFilteredList(listfilterAllForm);// Nếu "Tất cả" được chọn, bỏ qua bộ lọc
 //            }else {
-//                filterFormList(selectedFilters);  // Lọc dữ liệu trong ListView
+//                filterFormList(selectedFilters);
+//                afAdapter.updateFilteredList(listfilterAllForm);
 //            }
 //            bottomSheetDialog.dismiss();
-
             selectedChipFilters = getSelectedFilters(chipGroup); // Lưu lại lựa chọn
             if (selectedChipFilters.isEmpty() || selectedChipFilters.contains("Tất cả")) {
                 selectedChipFilters.clear();
                 showAllItems();
                 onChipAllSelected(); // Nếu chọn "Tất cả", reset bộ lọc
+                afAdapter.updateFilteredList(listfilterAllForm);
             } else {
                 filterFormList(selectedChipFilters); // Áp dụng bộ lọc
+                afAdapter.updateFilteredList(listfilterAllForm);
             }
             bottomSheetDialog.dismiss();
 
         });
 
-//        loadDataFilterTypeFormFromDatabase(listFiltertypeform);
 
         bottomSheetDialog.setContentView(sheetView);
 
@@ -256,86 +334,53 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
     }
 
     private void showAllItems() {
-        // Giả sử originalList chứa tất cả các item bạn muốn hiển thị trong ListView
-        listfilterFormApprove.clear(); // Xóa danh sách filter cũ
-        listfilterFormApprove.addAll(originalList);
+        listfilterAllForm.clear();
+        listfilterAllForm.addAll(originalList);
         currentList.clear();
-        currentList.addAll(originalList);// Thêm toàn bộ dữ liệu gốc vào listfilterFormApprove
-        faAdapter.notifyDataSetChanged();  // Cập nhật lại ListView sau khi thay đổi dữ liệu
+        currentList.addAll(originalList);
+        afAdapter.notifyDataSetChanged();
     }
 
     private void loadInitialData() {
-        // Giả sử bạn đã tải dữ liệu từ db.db vào listfilterFormApprove
-        originalList.clear();  // Đảm bảo rằng danh sách gốc không có dữ liệu cũ
-        originalList.addAll(listfilterFormApprove);  // Lưu toàn bộ dữ liệu gốc vào originalList
+        originalList.clear();
+        originalList.addAll(listfilterAllForm);
     }
 
     // Hàm lọc lại từ danh sách gốc (originalList)
     private void filterFormList(List<String> selectedFilters) {
-        ArrayList<FormApprove> filteredList = new ArrayList<>();
-        for (FormApprove formApprove : originalList) {  // Lọc từ originalList thay vì listfilterFormApprove
-            if (selectedFilters.contains(formApprove.getNameFormApprove())) {
-                filteredList.add(formApprove);
+        ArrayList<Object> filteredList = new ArrayList<>();
+        for (Object formObject : originalList) {
+            String formName = null;
+
+            if (formObject instanceof Form) {
+                formName = ((Form) formObject).getNameForm();
+            } else if (formObject instanceof FormApprove) {
+                formName = ((FormApprove) formObject).getNameFormApprove();
+            }
+
+            if (formName != null && selectedFilters.contains(formName)) {
+                filteredList.add(formObject);
             }
         }
         currentList.clear();
         currentList.addAll(filteredList);
-        // Cập nhật lại adapter với danh sách đã lọc
-        listfilterFormApprove.clear();
-        listfilterFormApprove.addAll(filteredList);
-        faAdapter.notifyDataSetChanged();
+        listfilterAllForm.clear();
+        listfilterAllForm.addAll(filteredList);
+        afAdapter.notifyDataSetChanged();
     }
-    //    private boolean isFilterSelected(String leaveTypeName) {
-//        // Kiểm tra xem loại nghỉ có được chọn trước đó không
-//        return selectedFilters.contains(leaveTypeName); // Giả sử bạn lưu danh sách các filter đã chọn
-//    }
     private void onChipAllSelected() {
         // Đặt lại giá trị của Spinner về mặc định
         spThang.setSelection(0);  // Giả sử vị trí 0 là "Chọn thời gian"
         spTrangThai.setSelection(0); // Giả sử vị trí 0 là "Chọn trạng thái"
 
         // Xóa danh sách lọc và hiển thị tất cả các mục ban đầu
-        listfilterFormApprove.clear();
-        listfilterFormApprove.addAll(listFormApprove); // listFormApprove chứa tất cả các form ban đầu
+        listfilterAllForm.clear();
+        listfilterAllForm.addAll(listAllForm); // listFormApprove chứa tất cả các form ban đầu
 
         // Cập nhật lại ListView
-        faAdapter.notifyDataSetChanged();
+        afAdapter.notifyDataSetChanged();
     }
 
-    public void setFormApprove(){
-        listFormApprove.add(new FormApprove("Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024","12/10/2024" ,"Đi trễ","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Nghỉ không lương", "15/02/2024", "12/10/2024","Nghỉ không lương","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Nghỉ phép - gửi trước 24h", "05/03/2024", "12/10/2024","Nghỉ phép","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Cưới/ tang", "10/04/2024", "12/10/2024","Cưới","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Công tác", "23/05/2024","12/10/2024", "Công tác","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Làm việc từ xa", "30/06/2024","12/10/2024", "Làm việc từ xa","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Giải trình công", "07/07/2024", "12/10/2024","Giải trình công","Trịnh Trần Phương Thắng","y"));
-    }
-
-    public void setListMonth() {
-        listMonth.add(new MonthSpinner("Chọn thời gian"));
-        listMonth.add(new MonthSpinner("Tuần này"));
-        listMonth.add(new MonthSpinner("Tuần trước"));
-        listMonth.add(new MonthSpinner("Tháng này"));
-        listMonth.add(new MonthSpinner("Tháng trước"));
-        listMonth.add(new MonthSpinner("Năm này"));
-        listMonth.add(new MonthSpinner("Năm trước"));
-    }
-    public void setListStatus(){
-        listStatus.add(new StatusSpinner("Chọn trạng thái"));
-        listStatus.add(new StatusSpinner("Đồng ý"));
-        listStatus.add(new StatusSpinner("Chưa phê duyệt"));
-    }
-
-    private void loadDataTypeFormFromDatabase() {
-        List<List> leaveType = DBHelper.loadDataHandler("LeaveType", null, null);
-        listfilterTypeForm.clear();
-        for (List<String> row : leaveType) {
-            String nameFilterTypeform = row.get(1);
-            listfilterTypeForm.add(new FilterTypeForm(nameFilterTypeform));
-        }
-//        fAdapter.notifyDataSetChanged();
-    }
     public List<String> getLeaveTypeNames() {
         List<String> leaveTypeNames = new ArrayList<>();
         SQLiteDatabase db = DBHelper.getReadableDatabase();
@@ -360,7 +405,16 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
 
 
 
-    private void loadDataFAFromDatabase() {
+
+    private void loadDataFormFromDatabase() {
+//        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
+//                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
+//                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
+//                "LeaveRequest.LeaveID AS LeaveID, " +
+//                "LeaveRequest.Status AS Status, " +
+//                "LeaveRequest.Reason AS Reason " +
+//                "FROM LeaveRequest " +
+//                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID";
         String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
                 "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
                 "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
@@ -374,38 +428,35 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
                 "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
                 "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
 
-
         SQLiteDatabase db = DBHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor != null && cursor.moveToFirst()) {
-            listFormApprove.clear();
+//            listForms.clear();
+            listAllForm.clear();
             do {
-//                int formIDindex = cursor.getColumnIndex("LeaveID");
+                int formIDindex = cursor.getColumnIndex("LeaveID");
                 int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-                int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
-                int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
                 int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
                 int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
                 int reasonIndex = cursor.getColumnIndex("Reason");
                 int statussIndex = cursor.getColumnIndex("Status");
 
-                if (nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+                if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+                    String formID = cursor.getString(formIDindex);
                     String nameForm = cursor.getString(nameFormIndex);
-                    String employeeName = cursor.getString(employeeNameIndex);
-                    String createdTime = cursor.getString(createdTimeIndex);
                     String leaveStartTime = cursor.getString(leaveStartTimeIndex);
                     String leaveEndTime = cursor.getString(leaveEndTimeIndex);
                     String reason = cursor.getString(reasonIndex);
                     String status = cursor.getString(statussIndex);
 
-                    String formattedCreatedTime = formatDate(createdTime);
                     String formattedStartTime = FormListActivity.formatDateTime(leaveStartTime);
                     String formattedEndTime = FormListActivity.formatDateTime(leaveEndTime);
 
                     String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                    listFormApprove.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
+//                    listForms.add(new Form(formID,nameForm, dateOff, reason, status));
+                    listAllForm.add(new Form(formID,nameForm, dateOff, reason, status));
                 }
             } while (cursor.moveToNext());
         }
@@ -414,41 +465,39 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
         if (cursor != null) {
             cursor.close();
         }
-        listfilterFormApprove.clear();
-        listfilterFormApprove.addAll(listFormApprove);
-//        fAdapter.notifyDataSetChanged();
+//        filteredForms.clear();
+//        filteredForms.addAll(listForms);
+        listfilterAllForm.clear();
+        listfilterAllForm.addAll(listAllForm);
+//        afAdapter.notifyDataSetChanged();
     }
-
-    public static String formatDate(String dateTime) {
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-        try {
-            Date date = inputFormat.parse(dateTime);
-            return outputFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return dateTime;  // Trả về định dạng gốc nếu có lỗi
-        }
-    }
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
 
-        List<FormApprove> tempFilteredList = new ArrayList<>(listfilterFormApprove);
-        listfilterFormApprove.clear();
+        List<Object> tempFilteredList = new ArrayList<>(listfilterAllForm);
+        listfilterAllForm.clear();
         boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
         boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
 
         //    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-        for (FormApprove form : tempFilteredList) {
+        for (Object form : tempFilteredList) {
             boolean matchesMonth = true;
             boolean matchesStatus = true;
+            String formDate = null;
+            String formStatus = null;
 
-            if (filterByMonth) {
-                String formDate = form.getDateoffApprove().substring(0, 10);
+            if (form instanceof Form) {
+                formDate = ((Form) form).getDateoff().substring(0, 10); // Lấy date từ Form
+                formStatus = ((Form) form).getStatus(); // Lấy status từ Form
+            } else if (form instanceof FormApprove) {
+                formDate = ((FormApprove) form).getDateoffApprove().substring(0, 10); // Lấy date từ FormApprove
+                formStatus = ((FormApprove) form).getStatusApprover(); // Lấy status từ FormApprove
+            }
+
+            // Lọc theo tháng
+            if (filterByMonth && formDate != null) {
                 switch (selectedMonth) {
                     case "Tuần này":
                         matchesMonth = isDateInCurrentWeek(formDate);
@@ -470,21 +519,24 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
                         break;
                     default:
                         String monthNumber = getMonthNumberFromSpinner(selectedMonth);
-                        String formMonth = form.getDateoffApprove().substring(5, 7);
+                        String formMonth = formDate.substring(5, 7);
                         matchesMonth = formMonth.equals(monthNumber);
                         break;
                 }
             }
 
-            if (filterByStatus) {
-                matchesStatus = form.getStatusApprover().equals(selectedStatus);
+            // Lọc theo trạng thái
+            if (filterByStatus && formStatus != null) {
+                matchesStatus = formStatus.equals(selectedStatus);
             }
 
+            // Nếu đối tượng thỏa cả hai điều kiện, thêm vào danh sách lọc
             if (matchesMonth && matchesStatus) {
-                listfilterFormApprove.add(form);
+                listfilterAllForm.add(form);
             }
         }
-        faAdapter.notifyDataSetChanged();
+        afAdapter.updateFilteredList(listfilterAllForm);
+//        afAdapter.notifyDataSetChanged();
     }
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -514,9 +566,6 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInCurrentMonth(String date) {
-//        LocalDate inputDate = LocalDate.parse(date);
-//        LocalDate today = LocalDate.now();
-//        return today.getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
         // Đảm bảo chỉ lấy phần ngày từ chuỗi "dd/MM/yyyy HH:mm" nếu có
         String formattedDate = date.length() > 10 ? date.substring(0, 10) : date;
         LocalDate inputDate = LocalDate.parse(formattedDate, dateFormatter);
@@ -527,9 +576,6 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInPreviousMonth(String date) {
-//        LocalDate inputDate = LocalDate.parse(date);
-//        LocalDate today = LocalDate.now();
-//        return today.minusMonths(1).getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
         String formattedDate = date.length() > 10 ? date.substring(0, 10) : date;
         LocalDate inputDate = LocalDate.parse(formattedDate, dateFormatter);
         LocalDate today = LocalDate.now();
@@ -538,10 +584,6 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInCurrentYear(String date) {
-//        LocalDate inputDate = LocalDate.parse(date);
-//        LocalDate today = LocalDate.now();
-//        return today.getYear() == inputDate.getYear();
-        // Cắt chuỗi để chỉ lấy phần ngày "dd/MM/yyyy"
         String formattedDate = date.length() > 10 ? date.substring(0, 10) : date;
         LocalDate inputDate = LocalDate.parse(formattedDate, dateFormatter);
         LocalDate today = LocalDate.now();
@@ -550,9 +592,6 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean isDateInPreviousYear(String date) {
-//        LocalDate inputDate = LocalDate.parse(date);
-//        LocalDate today = LocalDate.now();
-//        return (today.getYear() - 1) == inputDate.getYear();
 
         // Cắt chuỗi để chỉ lấy phần ngày "dd/MM/yyyy"
         String formattedDate = date.length() > 10 ? date.substring(0, 10) : date;
@@ -569,7 +608,7 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
     }
 
     @Override
-    public void onFormClick(String formName) {
-        Toast.makeText(this, "Đơn từ cần phê duyệt: " + formName, Toast.LENGTH_SHORT).show();
+    public void onFormClick(String nameForm) {
+
     }
 }

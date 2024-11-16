@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/header_lnLayout"
-        android:layout_above="@+id/button_footer">
+        android:layout_above="@+id/createForm_btn">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -390,7 +390,7 @@
 
     <!-- Button Footer -->
     <Button
-        android:id="@+id/button_footer"
+        android:id="@+id/createForm_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Tạo đơn từ"

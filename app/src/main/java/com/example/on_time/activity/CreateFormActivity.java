@@ -2,6 +2,7 @@ package com.example.on_time.activity;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -25,6 +27,7 @@ import com.example.on_time.DatabaseHelper;
 import com.example.on_time.OnFormClickListener;
 import com.example.on_time.R;
 import com.example.on_time.adapter.ApproverBTAdapter;
+import com.example.on_time.adapter.FormAdapter;
 import com.example.on_time.models.ApproverBT;
 import com.example.on_time.models.modelsfirebase.WorkShift;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -41,6 +44,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.on_time.activity.FormListActivity;
+
+import org.checkerframework.checker.units.qual.C;
+
 public class CreateFormActivity extends Activity implements OnFormClickListener {
     String selectedType;
     Spinner typeformNameSpinner;
@@ -48,7 +55,7 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
     DatabaseHelper DBHelper;
 //    SQLiteDatabase db;
     ImageButton backBtn;
-    Button shiftMorningBtn, shiftAfternoonBtn, shiftNightBtn;
+    Button shiftMorningBtn, shiftAfternoonBtn, shiftNightBtn, createBtn;
     private Button selectedButton;
     EditText startDateEditText, startHourEditText, endDateEditText, endHourEditText,reasonEditText;
     TextView numberShiftSubmitText;
@@ -61,6 +68,7 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
     private HashSet<String> selectedApprovers = new HashSet<>(); // Danh sách những người phê duyệt đã chọn
     private ApproverBTAdapter ABTadapter;
     private ArrayList<ApproverBT> approverList;
+    FormAdapter fAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +91,7 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
         numberShiftSubmitText = findViewById(R.id.numberShiftSubmit_txt);
         reasonEditText = findViewById(R.id.reason_tedit);
         approverNameText = findViewById(R.id.approver_name_text);
-
+        createBtn = findViewById(R.id.createForm_btn);
 //        ListApproverForm = new ArrayList<>();
 
 
@@ -143,7 +151,80 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
                 showBottomSheetDialog();
             }
         });
+
+
+        createBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 1. Lấy thông tin từ các trường nhập liệu
+                String leaveTypeName = typeformNameSpinner.getSelectedItem().toString();
+                String employeeID = "Employee123";  // ID của nhân viên đăng nhập (có thể lấy từ session hoặc đối tượng đang đăng nhập)
+                String startDate = startDateEditText.getText().toString();
+                String startTime = startHourEditText.getText().toString();
+                String endDate = endDateEditText.getText().toString();
+                String endTime = endHourEditText.getText().toString();
+                String reason = reasonEditText.getText().toString();
+
+                // 2. Lấy danh sách những người phê duyệt đã chọn từ flowApprover_lnl
+                List<String> approvers = getSelectedApprovers(); // Implement phương thức này để lấy danh sách EmployeeID của những người phê duyệt
+
+                // 3. Gọi DatabaseHelper để lưu dữ liệu
+
+                DBHelper.addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime, reason, approvers);
+
+                // 4. Thông báo thành công
+                Toast.makeText(CreateFormActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(CreateFormActivity.this, FormListActivity.class);
+
+                intent.putExtra("isSuccess", true);
+                startActivity(intent);
+//                fAdapter.notifyDataSetChanged();
+
+
+                // 5. Xóa hoặc làm trống các trường nhập liệu sau khi lưu
+                clearInputFields();
+            }
+        });
+
     }
+    private List<String> getSelectedApprovers() {
+        List<String> approverIds = new ArrayList<>();
+
+        // Duyệt qua tất cả các phần tử con của flowApprover_lnl
+        for (int i = 0; i < flowApproveLayout.getChildCount(); i++) {
+            View child = flowApproveLayout.getChildAt(i);
+
+            // Giả sử mỗi phần tử là một TextView hoặc CheckBox
+            if (child instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) child;
+                // Nếu CheckBox được chọn, lấy EmployeeID từ tag hoặc text
+                if (checkBox.isChecked()) {
+                    String employeeId = (String) checkBox.getTag(); // Tag chứa EmployeeID
+                    if (employeeId != null) {
+                        approverIds.add(employeeId);
+                    }
+                }
+            }
+        }
+
+        return approverIds;
+    }
+
+
+    private void clearInputFields() {
+        startDateEditText.setText("");
+        startHourEditText.setText("");
+        endDateEditText.setText("");
+        endHourEditText.setText("");
+        reasonEditText.setText("");
+        numberShiftSubmitText.setText("");
+
+        // Đặt lại spinner về vị trí đầu tiên
+        typeformNameSpinner.setSelection(0);
+        flowApproveLayout.removeAllViews();
+        // Xóa danh sách người phê duyệt đã chọn, nếu cần
+    }
+
 
     private ArrayList<ApproverBT> getApprovers() {
         return new ArrayList<>();

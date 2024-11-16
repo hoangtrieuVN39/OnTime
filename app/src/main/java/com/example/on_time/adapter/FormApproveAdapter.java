@@ -61,9 +61,7 @@ public class FormApproveAdapter extends BaseAdapter {
         TextView txtReasonApprove = view.findViewById(R.id.lydoApprover_txt);
         TextView txtApprover = view.findViewById(R.id.nguoipheduyet_txt);
         TextView txtCreateTime = view.findViewById(R.id.ngaytaodon_txt);
-        ViewGroup recallLayoutContainer = view.findViewById(R.id.recallApprover_btn);
-
-
+        ViewGroup recallLayoutContainer = view.findViewById(R.id.recallApprover_ll);
 
 
         txtNameFormApprove.setText(faForm.get(i).getNameFormApprove());
@@ -73,18 +71,43 @@ public class FormApproveAdapter extends BaseAdapter {
         txtStatusApprove.setText(faForm.get(i).getStatusApprover());
         txtCreateTime.setText(faForm.get(i).getCreateTimeApprover());
 
+        recallLayoutContainer.setVisibility(View.GONE);
+
         if ("Đồng ý".equals(formApprove.getStatusApprover())) {
             txtStatusApprove.setText(formApprove.getStatusApprover());
             txtStatusApprove.setTextColor(Color.parseColor("#D9AF03"));
             txtStatusApprove.setVisibility(View.VISIBLE);
             recallLayoutContainer.setVisibility(View.GONE);
-        }else{
-            txtStatusApprove.setVisibility(View.GONE);
-            recallLayoutContainer.setVisibility(View.VISIBLE);
+        }
+        else if ("Loại bỏ".equals(formApprove.getStatusApprover())) {
+                txtStatusApprove.setText(formApprove.getStatusApprover());
+                txtStatusApprove.setTextColor(Color.parseColor("#575E72"));
+                txtStatusApprove.setVisibility(View.VISIBLE);
+                recallLayoutContainer.setVisibility(View.GONE);
+        }else if ("Chưa phê duyệt".equals(formApprove.getStatusApprover())){
+//            txtStatusApprove.setVisibility(View.GONE);
+//            recallLayoutContainer.setVisibility(View.VISIBLE);
+
+            // Nếu trạng thái là "Chưa phê duyệt", mặc định ẩn recallLayoutContainer
+            txtStatusApprove.setVisibility(View.VISIBLE);
+            txtStatusApprove.setTextColor(Color.parseColor("#BB1B1B"));
 
             Button btnReject = view.findViewById(R.id.reject_btn);
             Button btnApprove = view.findViewById(R.id.approver_btn);
+
         }
+        txtStatusApprove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (recallLayoutContainer.getVisibility() == View.GONE) {
+                    txtStatusApprove.setVisibility(View.GONE); // Ẩn status
+                    recallLayoutContainer.setVisibility(View.VISIBLE); // Hiển thị recallLayout
+                } else {
+                    txtStatusApprove.setVisibility(View.VISIBLE); // Hiển thị lại status
+                    recallLayoutContainer.setVisibility(View.GONE); // Ẩn recallLayout
+                }
+            }
+        });
 
 
         view.setOnClickListener(new View.OnClickListener() {

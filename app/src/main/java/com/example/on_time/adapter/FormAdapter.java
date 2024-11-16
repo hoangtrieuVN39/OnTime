@@ -11,10 +11,12 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.on_time.DatabaseHelper;
 import com.example.on_time.OnFormClickListener;
 import com.example.on_time.R;
 import com.example.on_time.models.Form;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class FormAdapter extends BaseAdapter {
@@ -23,13 +25,16 @@ public class FormAdapter extends BaseAdapter {
     ArrayList<Form> fForm;
     OnFormClickListener fListener;
     private SQLiteDatabase database;
+    DatabaseHelper dbHelper;
 
 
-    public FormAdapter (Context context, ArrayList<Form> forms, OnFormClickListener listener, SQLiteDatabase db) {
+    public FormAdapter (Context context, ArrayList<Form> forms, OnFormClickListener listener, DatabaseHelper dbHelper) {
         fContext = context;
         fForm = forms;
         fListener = listener;
-        this.database = db;
+        this.dbHelper = dbHelper;
+        this.database = dbHelper.getWritableDatabase();
+
     }
     @Override
     public int getCount() {
@@ -60,7 +65,7 @@ public class FormAdapter extends BaseAdapter {
         TextView txtDateoff = view.findViewById(R.id.ngaynghi_txt);
         TextView txtReason = view.findViewById(R.id.lydo_txt);
         TextView txtStatus = view.findViewById(R.id.status_txt);
-        ViewGroup recallLayoutContainer = view.findViewById(R.id.recall_ll);
+        ViewGroup recallLayoutContainer = view.findViewById(R.id.Recall_ll);
 
         txtNameForm.setText(fForm.get(i).getNameForm());
         txtDateoff.setText(fForm.get(i).getDateoff());
@@ -85,19 +90,23 @@ public class FormAdapter extends BaseAdapter {
             recallLayoutContainer.setVisibility(View.VISIBLE);
 
 //            TextView notApprovedTxt = recallLayoutContainer.findViewById(R.id.not_approved_txt);
-            Button recallBtn = recallLayoutContainer.findViewById(R.id.recall_btn);
+            Button recallBtn = recallLayoutContainer.findViewById(R.id.Recall_btn);
 
 //            notApprovedTxt.setText(form.getStatus());
 
-//            recallBtn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    String leaveId = form.getFormID();  // Lấy LeaveID của đơn từ
-//                    deleteLeaveRequest(leaveId);  // Xóa đơn từ khỏi cơ sở dữ liệu
-//                    fForm.remove(i);  // Xóa khỏi danh sách
-//                    notifyDataSetChanged();  //
-//                }
-//            });
+            recallBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String leaveId = form.getFormID();  // Lấy LeaveID của đơn từ
+                    try {
+                        deleteLeaveRequest(leaveId);  // Xóa đơn từ khỏi cơ sở dữ liệu
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    fForm.remove(i);  // Xóa khỏi danh sách
+                    notifyDataSetChanged();  //
+                }
+            });
         }
 
 
@@ -110,7 +119,13 @@ public class FormAdapter extends BaseAdapter {
         });
         return view;
     }
-    private void deleteLeaveRequest(String leaveId) {
+    private void deleteLeaveRequest(String leaveId) throws IOException {
+        if (dbHelper == null) {
+            dbHelper = new DatabaseHelper(fContext,null);
+        }
+        if (database == null || !database.isOpen()) {
+            database = dbHelper.getWritableDatabase();
+        }
         String whereClause = "LeaveID=?";
         String[] whereArgs = { leaveId };
         database.delete("LeaveRequest", whereClause, whereArgs);
