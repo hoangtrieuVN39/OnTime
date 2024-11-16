@@ -96,14 +96,14 @@
 <!--            android:paddingStart="10dp">-->
 <!--        </TextView>-->
     <LinearLayout
-        android:id="@+id/recall_ll"
+        android:id="@+id/Recall_ll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/round_corner_red"
         android:layout_alignParentEnd="true"
         android:orientation="horizontal"
         android:layout_gravity="end"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/icon_recall"
@@ -114,7 +114,7 @@
             android:layout_gravity="center"/>
 
         <Button
-            android:id="@+id/recall_btn"
+            android:id="@+id/Recall_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"

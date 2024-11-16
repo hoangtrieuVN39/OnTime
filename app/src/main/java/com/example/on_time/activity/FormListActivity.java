@@ -55,6 +55,7 @@ import java.time.temporal.WeekFields;
 import java.util.Locale;
 import java.time.format.DateTimeFormatter;
 
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class FormListActivity extends Activity implements OnFormClickListener {
     ListView lvForm;
     FormAdapter fAdapter;
@@ -106,7 +107,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
-        fAdapter = new FormAdapter(this, filteredForms, this,db);
+        fAdapter = new FormAdapter(this, filteredForms, this, DBHelper);
         lvForm.setAdapter(fAdapter);
 
         spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -144,6 +145,20 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                 showBottomSheetDialog();
             }
         });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = getIntent();
+        boolean isSuccess = intent.getBooleanExtra("isSuccess", false);
+
+        // Nếu là thông báo thành công, hiển thị Toast
+        if (isSuccess) {
+            Toast.makeText(this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
+        }
+        fAdapter.notifyDataSetChanged();
     }
 
 
@@ -221,7 +236,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 //        fAdapter.notifyDataSetChanged();
     }
 
-    private String formatDateTime(String dateTime) {
+    public static String formatDateTime(String dateTime) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
@@ -325,7 +340,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 //        fAdapter.notifyDataSetChanged();
 //    }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
+    public void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
         filteredForms.clear();
         boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
         boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
@@ -378,7 +393,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean isDateInCurrentWeek(String date) {
+    public  boolean isDateInCurrentWeek(String date) {
         LocalDate inputDate = LocalDate.parse(date,dateFormatter);
         LocalDate today = LocalDate.now();
 
@@ -390,7 +405,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean isDateInPreviousWeek(String date) {
+    public boolean isDateInPreviousWeek(String date) {
         LocalDate inputDate = LocalDate.parse(date,dateFormatter);
         LocalDate today = LocalDate.now();
 
@@ -402,7 +417,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean isDateInCurrentMonth(String date) {
+    public boolean isDateInCurrentMonth(String date) {
 //        LocalDate inputDate = LocalDate.parse(date);
 //        LocalDate today = LocalDate.now();
 //        return today.getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
@@ -415,7 +430,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean isDateInPreviousMonth(String date) {
+    public boolean isDateInPreviousMonth(String date) {
 //        LocalDate inputDate = LocalDate.parse(date);
 //        LocalDate today = LocalDate.now();
 //        return today.minusMonths(1).getMonth() == inputDate.getMonth() && today.getYear() == inputDate.getYear();
@@ -426,7 +441,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean isDateInCurrentYear(String date) {
+    public boolean isDateInCurrentYear(String date) {
 //        LocalDate inputDate = LocalDate.parse(date);
 //        LocalDate today = LocalDate.now();
 //        return today.getYear() == inputDate.getYear();
@@ -438,7 +453,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean isDateInPreviousYear(String date) {
+    public boolean isDateInPreviousYear(String date) {
 //        LocalDate inputDate = LocalDate.parse(date);
 //        LocalDate today = LocalDate.now();
 //        return (today.getYear() - 1) == inputDate.getYear();
@@ -507,7 +522,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     }
 
 
-    private String getMonthNumberFromSpinner(String selectedMonth) {
+    public  String getMonthNumberFromSpinner(String selectedMonth) {
         String[] parts = selectedMonth.split(" ");
         int month = Integer.parseInt(parts[1]);
 

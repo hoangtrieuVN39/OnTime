@@ -1,18 +1,24 @@
 package com.example.on_time;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import com.example.on_time.models.modelsfirebase.Account;
 import com.example.on_time.models.modelsfirebase.Attendance;
@@ -151,46 +157,228 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public SQLiteDatabase getReadableDatabase() {
         return this.getWritableDatabase();
+
     }
 
-//    public void syncDataToFirebaseLR() {
-//        String query = "SELECT * " + "FROM LeaveRequest";
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-//        // Đồng bộ hóa bảng Place
+    public void addLeaveRequest(String leaveTypeName, String employeeID,
+                                String startDate, String startTime,
+                                String endDate, String endTime,
+                                String reason, List<String> approvers) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Sử dụng transaction để đảm bảo tính toàn vẹn
+        db.beginTransaction();
+        try {
+            // 1. Kiểm tra LeaveTypeID từ tên
+            String leaveTypeID = getLeaveTypeIDByName(leaveTypeName);
+            if (leaveTypeID == null) {
+                throw new IllegalArgumentException("Loại nghỉ phép không tồn tại: " + leaveTypeName);
+            }
+
+            // 2. Tạo LeaveID và các giá trị cần thiết
+            String leaveID = generateNewLeaveID();
+            String createdTime = getCurrentDateTime();
+            String leaveStartTime = startDate + " " + startTime;
+            String leaveEndTime = endDate + " " + endTime;
+
+            // 3. Chuẩn bị ContentValues để thêm dữ liệu vào bảng LeaveRequest
+            ContentValues leaveRequestValues = new ContentValues();
+            leaveRequestValues.put("LeaveID", leaveID);
+            leaveRequestValues.put("CreatedTime", createdTime);
+            leaveRequestValues.put("Status", "Chưa phê duyệt");
+            leaveRequestValues.put("LeaveTypeID", leaveTypeID);
+            leaveRequestValues.put("EmployeeID", employeeID);
+            leaveRequestValues.put("LeaveStartTime", leaveStartTime);
+            leaveRequestValues.put("LeaveEndTime", leaveEndTime);
+            leaveRequestValues.put("Reason", reason);
+
+            long leaveRequestResult = db.insert("LeaveRequest", null, leaveRequestValues);
+            if (leaveRequestResult == -1) {
+                throw new Exception("Không thể thêm yêu cầu nghỉ phép vào bảng LeaveRequest.");
+            }
+            Log.d("AddLeaveRequest", "Inserted LeaveRequest successfully: " + leaveID);
+
+            // 4. Thêm từng người phê duyệt vào bảng LeaveRequestApproval
+            for (String approverID : approvers) {
+                String leaveApprovalID = generateNewLeaveApprovalID();
+
+                ContentValues approvalValues = new ContentValues();
+                approvalValues.put("LeaveApprovalID", leaveApprovalID);
+                approvalValues.put("LeaveID", leaveID);
+                approvalValues.put("EmployeeID", approverID);
+                approvalValues.put("Status", "Chưa phê duyệt");
+
+                long approvalResult = db.insert("LeaveRequestApproval", null, approvalValues);
+                if (approvalResult == -1) {
+                    throw new Exception("Không thể thêm người phê duyệt vào bảng LeaveRequestApproval.");
+                }
+                Log.d("AddLeaveRequest", "Inserted approver successfully: " + approverID);
+            }
+
+            // 5. Đánh dấu transaction thành công
+            db.setTransactionSuccessful();
+            Log.d("AddLeaveRequest", "Transaction completed successfully.");
+
+        } catch (Exception e) {
+            Log.e("AddLeaveRequest", "Error while adding leave request", e);
+        } finally {
+            // 6. Kết thúc transaction và đóng database
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+
+
+
+
+//    public void addLeaveRequest(String leaveTypeName, String employeeID,
+//                                String startDate, String startTime,
+//                                String endDate, String endTime,
+//                                String reason, List<String> approvers) {
 //        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery(query, null);
-//
-//        if (cursor.moveToFirst()) {
-//            do {
-//                int LeaveID = cursor.getColumnIndex("LeaveID");
-//                int CreatedTime = cursor.getColumnIndex("CreatedTime");
-//                int Status = cursor.getColumnIndex("Status");
-//                int LeaveTypeID = cursor.getColumnIndex("LeaveTypeID");
-//                int EmployeeID = cursor.getColumnIndex("EmployeeID");
-//                int LeaveStartTime = cursor.getColumnIndex("LeaveStartTime");
-//                int LeaveEndTime = cursor.getColumnIndex("LeaveEndTime");
-//                int Reason = cursor.getColumnIndex("Reason");
 //
 //
-//                if (LeaveID != -1 && CreatedTime != -1 && Status != -1 && LeaveTypeID != -1 && EmployeeID != -1 && LeaveStartTime != -1 && Reason != -1) {
-//                    String leaveRequestID = cursor.getString(LeaveID);
-//                    String createdTime = cursor.getString(CreatedTime);
-//                    String status = cursor.getString(Status);
-//                    String leaveTypeID = cursor.getString(LeaveTypeID);
-//                    String employeeID = cursor.getString(EmployeeID);
-//                    String leaveStartTime = cursor.getString(LeaveStartTime);
-//                    String leaveEndTime = cursor.getString(LeaveEndTime);
-//                    String reason = cursor.getString(Reason);
+//        try {
+//            String leaveID = generateNewLeaveID();
 //
-//                    LeaveRequest lr = new LeaveRequest(leaveRequestID, createdTime, status, leaveTypeID, employeeID, leaveStartTime, leaveEndTime, reason);
-//                    databaseReference.child("leaverequest").child(leaveRequestID).setValue(lr);
-//                }
-//            }while (cursor.moveToNext()) ;
+//            String leaveTypeID = getLeaveTypeIDByName(leaveTypeName);
+//            if (leaveTypeID == null) {
+//                throw new Exception("LeaveType không tồn tại.");
+//            }
+//            String createdTime = getCurrentDateTime();
 //
-//            cursor.close();
+//            String leaveStartTime = startDate + " " + startTime;
+//            String leaveEndTime = endDate + " " + endTime;
+//
+//            String insertLeaveRequest = "INSERT INTO LeaveRequest (LeaveID, CreatedTime, Status, LeaveTypeID, EmployeeID, LeaveStartTime, LeaveEndTime, Reason) " +
+//                    "VALUES (?, ?, 'Chưa phê duyệt', ?, ?, ?, ?, ?)";
+//            db.execSQL(insertLeaveRequest, new String[]{leaveID, createdTime, leaveTypeID, employeeID, leaveStartTime, leaveEndTime, reason});
+//            Log.d("AddLeaveRequest", "Inserted LeaveRequest successfully!");
+//
+//            for (String approverID : approvers) {
+//                String leaveApprovalID = generateNewLeaveApprovalID();
+//                String insertApproval = "INSERT INTO LeaveRequestApproval (LeaveApprovalID, LeaveID, EmployeeID, Status) " +
+//                        "VALUES (?, ?, ?, 'Chưa phê duyệt')";
+//                db.execSQL(insertApproval, new String[]{leaveApprovalID, leaveID, approverID});
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            db.close();
+//        }
+//
+//    }
+
+//    public void addLeaveRequest(String leaveTypeName, String employeeID,
+//                                String startDate, String startTime,
+//                                String endDate, String endTime,
+//                                String reason, List<String> approvers) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//
+//        try {
+//            // 1. Tạo LeaveID mới
+//            String leaveID = generateNewLeaveID();
+//
+//            // 2. Lấy LeaveTypeID từ LeaveTypeName
+//            String leaveTypeID = getLeaveTypeIDByName(leaveTypeName);
+//            if (leaveTypeID == null) {
+//                throw new Exception("LeaveType không tồn tại.");
+//            }
+//
+//            // 3. Ngày hiện tại cho CreatedTime
+//            String createdTime = getCurrentDateTime();
+//
+//            // 4. Ghép nối LeaveStartTime và LeaveEndTime
+//            String leaveStartTime = startDate + " " + startTime;
+//            String leaveEndTime = endDate + " " + endTime;
+//
+//            // 5. Thêm mới bản ghi vào bảng LeaveRequest
+//            ContentValues leaveRequestValues = new ContentValues();
+//            leaveRequestValues.put("LeaveID", leaveID);
+//            leaveRequestValues.put("CreatedTime", createdTime);
+//            leaveRequestValues.put("Status", "Chưa phê duyệt");
+//            leaveRequestValues.put("LeaveTypeID", leaveTypeID);
+//            leaveRequestValues.put("EmployeeID", employeeID);
+//            leaveRequestValues.put("LeaveStartTime", leaveStartTime);
+//            leaveRequestValues.put("LeaveEndTime", leaveEndTime);
+//            leaveRequestValues.put("Reason", reason);
+//
+//            db.insert("LeaveRequest", null, leaveRequestValues);  // Thêm vào bảng LeaveRequest
+//
+//            // 6. Thêm từng người phê duyệt vào bảng LeaveRequestApproval
+//            for (String approverID : approvers) {
+//                String leaveApprovalID = generateNewLeaveApprovalID();
+//                ContentValues approvalValues = new ContentValues();
+//                approvalValues.put("LeaveApprovalID", leaveApprovalID);
+//                approvalValues.put("LeaveID", leaveID);
+//                approvalValues.put("EmployeeID", approverID);
+//                approvalValues.put("Status", "Chưa phê duyệt");
+//
+//                db.insert("LeaveRequestApproval", null, approvalValues);  // Thêm vào bảng LeaveRequestApproval
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            // Có thể thêm việc log lỗi ở đây nếu cần
+//        } finally {
 //            db.close();
 //        }
 //    }
+
+
+    private String generateNewLeaveID() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT LeaveID FROM LeaveRequest ORDER BY LeaveID DESC LIMIT 1";
+        Cursor cursor = db.rawQuery(query, null);
+        String newID = "DT011";  // Giá trị mặc định nếu bảng rỗng
+
+        if (cursor.moveToFirst()) {
+            String lastID = cursor.getString(0);
+            int lastNum = Integer.parseInt(lastID.substring(2));
+            newID = String.format("DT%03d", lastNum + 1);
+        }
+
+        cursor.close();
+        return newID;
+    }
+
+    private String generateNewLeaveApprovalID() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT LeaveApprovalID FROM LeaveRequestApproval ORDER BY LeaveApprovalID DESC LIMIT 1";
+        Cursor cursor = db.rawQuery(query, null);
+        String newID = "LAP011";  // Giá trị mặc định nếu bảng rỗng
+
+        if (cursor.moveToFirst()) {
+            String lastID = cursor.getString(0);
+            int lastNum = Integer.parseInt(lastID.substring(3));
+            newID = String.format("LAP%03d", lastNum + 1);
+        }
+
+        cursor.close();
+        return newID;
+    }
+
+    private String getLeaveTypeIDByName(String leaveTypeName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT LeaveTypeID FROM LeaveType WHERE LeaveTypeName = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{leaveTypeName});
+        String leaveTypeID = null;
+
+        if (cursor.moveToFirst()) {
+            leaveTypeID = cursor.getString(0);
+        }
+
+        cursor.close();
+        return leaveTypeID;
+    }
+
+    private String getCurrentDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        return dateFormat.format(new Date());
+    }
+
 
     public void syncDataToFirebase() {
         List<TableInfo> tables = new ArrayList<>();
