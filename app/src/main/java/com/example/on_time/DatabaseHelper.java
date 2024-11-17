@@ -165,6 +165,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                 String endDate, String endTime,
                                 String reason, List<String> approvers) {
 
+
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Sử dụng transaction để đảm bảo tính toàn vẹn
