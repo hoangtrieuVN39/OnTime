@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.classs.Shift;
+import com.example.checkin.classes.Shift;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
