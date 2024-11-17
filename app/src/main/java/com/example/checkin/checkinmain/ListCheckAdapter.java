@@ -1,6 +1,7 @@
 package com.example.checkin.checkinmain;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.checkin.R;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -51,10 +53,18 @@ public class ListCheckAdapter extends BaseAdapter {
         TextView shift_name = v.findViewById(R.id.shift_name);
         LinearLayout main_lyt = v.findViewById(R.id.main_lyt);
 
+        LinearLayout check_lyt = (LinearLayout) main_lyt.getChildAt(0);
+        ImageView check_icon = check_lyt.findViewById(R.id.icon);
+        TextView check_time_txt = check_lyt.findViewById(R.id.check_time);
+
         if (mCheck.get(i)[2].equals("Bắt đầu") || mCheck.get(i)[2].equals("Kết thúc")) {
             icon.setImageResource(R.drawable.baseline_outlined_flag_24);
         } else {
             icon.setImageResource(R.drawable.baseline_check_24);
+            if (mCheck.get(i)[4].equals("1")) {
+                check_icon.setColorFilter(Color.RED);
+                check_time_txt.setTextColor(Color.RED);
+            }
         }
 
         check_time.setText(mCheck.get(i)[1]);

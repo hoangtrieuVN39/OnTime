@@ -1,6 +1,7 @@
 ﻿-- Bảng Place
 CREATE TABLE Place (
     PlaceID VARCHAR(10) PRIMARY KEY,
+    PlaceName varchar(50),
     Latitude DECIMAL(9, 6), 
     Longitude DECIMAL(9, 6)
 );
@@ -76,9 +77,9 @@ CREATE TABLE LeaveRequestApproval (
 );
 
 -- Thêm dữ liệu mẫu cho bảng Place
-INSERT INTO Place (PlaceID, Latitude, Longitude) VALUES
-('VT001', 16.04590, 108.24151),
-('VT002', 16.04821, 108.23918);
+INSERT INTO Place (PlaceID, PlaceName, Latitude, Longitude) VALUES
+('VT001', 'DHKT', 16.04590, 108.24151),
+('VT002', 'Phòng họp', 16.04821, 108.23918);
 
 
 -- Thêm dữ liệu mẫu cho bảng WorkShift
@@ -142,16 +143,16 @@ INSERT INTO LeaveRequest (LeaveID, CreatedTime, Status, LeaveTypeID, EmployeeID,
 
 -- Thêm dữ liệu mẫu cho bảng Attendance
 INSERT INTO Attendance (AttendanceID, CreatedTime, AttendanceType, EmployeeID, ShiftID, PlaceID, Latitude, Longitude) VALUES
-('AT001', '2024-10-01 08:00:00', 'checkin', 'NV001', 'CA001', 'VT001',  16.04590, 108.24151),
-('AT002', '2024-10-01 12:00:00', 'checkout', 'NV001', 'CA001', 'VT001', 16.04590, 108.24151),
-('AT003', '2024-10-01 13:00:00', 'checkin', 'NV002', 'CA002', 'VT002',  16.04590, 108.24151),
-('AT004', '2024-10-01 17:00:00', 'checkout', 'NV002', 'CA002', 'VT002',  16.04590, 108.24151),
-('AT005', '2024-10-01 08:00:00', 'checkin', 'NV003', 'CA001', 'VT003',  16.04590, 108.24151),
-('AT006', '2024-10-01 12:00:00', 'checkout', 'NV003', 'CA001', 'VT003',  16.04590, 108.24151),
-('AT007', '2024-10-01 13:00:00', 'checkin', 'NV004', 'CA002', 'VT004',  16.04590, 108.24151),
-('AT008', '2024-10-01 17:00:00', 'checkout', 'NV004', 'CA002', 'VT004',  16.04590, 108.24151),
-('AT009', '2024-10-01 08:00:00', 'checkin', 'NV005', 'CA001', 'VT005',  16.04590, 108.24151),
-('AT010', '2024-10-01 12:00:00', 'checkout', 'NV005', 'CA001', 'VT005',  16.04590, 108.24151);
+('AT001', '2024-10-01 08:00:00', 'Check in', 'NV001', 'CA001', 'VT001',  16.04590, 108.24151),
+('AT002', '2024-10-01 12:00:00', 'Check out', 'NV001', 'CA001', 'VT001', 16.04590, 108.24151),
+('AT003', '2024-10-01 13:00:00', 'Check in', 'NV002', 'CA002', 'VT002',  16.04590, 108.24151),
+('AT004', '2024-10-01 17:00:00', 'Check out', 'NV002', 'CA002', 'VT002',  16.04590, 108.24151),
+('AT005', '2024-10-01 08:00:00', 'Check in', 'NV003', 'CA001', 'VT003',  16.04590, 108.24151),
+('AT006', '2024-10-01 12:00:00', 'Check out', 'NV003', 'CA001', 'VT003',  16.04590, 108.24151),
+('AT007', '2024-10-01 13:00:00', 'Check in', 'NV004', 'CA002', 'VT004',  16.04590, 108.24151),
+('AT008', '2024-10-01 17:00:00', 'Check out', 'NV004', 'CA002', 'VT004',  16.04590, 108.24151),
+('AT009', '2024-10-01 08:00:00', 'Check in', 'NV005', 'CA001', 'VT005',  16.04590, 108.24151),
+('AT010', '2024-10-01 12:00:00', 'Check out', 'NV005', 'CA001', 'VT005',  16.04590, 108.24151);
 
 -- Thêm dữ liệu mẫu cho bảng LeaveRequestApproval
 INSERT INTO LeaveRequestApproval (LeaveApprovalID, LeaveID, EmployeeID, Status) VALUES

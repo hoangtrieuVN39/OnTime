@@ -9,7 +9,8 @@ import android.widget.ListView;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.classs.Shift;
+import com.example.checkin.Utils;
+import com.example.checkin.classes.Shift;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,15 +79,26 @@ public class ListShiftCheckAdapter extends BaseAdapter {
 
         List<String[]> checkList = getListCheck(date, shift, employee);
 
-        String[] check = new String[]{"Check", shift.getShift_time_start(), "Check in", "0"};
-        String[] check2 = new String[]{"Check", shift.getShift_time_end(), "Check out", "0"};
+        String[] check = new String[]{"Check", shift.getShift_time_start(), "Check in", "0", "0"};
+        String[] check2 = new String[]{"Check", shift.getShift_time_end(), "Check out", "0", "0"};
 
         for (int i = 0; i < checkList.size(); i++) {
+            SimpleDateFormat sdff = new SimpleDateFormat("HH:mm:ss");
+            Date date1 = sdff.parse(checkList.get(i)[0]);
+
             if (checkList.get(i)[1].equals("Check in")) {
-                check = new String[]{"Check", checkList.get(i)[0], "Check in", "1"};
+                check = new String[]{"Check", checkList.get(i)[0], "Check in", "1", "0"};
+                Date date2 = sdff.parse(shift.getShift_time_start());
+                if (Utils.isLate(date1, date2)){
+                    check[4] = "1";
+                }
             }
             if (checkList.get(i)[1].equals("Check out")) {
-                check2 = new String[]{"Check", checkList.get(i)[0], "Check out", "1"};
+                check2 = new String[]{"Check", checkList.get(i)[0], "Check out", "1", "0"};
+                Date date2 = sdff.parse(shift.getShift_time_end());
+                if (Utils.isEarly(date1, date2)){
+                    check2[4] = "1";
+                }
             }
         }
 

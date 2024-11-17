@@ -38,7 +38,8 @@ android {
 	}
 	buildFeatures {
 		compose = true
-	}
+        viewBinding = true
+    }
 	composeOptions {
 		kotlinCompilerExtensionVersion = "1.5.1"
 	}
@@ -61,6 +62,12 @@ dependencies {
 	implementation(libs.play.services.location)
 	implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.androidx.navigation.fragment.ktx)
+	implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
     testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)

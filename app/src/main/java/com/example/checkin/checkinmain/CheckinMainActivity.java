@@ -1,5 +1,7 @@
 package com.example.checkin.checkinmain;
 
+import static java.lang.String.join;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -9,15 +11,17 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -26,28 +30,24 @@ import androidx.core.content.ContextCompat;
 import com.example.checkin.ActivityBase;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.classs.Attendance;
-import com.example.checkin.classs.Shift;
+import com.example.checkin.classes.Place;
+import com.example.checkin.classes.Shift;
 import com.example.checkin.Utils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -59,26 +59,35 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
     private GoogleMap gMap;
     FusedLocationProviderClient fusedLocationProviderClient;
     Location clocation;
+    SupportMapFragment mapFragment;
+    LocationRequest mLocationRequest;
 
     DatabaseHelper dbHelper;
 
     Date current = new Date();
+    Place cPlace;
+    double distance;
+    boolean isCheckedIn = false;
     public static List<Shift> shifts;
+    public static List<Place> places;
+
+    Context context;
+
     Shift currentshift;
     TextView currentshift_txt;
     TextView currenttime_txt;
     TextView checkin_txt;
     TextView currentdate_txt;
-    boolean isCheckedIn = false;
+    TextView currentplace_txt;
+    TextView currentdis;
+    LinearLayout check_btn;
+    LinearLayout requestLocationLayout;
 
     String employeeID = "NV003";
-    LinearLayout requestLocationButton;
+    CheckInvalidDialog checkInvalidDialog;
 
-    private Runnable uiTimeUpdateRunnable;
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
-
-    SupportMapFragment mapFragment;
-    LocationRequest mLocationRequest;
+    private Runnable uiUpdateRunnable;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -86,94 +95,129 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkinmain_layout);
 
+        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.checkinMain);
+
         try {
             dbHelper = new DatabaseHelper(this, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        requestLocationButton = findViewById(R.id.request_btn_layout);
-        requestLocationButton.setVisibility(View.VISIBLE);
+        requestLocationLayout = findViewById(R.id.request_btn_layout);
+        requestLocationLayout.setVisibility(View.VISIBLE);
+
         checkin_txt = findViewById(R.id.checkin_txt);
         currentshift_txt = findViewById(R.id.currentshift_txt);
         currenttime_txt = findViewById(R.id.currenttime_txt);
         currentdate_txt = findViewById(R.id.currentdate_txt);
+        currentplace_txt = findViewById(R.id.place_txt);
+        currentdis = findViewById(R.id.currentdis_txt);
 
         Switch sw = findViewById(R.id.map_sw);
         sw.setOnCheckedChangeListener(this::switchMap);
 
-        LinearLayout check_btn = findViewById(R.id.checkin_btn);
+        check_btn = findViewById(R.id.checkin_btn);
 
-        loadShiftsInBackground();
+        loadInBackground();
 
-        uiTimeUpdateRunnable = () -> {
-            current = new Date();
+        uiUpdateRunnable = () -> {
             try {
+                current = new Date();
+                context = this;
                 List ret = Utils.isCheckedInAndCurrentShift(employeeID, dbHelper, current, shifts);
                 isCheckedIn = (boolean) ret.get(1);
                 currentshift = (Shift) ret.get(0);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                if (currentshift != null){
-                    if (isCheckedIn){
-                        check_btn.setBackgroundResource(R.drawable.checkout_btn);
-                        checkin_txt.setText("Check out");
-                    }
-                    else {
-                        check_btn.setBackgroundResource(R.drawable.checkin_btn);
-                        checkin_txt.setText("Check in");
-                    }
-                    check_btn.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                                check_btn.setElevation(0);
-                                check_btn.setTranslationZ(0);
-                                return true;
-                            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                                check_btn.setElevation(10);
-                                check_btn.setTranslationZ(5);
-                                try {
-                                    onCheckBtnClicked();
-                                } catch (ParseException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                return true;
-                            }
-                            return false;
-                        }});
-                }
-                else {
-                    check_btn.setBackgroundColor(Color.parseColor("#EEEFF2"));
-                    checkin_txt.setText("Chưa có ca làm");
-                    check_btn.setOnTouchListener(null);
+                cPlace = Utils.getCurrentPlace(places, clocation);
+                distance = Utils.getDisPlace(cPlace, clocation);
+
+                setCheck_btn();
+
+                currentdis.setText(String.format("Ngoài vị trí %.0f m", distance));
+
+                LinearLayout currentdis_layout = findViewById(R.id.currentdis_layout);
+                ImageView view = (ImageView) currentdis_layout.getChildAt(0);
+                TextView txt = (TextView) currentdis_layout.getChildAt(2);
+                if (Utils.isLocationValid(distance)){
+                    view.setColorFilter(Color.GREEN);
+                    txt.setTextColor(Color.GREEN);
+                } else {
+                    view.setColorFilter(Color.RED);
+                    txt.setTextColor(Color.RED);
                 }
 
-//                currentshift = currentShift();
+                currentplace_txt.setText(cPlace.getPlaceName());
                 currentshift_txt.setText(currentshift.getShift_name());
-                currentdate_txt.setText(currentDate());
+                currentdate_txt.setText(Utils.currentDate(current));
                 currenttime_txt.setText(new SimpleDateFormat("HH:mm:ss").format(current.getTime()));
 
             } catch (Exception e) {
+                Log.e("Error", e.getMessage() + join("\r\n", Arrays.toString(e.getStackTrace())));
             }
-            uiHandler.postDelayed(uiTimeUpdateRunnable, 1000); // Update every 1000ms (1 second)
+            uiHandler.postDelayed(uiUpdateRunnable, 1000);
         };
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+        ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            requestLocationLayout.setVisibility(View.INVISIBLE);
             onCreateMap();
-            requestLocationButton.setVisibility(View.INVISIBLE);
         }
         else {
             Button requestLocationButton = findViewById(R.id.request_btn);
             requestLocationButton.setOnClickListener((l)->{
                 requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                onCreateMap();
             });
         }
-        uiHandler.post(uiTimeUpdateRunnable);
 
-
+        uiHandler.post(uiUpdateRunnable);
     }
+
+    private void setCheck_btn(){
+        if (currentshift != null){
+            if (Utils.isLocationValid(distance)){
+                if (isCheckedIn) {
+                    check_btn.setBackgroundResource(R.drawable.checkout_btn);
+                    checkin_txt.setText("Check out");
+                }
+                else {
+                    check_btn.setBackgroundResource(R.drawable.checkin_btn);
+                    checkin_txt.setText("Check in");
+                }
+                check_btn.setOnTouchListener(CheckBtnListener);
+            }
+            else {
+                check_btn.setBackgroundResource(R.drawable.checkfailed_btn);
+                checkin_txt.setText("Vị trí không hợp lệ");
+                check_btn.setOnTouchListener(null);
+            }
+        }
+        else {
+            check_btn.setBackgroundResource(R.drawable.checkfailed_btn);
+            checkin_txt.setText("Chưa có ca làm");
+            check_btn.setOnTouchListener(null);
+        }
+    }
+
+    private View.OnTouchListener CheckBtnListener = new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    check_btn.setElevation(0);
+                    check_btn.setTranslationZ(0);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    check_btn.setElevation(10);
+                    check_btn.setTranslationZ(5);
+                    try {
+                        onCheckBtnClicked();
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return true;
+                }
+                return false;
+            }
+    };
 
     private void onCheckBtnClicked() throws ParseException {
         List<String> latest = dbHelper.getLast("Attendance", null, new String[]{"AttendanceID", "ShiftID"});
@@ -182,61 +226,21 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
         String attendanceID = "CC"+String.format("%03d", newID);
         String attendanceTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current.getTime());
         String attendanceType;
-        Shift attShift = currentshift;
 
         if (isCheckedIn){
-//            attShift = Utils.getShift(latest.get(1).toString());
             attendanceType = "Check out";
         }
         else {
             attendanceType = "Check in";
         }
-        String[] insert = {attendanceID, attendanceTime, "Complete", attendanceType, "", employeeID, attShift.getShift_id()};
+        String[] insert = {attendanceID, attendanceTime, attendanceType, employeeID, currentshift.getShift_id(), cPlace.getPlaceID(), clocation.getLatitude() + "", clocation.getLongitude() + ""};
         for (int i = 0; i < insert.length; i++){
             insert[i] = '"' + insert[i] + '"';
         }
         dbHelper.insertDataHandler("Attendance", null, insert);
 
-        loadShiftsInBackground();
+        loadInBackground();
     }
-
-    private String currentDate() {
-        String currentDate = new SimpleDateFormat("dd/MM/yyyy").format(current.getTime());
-        String dateOfWeek = new SimpleDateFormat("EEEE").format(current.getTime());
-        String DOW;
-        if (dateOfWeek.equals("Monday")) {
-            DOW = "Thứ 2";
-        } else if (dateOfWeek.equals("Tuesday")) {
-            DOW = "Thứ 3";
-        } else if (dateOfWeek.equals("Wednesday")) {
-            DOW = "Thứ 4";
-        } else if (dateOfWeek.equals("Thursday")) {
-            DOW = "Thứ 5";
-        } else if (dateOfWeek.equals("Friday")) {
-            DOW = "Thứ 6";
-        } else if (dateOfWeek.equals("Saturday")) {
-            DOW = "Thứ 7";
-        } else {
-            DOW = "Chủ nhật";
-        }
-
-        return DOW += ", " + currentDate;
-    }
-
-//    private Shift currentShift() throws ParseException {
-//        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-//        String ctime = sdf.format(current.getTime());
-//
-//        Date d1 = sdf.parse(ctime);
-//
-//        for (Shift shift : shifts) {
-//            Date d2 = sdf.parse(shift.getShift_time_end());
-//            if (d2.getTime() - d1.getTime() >= 0) {
-//                return shift;
-//            }
-//        }
-//        return null;
-//    }
 
     private void switchMap(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
@@ -253,25 +257,12 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
         lvShift.setAdapter(shiftAdapter);
     }
 
-    private ArrayList<Shift> getListShift() throws IOException {
-        ArrayList<Shift> shiftList = new ArrayList<>();
-
-        List<List> table = dbHelper.loadDataHandler("WorkShift", null, null);
-
-        for (int i = 0; i < table.size(); i++) {
-            Shift shift = new Shift(table.get(i).get(0).toString(), table.get(i).get(1).toString(), table.get(i).get(2).toString(), table.get(i).get(3).toString());
-            shiftList.add(shift);
-        }
-
-        return shiftList;
-    }
-
-
     private void loadShiftsInBackground() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             try {
-                shifts = getListShift();
+                shifts = Utils.getListShift(dbHelper);
+
                 runOnUiThread(() -> {
                     try {
                         onCreateListCheck();
@@ -282,18 +273,44 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
             }
         });
     }
+    private void loadInBackground() {
+        loadShiftsInBackground();
+        loadPlacesInBackground();
+        setCheck_btn();
+    }
+
+    private void loadPlacesInBackground() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            places = Utils.getListPlace(dbHelper);
+            runOnUiThread(() -> {
+                    for (Place place: places){
+                        try {
+                            gMap.addMarker(
+                                    new com.google.android.gms.maps.model.MarkerOptions().position(
+                                            new LatLng(
+                                                    place.getLat(),
+                                                    place.getLng()))
+                            );
+                        } catch (Exception e){
+
+                        }
+                    }
+                }
+            );
+        });
+    }
 
     private void onCreateMap() {
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(15000);
         mLocationRequest.setFastestInterval(10000);
@@ -311,12 +328,9 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
             super.onLocationResult(locationResult);
-            Location lastLocation = locationResult.getLastLocation();
-            if (lastLocation != null) {
-                clocation = lastLocation;
-                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), 19));
-                requestLocationButton.setVisibility(View.INVISIBLE);
-            }
+            clocation = locationResult.getLastLocation();
+            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(clocation.getLatitude(), clocation.getLongitude()), 19));
+            requestLocationLayout.setVisibility(View.INVISIBLE);
         }
     };
 
