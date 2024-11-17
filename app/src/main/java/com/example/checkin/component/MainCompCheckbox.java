@@ -15,8 +15,8 @@ public class MainCompCheckbox extends AppCompatImageView {
 
     private int borderColorUnchecked = Color.parseColor("#CDCFD0");
     private int borderColorChecked = Color.TRANSPARENT;
-    private int fillColorChecked = Color.parseColor("#4367FC");
-    private int fillColorUnchecked = Color.WHITE;
+    private final int fillColorChecked = Color.parseColor("#4367FC");
+    private final int fillColorUnchecked = Color.WHITE;
 
     public MainCompCheckbox(Context context) {
         super(context);

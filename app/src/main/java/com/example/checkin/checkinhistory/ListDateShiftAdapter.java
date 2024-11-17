@@ -13,8 +13,8 @@ import com.example.checkin.R;
 import java.util.List;
 
 public class ListDateShiftAdapter extends BaseAdapter {
-    private List<String[]> shifts;
-    private Context context;
+    private final List<String[]> shifts;
+    private final Context context;
 
     public ListDateShiftAdapter(Context context, List<String[]> shifts) {
         this.shifts = shifts;

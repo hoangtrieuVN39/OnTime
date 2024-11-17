@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.classes.Shift;
+import com.example.checkin.models.classes.Shift;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,11 +19,11 @@ import java.util.Date;
 import java.util.List;
 
 public class ListDateAdapter extends BaseAdapter {
-    private List<Date> dates;
-    private Context context;
-    private DatabaseHelper dbHelper;
-    private List<Shift> listShift;
-    private String employee;
+    private final List<Date> dates;
+    private final Context context;
+    private final DatabaseHelper dbHelper;
+    private final List<Shift> listShift;
+    private final String employee;
 
     public ListDateAdapter(Context context, List<Date> dates, DatabaseHelper dbHelper, List<Shift> listShift, String employee) {
         this.dates = dates;
@@ -128,7 +128,7 @@ public class ListDateAdapter extends BaseAdapter {
                     dateFormat(table.get(i).get(0).toString(), "yyyy-MM-dd HH:mm:ss", "HH:mm:ss"),
                     table.get(i).get(1).toString()
             });
-        };
+        }
 
         return checkList;
     }

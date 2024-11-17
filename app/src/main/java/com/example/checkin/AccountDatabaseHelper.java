@@ -7,7 +7,7 @@ import android.content.ContentValues;
 
 public class AccountDatabaseHelper {
 
-    private SQLiteDatabase db;
+    private final SQLiteDatabase db;
 
     public AccountDatabaseHelper(SQLiteDatabase database) {
         this.db = database;

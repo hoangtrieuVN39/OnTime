@@ -18,7 +18,7 @@ public class MainCompBtn extends androidx.appcompat.widget.AppCompatButton {
     private int buttonType;
 
     // Màu trước khi nhấn
-    private int[] buttonColors = {
+    private final int[] buttonColors = {
             Color.parseColor("#FBCC08"),
             Color.parseColor("#EEEFF2"),
             Color.parseColor("#FFFFFF"),
@@ -26,7 +26,7 @@ public class MainCompBtn extends androidx.appcompat.widget.AppCompatButton {
     };
 
     // Màu viền nút
-    private int[] borderColors = {
+    private final int[] borderColors = {
             Color.parseColor("#FBCC08"),
             Color.parseColor("#EEEFF2"),
             Color.parseColor("#BB1B1B"),
@@ -34,7 +34,7 @@ public class MainCompBtn extends androidx.appcompat.widget.AppCompatButton {
     };
 
     // Màu sau khi nhấn
-    private int[] clickColors = {
+    private final int[] clickColors = {
             Color.parseColor("#D9AF03"),
             Color.parseColor("#C2C7D1"),
             Color.parseColor("#FFFFFF"),
@@ -42,7 +42,7 @@ public class MainCompBtn extends androidx.appcompat.widget.AppCompatButton {
     };
 
     // Màu viền sau khi nhấn
-    private int[] clickBorderColors = {
+    private final int[] clickBorderColors = {
             Color.parseColor("#D9AF03"),
             Color.parseColor("#C2C7D1"),
             Color.parseColor("#F4AFAF"),

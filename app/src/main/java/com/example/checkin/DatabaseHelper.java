@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String DATABASE_PATH = "";
     private static final String DATABASE_NAME = "dbase.db";
 
-    private Context context;
+    private final Context context;
     SQLiteDatabase mDatabase;
 
     public DatabaseHelper(Context context, SQLiteDatabase.CursorFactory factory) throws IOException {
@@ -200,7 +200,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query += " WHERE " + FILTER;
         }
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null).;
+        Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             for (int i = 0; i < cursor.getColumnCount(); i++) {
                 results.add(cursor.getString(i));

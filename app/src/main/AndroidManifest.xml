@@ -14,35 +14,37 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.Checkin"
         tools:targetApi="31">
 
-        <activity android:name=".login_register.LoginMain"
+        <activity android:name="com.example.checkin.login_register.LoginMain"
             android:exported="true">
+        </activity>
+
+        <activity android:name="com.example.checkin.login_register.RegisterMain">
+
+        </activity>
+
+        <activity
+            android:name="com.example.checkin.checkinmain.CheckinMainActivity"
+            android:exported="true"
+            android:label="@string/title_activity_main"
+            android:foregroundServiceType="location"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".login_register.RegisterMain">
-
-        </activity>
-
-        <activity
-            android:name=".checkinmain.CheckinMainActivity"
-            android:exported="true"
-            android:label="@string/title_activity_main"
-            android:foregroundServiceType="location"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
-        <activity android:name=".activity.CreateFormActivity"/>
-        <activity android:name=".activity.AllFormListActivity"/>
-        <activity android:name=".activity.FormListApproveActivity"/>
+        <activity android:name="com.example.checkin.checkinhistory.CheckinHistoryActivity"/>
+        <activity android:name="com.example.checkin.leave.formcreate.FormCreateActivity"/>
+        <activity android:name="com.example.checkin.leave.formlist.FormListActivity"/>
+        <activity android:name="com.example.checkin.leave.formapprove.FormApproveActivity"/>
+        <activity android:name="com.example.checkin.leave.formpersonal.FormPersonalActivity"/>
 
     </application>
 

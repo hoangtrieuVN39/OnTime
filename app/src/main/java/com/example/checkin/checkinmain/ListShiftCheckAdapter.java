@@ -10,7 +10,7 @@ import android.widget.ListView;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
-import com.example.checkin.classes.Shift;
+import com.example.checkin.models.classes.Shift;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -133,7 +133,7 @@ public class ListShiftCheckAdapter extends BaseAdapter {
                     sdff.format(sdf.parse(table.get(i).get(0).toString())),
                     table.get(i).get(1).toString()
             });
-        };
+        }
 
         return checkList;
     }

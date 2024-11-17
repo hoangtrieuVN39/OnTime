@@ -8,7 +8,8 @@
         android:id="@+id/checkinHistory"
         android:icon="@drawable/history"
         android:title="Lịch sử" />
-<!--    <item-->
-<!--        android:id="@+id/navigation_leave"-->
-<!--        android:title="Đơn từ" />-->
+    <item
+        android:id="@+id/leave"
+        android:icon="@drawable/leave"
+        android:title="Đơn từ" />
 </menu>

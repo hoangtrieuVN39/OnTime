@@ -9,8 +9,9 @@ import androidx.annotation.NonNull;
 
 import com.example.checkin.checkinhistory.CheckinHistoryActivity;
 import com.example.checkin.checkinmain.CheckinMainActivity;
-import com.example.checkin.classes.Place;
-import com.example.checkin.classes.Shift;
+import com.example.checkin.leave.formpersonal.FormPersonalActivity;
+import com.example.checkin.models.classes.Place;
+import com.example.checkin.models.classes.Shift;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -132,8 +133,8 @@ public class Utils {
             Double D = Utils.getDistance(
                     clocation.getLatitude(),
                     clocation.getLongitude(),
-                    place.getLat(),
-                    place.getLng());
+                    place.getLatitude(),
+                    place.getLongitude());
             if (minD == 0.0){
                 minD = D;
                 cPlace = place;
@@ -151,8 +152,8 @@ public class Utils {
     public static float getDisPlace(Place place, Location clocation) {
         float lat1 = (float) clocation.getLatitude();
         float lon1 = (float) clocation.getLongitude();
-        float lat2 = (float) place.getLat();
-        float lon2 = (float) place.getLng();
+        float lat2 = (float) place.getLatitude();
+        float lon2 = (float) place.getLongitude();
         float[] results = new float[1];
         Location.distanceBetween(lat1, lon1, lat2, lon2, results);
         return results[0];
@@ -198,6 +199,11 @@ public class Utils {
                 else if (item.getItemId() == R.id.checkinHistory)
                 {
                     context.startActivity(new Intent(context, CheckinHistoryActivity.class));
+                    return true;
+                }
+                else if (item.getItemId() == R.id.leave)
+                {
+                    context.startActivity(new Intent(context, FormPersonalActivity.class));
                     return true;
                 }
                 return false;

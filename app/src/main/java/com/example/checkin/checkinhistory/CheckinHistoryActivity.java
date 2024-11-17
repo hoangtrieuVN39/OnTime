@@ -1,6 +1,5 @@
 package com.example.checkin.checkinhistory;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,7 +9,7 @@ import com.example.checkin.ActivityBase;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
-import com.example.checkin.classes.Shift;
+import com.example.checkin.models.classes.Shift;
 import com.google.android.material.chip.ChipGroup;
 
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class CheckinHistoryActivity extends ActivityBase {
 
         runCheckReloadBackground(executor, filterChips.getCheckedChipId());
         filterChips.setOnCheckedStateChangeListener((group, checkedIds) -> runCheckReloadBackground(executor, filterChips.getCheckedChipId()));
-    };
+    }
 
     private void runCheckReloadBackground(ExecutorService executor, int filterid){
         executor.execute(() -> {
