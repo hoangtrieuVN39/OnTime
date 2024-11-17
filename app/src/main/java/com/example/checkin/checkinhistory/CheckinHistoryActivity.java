@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 public class CheckinHistoryActivity extends ActivityBase {
 
     DatabaseHelper dbHelper;
-    ExecutorService executor = Executors.newSingleThreadExecutor();
+    ExecutorService executor;
     ListView lvShift;
 
     @Override
@@ -34,7 +34,7 @@ public class CheckinHistoryActivity extends ActivityBase {
 
         Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.checkinHistory);
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor = Executors.newSingleThreadExecutor();
 
         try {
             dbHelper = new DatabaseHelper(this, null);
