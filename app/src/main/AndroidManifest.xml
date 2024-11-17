@@ -13,17 +13,18 @@
         android:theme="@style/Theme.On_Time"
         tools:targetApi="31">
         <activity
-            android:name=".activity.FormListActivity"
+            android:name="com.example.on_time.activity.FormListActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.On_Time">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.CreateFormActivity" />
+        <activity android:name=".activity.CreateFormActivity"/>
+        <activity android:name=".activity.AllFormListActivity"/>
+        <activity android:name=".activity.FormListApproveActivity"/>
 
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
