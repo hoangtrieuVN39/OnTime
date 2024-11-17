@@ -6,13 +6,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-
+import com.example.checkin.ActivityBase;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.classs.Shift;
+import com.example.checkin.Utils;
+import com.example.checkin.classes.Shift;
 import com.google.android.material.chip.ChipGroup;
 
 import java.io.IOException;
@@ -23,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CheckinHistoryActivity extends Activity {
+public class CheckinHistoryActivity extends ActivityBase {
 
     DatabaseHelper dbHelper;
     ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -33,6 +31,8 @@ public class CheckinHistoryActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkinhistory_layout);
+
+        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.checkinHistory);
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
 

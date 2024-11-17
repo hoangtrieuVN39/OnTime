@@ -1,4 +1,4 @@
-package com.example.checkin.classs;
+package com.example.checkin.classes;
 
 public class Place {
     String PlaceID;

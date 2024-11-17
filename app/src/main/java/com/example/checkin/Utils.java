@@ -1,15 +1,18 @@
 package com.example.checkin;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
-import android.widget.Toast;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+
+import com.example.checkin.checkinhistory.CheckinHistoryActivity;
 import com.example.checkin.checkinmain.CheckinMainActivity;
-import com.example.checkin.classs.Attendance;
-import com.example.checkin.classs.Place;
-import com.example.checkin.classs.Shift;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
+import com.example.checkin.classes.Place;
+import com.example.checkin.classes.Shift;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -180,5 +183,25 @@ public class Utils {
             placeList.add(place);
         }
         return placeList;
+    }
+
+    public static void onCreateNav(Context context, BottomNavigationView bottomNavigation, int selected){
+        bottomNavigation.setSelectedItemId(selected);
+        bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.checkinMain)
+                {
+                    context.startActivity(new Intent(context, CheckinMainActivity.class));
+                    return true;
+                }
+                else if (item.getItemId() == R.id.checkinHistory)
+                {
+                    context.startActivity(new Intent(context, CheckinHistoryActivity.class));
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 }

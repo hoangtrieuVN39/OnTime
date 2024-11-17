@@ -10,7 +10,7 @@ import android.widget.ListView;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
-import com.example.checkin.classs.Shift;
+import com.example.checkin.classes.Shift;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 public class ListShiftCheckAdapter extends BaseAdapter {

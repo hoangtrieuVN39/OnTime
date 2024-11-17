@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/checkinMain"
+        android:icon="@drawable/checkin"
+        android:title="Chấm công" />
+    <item
+        android:id="@+id/checkinHistory"
+        android:icon="@drawable/history"
+        android:title="Lịch sử" />
+<!--    <item-->
+<!--        android:id="@+id/navigation_leave"-->
+<!--        android:title="Đơn từ" />-->
+</menu>

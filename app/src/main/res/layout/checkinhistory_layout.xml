@@ -1,79 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:orientation="vertical"
-    android:padding="12dp">
+    android:orientation="vertical">
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chips"
+    <LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:clipChildren="false"
-        app:checkedChip="@id/thisweek_chip"
-        app:selectionRequired="true"
-        app:singleLine="true"
-        app:singleSelection="true">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/thisweek_chip"
-            style="@style/Theme.Checkin.Chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tuần này" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/lastweek_chip"
-            style="@style/Theme.Checkin.Chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tuần trước" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/thismonth_chip"
-            style="@style/Theme.Checkin.Chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tháng này" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/lastmonht_chip"
-            style="@style/Theme.Checkin.Chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tháng trước" />
-
-    </com.google.android.material.chip.ChipGroup>
-
-    <ScrollView
-        android:id="@+id/rj82hylhmngm"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/roundyellow"
-        android:clipToPadding="false"
-        android:paddingHorizontal="8dp"
-        android:paddingTop="8dp"
-        android:scrollbarSize="0dp">
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:padding="12dp">
 
-        <LinearLayout
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chips"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:clipChildren="false"
+            app:checkedChip="@id/thisweek_chip"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true">
 
-            <com.example.checkin.ShowAllListView
-                android:id="@+id/date_lv"
-                android:layout_width="match_parent"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/thisweek_chip"
+                style="@style/Theme.Checkin.Chip"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:divider="@drawable/space_8" />
+                android:text="Tuần này" />
 
-        </LinearLayout>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/lastweek_chip"
+                style="@style/Theme.Checkin.Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tuần trước" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/thismonth_chip"
+                style="@style/Theme.Checkin.Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tháng này" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/lastmonht_chip"
+                style="@style/Theme.Checkin.Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tháng trước" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <ScrollView
+            android:id="@+id/rj82hylhmngm"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/roundyellow"
+            android:clipToPadding="false"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:scrollbarSize="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.example.checkin.ShowAllListView
+                    android:id="@+id/date_lv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:divider="@drawable/space_8" />
+
+            </LinearLayout>
 
 
-    </ScrollView>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:theme="@style/NavBar"
+        app:menu="@menu/navigation_menu" />
+
 </LinearLayout>
