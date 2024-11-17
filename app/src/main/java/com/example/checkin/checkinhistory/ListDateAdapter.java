@@ -54,7 +54,7 @@ public class ListDateAdapter extends BaseAdapter {
         View v = inf.inflate(R.layout.date_layout, null);
 
         TextView date_txt = v.findViewById(R.id.date);
-        TextView work_count_txt = v.findViewById(R.id.workcount_txt);
+        TextView work_count_txt = v.findViewById(R.id.wordcount_txt);
         ListView shift_lv = v.findViewById(R.id.shift_lv);
 
         Double work_per_shift = 1.0;

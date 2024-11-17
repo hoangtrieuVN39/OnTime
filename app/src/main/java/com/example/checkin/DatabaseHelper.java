@@ -1,11 +1,13 @@
 package com.example.checkin;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -172,6 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (FILTER != null) {
             query += " WHERE " + FILTER;
         }
+        return results;
     }
 
     public boolean checkAccountExists(String email) {
@@ -196,20 +199,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (FILTER != null) {
             query += " WHERE " + FILTER;
         }
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null).;
+        if (cursor.moveToFirst()) {
+            for (int i = 0; i < cursor.getColumnCount(); i++) {
+                results.add(cursor.getString(i));
+            }
+        }
         return results;
     }
 
-    public boolean checkLogin(String email, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM Account WHERE Email = ? AND Passwordd = ?";
-        String[] selectionArgs = {email, password};
+    public List getUser(String email, String password) {
 
-        Cursor cursor = db.rawQuery(query, selectionArgs);
-        boolean isValidUser = cursor.getCount() > 0;
-        cursor.close();
-        db.close();
-
-        return isValidUser;
+        List User = getFirst("Account", "Email = '"+ email +"' AND Password = '"+ password +"'", new String[]{"EmployeeID"});
+        System.out.println(User);
+        if (User.size() > 0) {
+            return User;
+        }
+        return null;
     }
 
     public boolean addAccount(String fullName, String email, String password) {

@@ -21,16 +21,26 @@
         android:roundIcon="@drawable/logo_vert"
         android:supportsRtl="true"
         tools:targetApi="31">
+
+        <activity android:name=".login_register.LoginMain"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".login_register.RegisterMain">
+
+        </activity>
+
         <activity
             android:name=".checkinmain.CheckinMainActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:foregroundServiceType="location"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
         <meta-data

@@ -13,8 +13,10 @@ import android.widget.Toast;
 
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
+import com.example.checkin.checkinmain.CheckinMainActivity;
 
 import java.io.IOException;
+import java.util.List;
 
 public class LoginMain extends Activity {
 
@@ -71,10 +73,13 @@ public class LoginMain extends Activity {
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                if (databaseHelper.checkLogin(email, password)) {
+                List User = databaseHelper.getUser(email, password);
+
+                if (User != null) {
                     Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                    // Intent intent = new Intent(LoginMain.this, MainActivity.class);
-                    // startActivity(intent);
+                     Intent intent = new Intent(LoginMain.this, CheckinMainActivity.class);
+                     intent.putExtra("EmployeeID", (String) User.get(0));
+                     startActivity(intent);
                 } else {
                     Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
                 }

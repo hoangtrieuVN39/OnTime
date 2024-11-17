@@ -97,6 +97,8 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
 
         Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.checkinMain);
 
+        employeeID = getIntent().getStringExtra("EmployeeID");
+
         try {
             dbHelper = new DatabaseHelper(this, null);
         } catch (IOException e) {
