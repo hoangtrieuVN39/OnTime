@@ -81,7 +81,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         setListMonth();
         setListStatus();
 
-
         try {
             DBHelper = new DatabaseHelper(this, null);
             db = DBHelper.getWritableDatabase();
@@ -103,7 +102,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
         msAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spThang.setAdapter(msAdapter);
-
 
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
