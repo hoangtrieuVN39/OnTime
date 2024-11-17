@@ -365,13 +365,14 @@
                     android:orientation="horizontal">
 
                     <!-- Icon tròn hoàn tất phê duyệt -->
+
+                    <!-- TextView Hoàn tất phê duyệt -->
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/radio_button_checked"
-                        android:contentDescription="Complete Approval" />
+                        android:contentDescription="Complete Approval"
+                        android:src="@drawable/radio_button_checked" />
 
-                    <!-- TextView Hoàn tất phê duyệt -->
                     <TextView
                         android:id="@+id/complete_approval_text"
                         android:layout_width="wrap_content"
