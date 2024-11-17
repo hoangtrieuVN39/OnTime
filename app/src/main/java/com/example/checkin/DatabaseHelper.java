@@ -1,11 +1,13 @@
 package com.example.checkin;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -172,6 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (FILTER != null) {
             query += " WHERE " + FILTER;
         }
+        return results;
     }
 
     public boolean checkAccountExists(String email) {
