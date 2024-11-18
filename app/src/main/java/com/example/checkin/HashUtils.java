@@ -20,5 +20,10 @@ public class HashUtils {
             return null;
         }
     }
+
+    public static boolean checkPassword(String plainPassword, String hashedPassword) {
+        return hashPassword(plainPassword).equals(hashedPassword);
+    }
 }
+
 
