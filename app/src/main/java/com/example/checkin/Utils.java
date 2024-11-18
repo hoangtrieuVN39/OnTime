@@ -1,8 +1,12 @@
 package com.example.checkin;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -10,17 +14,30 @@ import androidx.annotation.NonNull;
 import com.example.checkin.checkinhistory.CheckinHistoryActivity;
 import com.example.checkin.checkinmain.CheckinMainActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
+import com.example.checkin.models.classes.Account;
+import com.example.checkin.models.classes.Attendance;
+import com.example.checkin.models.classes.Employee;
+import com.example.checkin.models.classes.LeaveRequest;
+import com.example.checkin.models.classes.LeaveRequestApproval;
+import com.example.checkin.models.classes.LeaveType;
 import com.example.checkin.models.classes.Place;
 import com.example.checkin.models.classes.Shift;
+import com.example.checkin.models.classes.TableInfo;
+import com.example.checkin.models.classes.WorkShift;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -101,6 +118,16 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    public static String getAccount(String email, String password, DatabaseHelper dbHelper) {
+        String query = "SELECT * FROM Account WHERE Email = '" + email + "' AND Passwordd = '" + password + "'";
+        List<String> account = dbHelper.getFirst("Account", query, new String[]{"EmployeeID"});
+        if (account == null) {
+            return null;
+        } else {
+            return account.get(0);
+        }
     }
 
     public static String currentDate(Date current) {
@@ -210,4 +237,207 @@ public class Utils {
             }
         });
     }
+
+    public static void addLeaveRequest(String leaveTypeName, String employeeID,
+                                String startDate, String startTime,
+                                String endDate, String endTime,
+                                String reason, List<String> approvers,
+                                DatabaseHelper dbHelper) {
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Sử dụng transaction để đảm bảo tính toàn vẹn
+        db.beginTransaction();
+        try {
+            // 1. Kiểm tra LeaveTypeID từ tên
+            String leaveTypeID = getLeaveTypeIDByName(leaveTypeName, dbHelper);
+            if (leaveTypeID == null) {
+                throw new IllegalArgumentException("Loại nghỉ phép không tồn tại: " + leaveTypeName);
+            }
+
+            // 2. Tạo LeaveID và các giá trị cần thiết
+            String leaveID = generateNewLeaveID(dbHelper);
+            String createdTime = getCurrentDateTime();
+            String leaveStartTime = startDate + " " + startTime;
+            String leaveEndTime = endDate + " " + endTime;
+
+            // 3. Chuẩn bị ContentValues để thêm dữ liệu vào bảng LeaveRequest
+            ContentValues leaveRequestValues = new ContentValues();
+            leaveRequestValues.put("LeaveID", leaveID);
+            leaveRequestValues.put("CreatedTime", createdTime);
+            leaveRequestValues.put("Status", "Chưa phê duyệt");
+            leaveRequestValues.put("LeaveTypeID", leaveTypeID);
+            leaveRequestValues.put("EmployeeID", employeeID);
+            leaveRequestValues.put("LeaveStartTime", leaveStartTime);
+            leaveRequestValues.put("LeaveEndTime", leaveEndTime);
+            leaveRequestValues.put("Reason", reason);
+
+            long leaveRequestResult = db.insert("LeaveRequest", null, leaveRequestValues);
+            if (leaveRequestResult == -1) {
+                throw new Exception("Không thể thêm yêu cầu nghỉ phép vào bảng LeaveRequest.");
+            }
+            Log.d("AddLeaveRequest", "Inserted LeaveRequest successfully: " + leaveID);
+
+            // 4. Thêm từng người phê duyệt vào bảng LeaveRequestApproval
+            for (String approverID : approvers) {
+                String leaveApprovalID = generateNewLeaveApprovalID(dbHelper);
+
+                ContentValues approvalValues = new ContentValues();
+                approvalValues.put("LeaveApprovalID", leaveApprovalID);
+                approvalValues.put("LeaveID", leaveID);
+                approvalValues.put("EmployeeID", approverID);
+                approvalValues.put("Status", "Chưa phê duyệt");
+
+                long approvalResult = db.insert("LeaveRequestApproval", null, approvalValues);
+                if (approvalResult == -1) {
+                    throw new Exception("Không thể thêm người phê duyệt vào bảng LeaveRequestApproval.");
+                }
+                Log.d("AddLeaveRequest", "Inserted approver successfully: " + approverID);
+            }
+
+            // 5. Đánh dấu transaction thành công
+            db.setTransactionSuccessful();
+            Log.d("AddLeaveRequest", "Transaction completed successfully.");
+
+        } catch (Exception e) {
+            Log.e("AddLeaveRequest", "Error while adding leave request", e);
+        } finally {
+            // 6. Kết thúc transaction và đóng database
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    private static String generateNewLeaveID(DatabaseHelper dbHelper) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT LeaveID FROM LeaveRequest ORDER BY LeaveID DESC LIMIT 1";
+        Cursor cursor = db.rawQuery(query, null);
+        String newID = "DT011";  // Giá trị mặc định nếu bảng rỗng
+
+        if (cursor.moveToFirst()) {
+            String lastID = cursor.getString(0);
+            int lastNum = Integer.parseInt(lastID.substring(2));
+            newID = String.format("DT%03d", lastNum + 1);
+        }
+
+        cursor.close();
+        return newID;
+    }
+
+    private static String generateNewLeaveApprovalID(DatabaseHelper dbHelper) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT LeaveApprovalID FROM LeaveRequestApproval ORDER BY LeaveApprovalID DESC LIMIT 1";
+        Cursor cursor = db.rawQuery(query, null);
+        String newID = "LAP011";  // Giá trị mặc định nếu bảng rỗng
+
+        if (cursor.moveToFirst()) {
+            String lastID = cursor.getString(0);
+            int lastNum = Integer.parseInt(lastID.substring(3));
+            newID = String.format("LAP%03d", lastNum + 1);
+        }
+
+        cursor.close();
+        return newID;
+    }
+
+    private static String getLeaveTypeIDByName(String leaveTypeName, DatabaseHelper dbHelper) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT LeaveTypeID FROM LeaveType WHERE LeaveTypeName = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{leaveTypeName});
+        String leaveTypeID = null;
+
+        if (cursor.moveToFirst()) {
+            leaveTypeID = cursor.getString(0);
+        }
+
+        cursor.close();
+        return leaveTypeID;
+    }
+
+    private static String getCurrentDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        return dateFormat.format(new Date());
+    }
+
+    public boolean checkAccountExists(String email, DatabaseHelper dbHelper) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT * FROM Account WHERE EmployeeEmail = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+        if (cursor.getCount() >= 0) {
+            return true;
+        }
+        cursor.close();
+        db.close();
+        return false;
+    }
+
+    public boolean checkLogin(String email, String password, DatabaseHelper dbHelper) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT * FROM Account WHERE Email = ? AND Passwordd = ?";
+        String[] selectionArgs = {email, password};
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+        boolean isValidUser = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+
+        return isValidUser;
+    }
+
+    public static boolean addAccount(String fullName, String email, String password, DatabaseHelper dbHelper) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        if (!isEmployeeValid(email, dbHelper)) {
+            db.close();
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("FullName", fullName);
+        values.put("Email", email);
+
+        String hashedPassword = Utils.hashPassword(password);
+        values.put("Passwordd", hashedPassword);
+        long result = db.insert("Account", null, values);
+
+        if (result == -1) {
+            Log.e("DatabaseHelper", "Failed to insert account data for: " + email);
+        } else {
+            Log.d("DatabaseHelper", "Account data inserted successfully.");
+        }
+
+        db.close();
+        return result != -1;
+    }
+
+    public static boolean isEmployeeValid(String email, DatabaseHelper dbHelper) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT * FROM Employee WHERE Email = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+
+        boolean isValid = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return isValid;
+    }
+
+    public static String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = digest.digest(password.getBytes());
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+
 }

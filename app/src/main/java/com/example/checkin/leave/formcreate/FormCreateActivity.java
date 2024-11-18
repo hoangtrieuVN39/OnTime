@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
+import com.example.checkin.Utils;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 import com.example.checkin.leave.ApproverBTAdapter;
 import com.example.checkin.leave.FormAdapter;
@@ -167,7 +168,7 @@ public class FormCreateActivity extends Activity implements OnFormClickListener 
 
                 // 3. Gọi DatabaseHelper để lưu dữ liệu
 
-                DBHelper.addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime, reason, approvers);
+                Utils.addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime, reason, approvers, DBHelper);
 
                 // 4. Thông báo thành công
                 Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();

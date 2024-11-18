@@ -31,9 +31,9 @@ import androidx.core.content.ContextCompat;
 import com.example.checkin.ActivityBase;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.classs.Place;
-import com.example.checkin.classs.Shift;
 import com.example.checkin.Utils;
+import com.example.checkin.models.classes.Place;
+import com.example.checkin.models.classes.Shift;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -291,8 +291,8 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
                             gMap.addMarker(
                                     new com.google.android.gms.maps.model.MarkerOptions().position(
                                             new LatLng(
-                                                    place.getLat(),
-                                                    place.getLng()))
+                                                    place.getLatitude(),
+                                                    place.getLongitude()))
                             );
                         } catch (Exception e){
 
@@ -346,5 +346,7 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
             }
         }
     }
+
+
 
 }
