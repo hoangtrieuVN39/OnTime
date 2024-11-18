@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
-
+import com.example.checkin.AccountUtils;
 import java.io.IOException;
 
 public class LoginMain extends Activity {
@@ -29,7 +29,7 @@ public class LoginMain extends Activity {
         setContentView(R.layout.login_layout);
 
         try {
-            databaseHelper = new DatabaseHelper(this, null);
+            databaseHelper = new DatabaseHelper(this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -39,7 +39,6 @@ public class LoginMain extends Activity {
         Button loginButton = findViewById(R.id.login_btn);
         TextView registerTextView = findViewById(R.id.register_btn);
 
-        // Đặt drawable cho passwordEditText
         passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock, 0, R.drawable.ic_eye, 0);
 
         registerTextView.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +57,7 @@ public class LoginMain extends Activity {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (event.getRawX() >= (passwordEditText.getRight() - passwordEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
                         togglePasswordVisibility();
-                        return true; // Đánh dấu sự kiện đã được xử lý
+                        return true;
                     }
                 }
                 return false;
@@ -71,10 +70,8 @@ public class LoginMain extends Activity {
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                if (databaseHelper.checkLogin(email, password)) {
+                if (AccountUtils.checkLogin(email, password)) {
                     Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                    // Intent intent = new Intent(LoginMain.this, MainActivity.class);
-                    // startActivity(intent);
                 } else {
                     Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
                 }
