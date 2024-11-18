@@ -5,12 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
-import com.example.checkin.HashUtils;
+import com.example.checkin.AccountUtils;
 
 import java.io.IOException;
 
@@ -30,7 +29,7 @@ public class RegisterMain extends Activity {
         setContentView(R.layout.register_layout);
 
         try {
-            databaseHelper = new DatabaseHelper(this, null);
+            databaseHelper = new DatabaseHelper(this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -64,12 +63,12 @@ public class RegisterMain extends Activity {
                     return;
                 }
 
-                if (!databaseHelper.isEmployeeValid(email)) {
+                if (!AccountUtils.isEmployeeValid(email)) {
                     Toast.makeText(RegisterMain.this, "Thông tin không khớp với bất kỳ nhân viên nào!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (databaseHelper.addAccount(fullName, email, password)) {
+                if (AccountUtils.addAccount(email, password)) {
                     Toast.makeText(RegisterMain.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
