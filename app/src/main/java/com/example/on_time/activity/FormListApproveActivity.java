@@ -1,10 +1,13 @@
 package com.example.on_time.activity;
 
+import static com.example.on_time.activity.FormListActivity.formatDateTime;
+
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
@@ -36,8 +40,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -70,7 +80,7 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
 
     // Khởi tạo selectedFilters (có thể là một List hoặc Set để lưu trữ các lựa chọn)
 //    private Set<String> selectedFilters = new HashSet<>();
-    private List<FormApprove> originalList = new ArrayList<>();
+    List<FormApprove> originalList = new ArrayList<>();
     private List<FormApprove> currentList = new ArrayList<>();
     private List<String> selectedChipFilters = new ArrayList<>();
 
@@ -91,11 +101,15 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        loadDataFAFromDatabase();
-        loadDataTypeFormFromDatabase();
-        loadInitialData();
+        loadDataFAFromFirebase();
         listfilterFormApprove.addAll(listFormApprove);
+//        loadDataFAFromDatabase();
+
+//        loadDataTypeFormFromDatabase();
+//        loadDataTypeFormFromFirebase();
+
+
+
 
         spTrangThai = findViewById(R.id.approveStatus_spinner);
         spThang = findViewById(R.id.approveMonth_spinner);
@@ -150,14 +164,14 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
 
     private void showFilterBottomSheetDialog() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(FormListApproveActivity.this, R.style.BottomSheetDialogTheme);
-//        View sheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bottomsheet_filtertypeform_layout, null);
         View sheetView = getLayoutInflater().inflate(R.layout.bottomsheet_filtertypeform_layout, null);
 
-        ImageButton closeButton = sheetView.findViewById(R.id.closeFilter_btn);
-//        listFiltertypeform = sheetView.findViewById(R.id.chipTypeForm_ll);
-
         ChipGroup chipGroup = sheetView.findViewById(R.id.chip_filter);
+        ImageButton closeButton = sheetView.findViewById(R.id.closeFilter_btn);
+        Button cancelButton = sheetView.findViewById(R.id.cancelFilter_btn);
+        Button confirmButton = sheetView.findViewById(R.id.confirmFilter_btn);
 
+        // Tạo Chip "Tất cả"
         Chip allChip = new Chip(this);
         allChip.setText("Tất cả");
         allChip.setCheckable(true);
@@ -165,95 +179,175 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
         allChip.setChipStrokeColorResource(R.color.selector_chip_stroke);
         allChip.setChipStrokeWidth(1f);
         allChip.setTextColor(getResources().getColor(R.color.black));
-//        allChip.setCheckedIcon(null);
         allChip.setChecked(selectedChipFilters.contains("Tất cả"));
         chipGroup.addView(allChip);
 
+        // Lấy dữ liệu từ Firebase
+        getLeaveTypeNames(new OnLeaveTypeNamesLoadedListener() {
+            @Override
+            public void onLoaded(List<String> leaveTypeNames) {
+                for (String leaveTypeName : leaveTypeNames) {
+                    Chip chip = new Chip(FormListApproveActivity.this);
+                    chip.setText(leaveTypeName);
+                    chip.setCheckable(true);
+                    chip.setChecked(selectedChipFilters.contains(leaveTypeName));
+                    chip.setChipBackgroundColorResource(R.color.selector_chip_background);
+                    chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
+                    chip.setChipStrokeWidth(1f);
+                    chip.setTextColor(getResources().getColor(R.color.black));
+                    chipGroup.addView(chip);
+                }
+            }
 
-
-        List<String> leaveTypeNames = this.getLeaveTypeNames();
-
-        // Tạo Chip cho từng loại đơn từ và thêm vào ChipGroup
-        for (String leaveTypeName : leaveTypeNames) {
-            Chip chip = new Chip(this);
-            chip.setText(leaveTypeName);
-            chip.setCheckable(true);
-            chip.setChecked(selectedChipFilters.contains(leaveTypeName));
-            chip.setChipBackgroundColorResource(R.color.selector_chip_background);
-            chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
-            chip.setChipStrokeWidth(1f);
-            chip.setTextColor(getResources().getColor(R.color.black));
-//            chip.setCheckedIcon(null);
-            ;
-
-//            if (isFilterSelected(leaveTypeName)) {  // Giả sử bạn có một hàm kiểm tra xem filter có được chọn không
-//                chip.setCheckable(true);
-//            }
-
-            chipGroup.addView(chip);
-        }
-//        FilterTypeFormAdapter filterTypeFormAdapter = new FilterTypeFormAdapter(this, listfilterTypeForm, this);
-//        listFiltertypeform.setAdapter(filterTypeFormAdapter);
-
-        // Xử lý sự kiện cho các nút trong BottomSheet
-        Button cancelButton = sheetView.findViewById(R.id.cancelFilter_btn);
-        Button confirmButton = sheetView.findViewById(R.id.confirmFilter_btn);
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(FormListApproveActivity.this, "Lỗi khi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-
         cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
         confirmButton.setOnClickListener(v -> {
-//            List<String> selectedFilters = getSelectedFilters(chipGroup); // Lấy danh sách các filter đã chọn\
-//            if (selectedFilters.isEmpty() || selectedFilters.contains("Tất cả")) {
-//                selectedFilters.clear();
-//                showAllItems();
-//                onChipAllSelected();// Nếu "Tất cả" được chọn, bỏ qua bộ lọc
-//            }else {
-//                filterFormList(selectedFilters);  // Lọc dữ liệu trong ListView
-//            }
-//            bottomSheetDialog.dismiss();
+            // Cập nhật selectedChipFilters với các filter đã chọn
+            selectedChipFilters = getSelectedFilters(chipGroup);
+            Log.d("SelectedChipFilters", "Dữ liệu selectedChipFilters: " + selectedChipFilters);
 
-            selectedChipFilters = getSelectedFilters(chipGroup); // Lưu lại lựa chọn
             if (selectedChipFilters.isEmpty() || selectedChipFilters.contains("Tất cả")) {
                 selectedChipFilters.clear();
-                showAllItems();
-                onChipAllSelected(); // Nếu chọn "Tất cả", reset bộ lọc
+                showAllItems(); // Hiển thị tất cả các item
+                onChipAllSelected(); // Cập nhật filter
             } else {
-                filterFormList(selectedChipFilters); // Áp dụng bộ lọc
+                filterFormList(selectedChipFilters);// Lọc lại danh sách theo các filter
+
             }
             bottomSheetDialog.dismiss();
-
         });
-
-//        loadDataFilterTypeFormFromDatabase(listFiltertypeform);
 
         bottomSheetDialog.setContentView(sheetView);
-
-        bottomSheetDialog.setOnShowListener(dialog -> {
-            BottomSheetDialog d = (BottomSheetDialog) dialog;
-            FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-            if (bottomSheet != null) {
-                BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-
-//                bottomSheetBehavior.setPeekHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.4));
-                bottomSheetBehavior.setDraggable(false); // Tắt khả năng vuốt
-            }
-        });
         bottomSheetDialog.show();
     }
 
 
 
+//    private void showFilterBottomSheetDialog() {
+//        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(FormListApproveActivity.this, R.style.BottomSheetDialogTheme);
+////        View sheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bottomsheet_filtertypeform_layout, null);
+//        View sheetView = getLayoutInflater().inflate(R.layout.bottomsheet_filtertypeform_layout, null);
+//
+//        ImageButton closeButton = sheetView.findViewById(R.id.closeFilter_btn);
+////        listFiltertypeform = sheetView.findViewById(R.id.chipTypeForm_ll);
+//
+//        ChipGroup chipGroup = sheetView.findViewById(R.id.chip_filter);
+//
+//        Chip allChip = new Chip(this);
+//        allChip.setText("Tất cả");
+//        allChip.setCheckable(true);
+//        allChip.setChipBackgroundColorResource(R.color.selector_chip_background);
+//        allChip.setChipStrokeColorResource(R.color.selector_chip_stroke);
+//        allChip.setChipStrokeWidth(1f);
+//        allChip.setTextColor(getResources().getColor(R.color.black));
+////        allChip.setCheckedIcon(null);
+//        allChip.setChecked(selectedChipFilters.contains("Tất cả"));
+//        chipGroup.addView(allChip);
+//
+//
+//
+//        List<String> leaveTypeNames = this.getLeaveTypeNames();
+//
+//        // Tạo Chip cho từng loại đơn từ và thêm vào ChipGroup
+//        for (String leaveTypeName : leaveTypeNames) {
+//            Chip chip = new Chip(this);
+//            chip.setText(leaveTypeName);
+//            chip.setCheckable(true);
+//            chip.setChecked(selectedChipFilters.contains(leaveTypeName));
+//            chip.setChipBackgroundColorResource(R.color.selector_chip_background);
+//            chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
+//            chip.setChipStrokeWidth(1f);
+//            chip.setTextColor(getResources().getColor(R.color.black));
+////            chip.setCheckedIcon(null);
+//            ;
+//
+////            if (isFilterSelected(leaveTypeName)) {  // Giả sử bạn có một hàm kiểm tra xem filter có được chọn không
+////                chip.setCheckable(true);
+////            }
+//
+//            chipGroup.addView(chip);
+//        }
+////        FilterTypeFormAdapter filterTypeFormAdapter = new FilterTypeFormAdapter(this, listfilterTypeForm, this);
+////        listFiltertypeform.setAdapter(filterTypeFormAdapter);
+//
+//        // Xử lý sự kiện cho các nút trong BottomSheet
+//        Button cancelButton = sheetView.findViewById(R.id.cancelFilter_btn);
+//        Button confirmButton = sheetView.findViewById(R.id.confirmFilter_btn);
+//
+//        closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+//
+//        cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+//        confirmButton.setOnClickListener(v -> {
+////            List<String> selectedFilters = getSelectedFilters(chipGroup); // Lấy danh sách các filter đã chọn\
+////            if (selectedFilters.isEmpty() || selectedFilters.contains("Tất cả")) {
+////                selectedFilters.clear();
+////                showAllItems();
+////                onChipAllSelected();// Nếu "Tất cả" được chọn, bỏ qua bộ lọc
+////            }else {
+////                filterFormList(selectedFilters);  // Lọc dữ liệu trong ListView
+////            }
+////            bottomSheetDialog.dismiss();
+//
+//            selectedChipFilters = getSelectedFilters(chipGroup); // Lưu lại lựa chọn
+//            if (selectedChipFilters.isEmpty() || selectedChipFilters.contains("Tất cả")) {
+//                selectedChipFilters.clear();
+//                showAllItems();
+//                onChipAllSelected(); // Nếu chọn "Tất cả", reset bộ lọc
+//            } else {
+//                filterFormList(selectedChipFilters); // Áp dụng bộ lọc
+//            }
+//            bottomSheetDialog.dismiss();
+//
+//        });
+//
+////        loadDataFilterTypeFormFromDatabase(listFiltertypeform);
+//
+//        bottomSheetDialog.setContentView(sheetView);
+//
+//        bottomSheetDialog.setOnShowListener(dialog -> {
+//            BottomSheetDialog d = (BottomSheetDialog) dialog;
+//            FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+//            if (bottomSheet != null) {
+//                BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+//
+////                bottomSheetBehavior.setPeekHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.4));
+//                bottomSheetBehavior.setDraggable(false); // Tắt khả năng vuốt
+//            }
+//        });
+//        bottomSheetDialog.show();
+//    }
+
+
+
+//    private List<String> getSelectedFilters(ChipGroup chipGroup) {
+//        List<String> selectedFilters = new ArrayList<>();
+//        for (int i = 0; i < chipGroup.getChildCount(); i++) {
+//            Chip chip = (Chip) chipGroup.getChildAt(i);
+//            if (chip.isChecked()) {
+//                selectedFilters.add(chip.getText().toString()); // Thêm chip được chọn vào danh sách
+//            }
+//        }
+//        return selectedFilters;
+//    }
     private List<String> getSelectedFilters(ChipGroup chipGroup) {
         List<String> selectedFilters = new ArrayList<>();
         for (int i = 0; i < chipGroup.getChildCount(); i++) {
             Chip chip = (Chip) chipGroup.getChildAt(i);
             if (chip.isChecked()) {
-                selectedFilters.add(chip.getText().toString()); // Thêm chip được chọn vào danh sách
+                selectedFilters.add(chip.getText().toString());
             }
         }
+        // Kiểm tra kết quả của selectedFilters
+        Log.d("Selected Filters", selectedFilters.toString());
         return selectedFilters;
     }
+
 
     private void showAllItems() {
         // Giả sử originalList chứa tất cả các item bạn muốn hiển thị trong ListView
@@ -265,26 +359,55 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
     }
 
     private void loadInitialData() {
-        // Giả sử bạn đã tải dữ liệu từ db.db vào listfilterFormApprove
         originalList.clear();  // Đảm bảo rằng danh sách gốc không có dữ liệu cũ
-        originalList.addAll(listfilterFormApprove);  // Lưu toàn bộ dữ liệu gốc vào originalList
+        originalList.addAll(listfilterFormApprove);
     }
 
     // Hàm lọc lại từ danh sách gốc (originalList)
+//    private void filterFormList(List<String> selectedFilters) {
+//        ArrayList<FormApprove> filteredList = new ArrayList<>();
+//        for (FormApprove formApprove : originalList) {  // Lọc từ originalList thay vì listfilterFormApprove
+//            if (selectedFilters.contains(formApprove.getNameFormApprove())) {
+//                filteredList.add(formApprove);
+//            }
+//        }
+//        currentList.clear();
+//        currentList.addAll(filteredList);
+//        // Cập nhật lại adapter với danh sách đã lọc
+//        listfilterFormApprove.clear();
+//        listfilterFormApprove.addAll(filteredList);
+//        faAdapter.notifyDataSetChanged();
+//    }
+
     private void filterFormList(List<String> selectedFilters) {
+
+        for (FormApprove formApprove : originalList) {
+            Log.d("OriginalList", "Tên loại form trong originalList: " + formApprove.getNameFormApprove());
+        }
         ArrayList<FormApprove> filteredList = new ArrayList<>();
-        for (FormApprove formApprove : originalList) {  // Lọc từ originalList thay vì listfilterFormApprove
+        for (FormApprove formApprove : originalList) {
+            Log.d("FormApproveName", "Tên loại form: " + formApprove.getNameFormApprove());
+            // Kiểm tra nếu tên loại form có trong selectedFilters
             if (selectedFilters.contains(formApprove.getNameFormApprove())) {
                 filteredList.add(formApprove);
             }
         }
+
+        // Cập nhật lại danh sách hiện tại
         currentList.clear();
         currentList.addAll(filteredList);
-        // Cập nhật lại adapter với danh sách đã lọc
+
+        // Kiểm tra xem filteredList có dữ liệu hay không
+        if (filteredList.isEmpty()) {
+            Toast.makeText(FormListApproveActivity.this, "Không có dữ liệu phù hợp!", Toast.LENGTH_SHORT).show();
+        }
+
+
         listfilterFormApprove.clear();
         listfilterFormApprove.addAll(filteredList);
         faAdapter.notifyDataSetChanged();
     }
+
     //    private boolean isFilterSelected(String leaveTypeName) {
 //        // Kiểm tra xem loại nghỉ có được chọn trước đó không
 //        return selectedFilters.contains(leaveTypeName); // Giả sử bạn lưu danh sách các filter đã chọn
@@ -302,15 +425,64 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
         faAdapter.notifyDataSetChanged();
     }
 
-    public void setFormApprove(){
-        listFormApprove.add(new FormApprove("Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024","12/10/2024" ,"Đi trễ","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Nghỉ không lương", "15/02/2024", "12/10/2024","Nghỉ không lương","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Nghỉ phép - gửi trước 24h", "05/03/2024", "12/10/2024","Nghỉ phép","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Cưới/ tang", "10/04/2024", "12/10/2024","Cưới","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Công tác", "23/05/2024","12/10/2024", "Công tác","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Làm việc từ xa", "30/06/2024","12/10/2024", "Làm việc từ xa","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Giải trình công", "07/07/2024", "12/10/2024","Giải trình công","Trịnh Trần Phương Thắng","y"));
+    public void getLeaveTypeNames(OnLeaveTypeNamesLoadedListener listener) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference leaveTypeRef = database.getReference("leavetypes");
+
+        leaveTypeRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<String> leaveTypeNames = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String leaveTypeName = snapshot.child("leaveTypeName").getValue(String.class);
+                    if (leaveTypeName != null) {
+                        leaveTypeName = new String(leaveTypeName.getBytes(StandardCharsets.UTF_8));
+                        leaveTypeNames.add(leaveTypeName);
+                    }
+                }
+                listener.onLoaded(leaveTypeNames); // Trả về danh sách qua listener
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("Firebase", "Lỗi khi tải dữ liệu: " + databaseError.getMessage());
+                listener.onError(databaseError.toException());
+            }
+        });
     }
+
+    // Giao diện để xử lý dữ liệu khi được tải
+    public interface OnLeaveTypeNamesLoadedListener {
+        void onLoaded(List<String> leaveTypeNames);
+        void onError(Exception e);
+    }
+
+    private void loadDataTypeFormFromFirebase() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        listfilterTypeForm.clear(); // Clear danh sách trước khi thêm mới
+
+        databaseReference.child("leavetypes").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot leaveTypeSnapshot : snapshot.getChildren()) {
+                    String nameFilterTypeForm = leaveTypeSnapshot.child("LeaveTypeName").getValue(String.class);
+                    if (nameFilterTypeForm != null) {
+                        listfilterTypeForm.add(new FilterTypeForm(nameFilterTypeForm));
+                    }
+                }
+                // Cập nhật giao diện nếu cần
+                faAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Failed to fetch LeaveTypes", error.toException());
+            }
+        });
+    }
+
+
+
 
     public void setListMonth() {
         listMonth.add(new MonthSpinner("Chọn thời gian"));
@@ -336,90 +508,286 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
         }
 //        fAdapter.notifyDataSetChanged();
     }
-    public List<String> getLeaveTypeNames() {
-        List<String> leaveTypeNames = new ArrayList<>();
-        SQLiteDatabase db = DBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT LeaveTypeName FROM LeaveType", null);
+//    public List<String> getLeaveTypeNames() {
+//        List<String> leaveTypeNames = new ArrayList<>();
+//        SQLiteDatabase db = DBHelper.getReadableDatabase();
+//        Cursor cursor = db.rawQuery("SELECT LeaveTypeName FROM LeaveType", null);
+//
+//        if (cursor != null && cursor.moveToFirst()) {
+//            do {
+//                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+//
+//                if (nameFormIndex != -1 ) {
+//                    String nameForm = cursor.getString(nameFormIndex);
+//                    leaveTypeNames.add(nameForm);
+//                }
+//            } while (cursor.moveToNext());
+//        }
+//
+//        if (cursor != null) {
+//            cursor.close();
+//        }
+//        return leaveTypeNames;
+//    }
 
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
 
-                if (nameFormIndex != -1 ) {
-                    String nameForm = cursor.getString(nameFormIndex);
-                    leaveTypeNames.add(nameForm);
+
+//    private void loadDataFAFromDatabase() {
+//        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
+//                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
+//                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
+//                "LeaveRequest.LeaveID AS LeaveID, " +
+//                "LeaveRequestApproval.Status AS Status, " +
+//                "LeaveRequest.Reason AS Reason, " +
+//                "LeaveRequest.CreatedTime AS CreatedTime, " +
+//                "Employee.EmployeeName AS EmployeeName " +
+//                "FROM LeaveRequest " +
+//                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
+//                "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
+//                "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
+//
+//
+//        SQLiteDatabase db = DBHelper.getReadableDatabase();
+//        Cursor cursor = db.rawQuery(query, null);
+//
+//        if (cursor != null && cursor.moveToFirst()) {
+//            listFormApprove.clear();
+//            do {
+////                int formIDindex = cursor.getColumnIndex("LeaveID");
+//                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+//                int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
+//                int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
+//                int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
+//                int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
+//                int reasonIndex = cursor.getColumnIndex("Reason");
+//                int statussIndex = cursor.getColumnIndex("Status");
+//
+//                if (nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+//                    String nameForm = cursor.getString(nameFormIndex);
+//                    String employeeName = cursor.getString(employeeNameIndex);
+//                    String createdTime = cursor.getString(createdTimeIndex);
+//                    String leaveStartTime = cursor.getString(leaveStartTimeIndex);
+//                    String leaveEndTime = cursor.getString(leaveEndTimeIndex);
+//                    String reason = cursor.getString(reasonIndex);
+//                    String status = cursor.getString(statussIndex);
+//
+//                    String formattedCreatedTime = formatDate(createdTime);
+//                    String formattedStartTime = FormListActivity.formatDateTime(leaveStartTime);
+//                    String formattedEndTime = FormListActivity.formatDateTime(leaveEndTime);
+//
+//                    String dateOff = formattedStartTime + " - " + formattedEndTime;
+//
+//                    listFormApprove.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
+//                }
+//            } while (cursor.moveToNext());
+//        }
+//
+//
+//        if (cursor != null) {
+//            cursor.close();
+//        }
+//        listfilterFormApprove.clear();
+//        listfilterFormApprove.addAll(listFormApprove);
+////        fAdapter.notifyDataSetChanged();
+//    }
+
+//    private void loadDataFAFromFirebase() {
+//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+//
+//        // Clear the current list
+//        listFormApprove.clear();
+//
+//        databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot leaveRequestSnapshot) {
+//                for (DataSnapshot leaveRequest : leaveRequestSnapshot.getChildren()) {
+//                    String leaveID = leaveRequest.getKey();
+//                    String leaveTypeID = leaveRequest.child("leaveTypeID").getValue(String.class);
+//                    String leaveStartTime = leaveRequest.child("startDate").getValue(String.class);
+//                    String leaveEndTime = leaveRequest.child("endDate").getValue(String.class);
+//                    String reason = leaveRequest.child("reason").getValue(String.class);
+//                    String createdTime = leaveRequest.child("createdTime").getValue(String.class);
+//                    String employeeID = leaveRequest.child("employeeID").getValue(String.class);
+//
+//                    // Fetch LeaveType to get LeaveTypeName
+//                    databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
+//                            String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
+//
+//                            // Fetch Employee to get EmployeeName
+//                            databaseReference.child("employees").child(employeeID).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
+//                                    String employeeName = employeeSnapshot.child("employeeName").getValue(String.class);
+//
+//                                    // Search in LeaveRequestApproval for matching LeaveID
+//                                    databaseReference.child("leaverequestapprovals").child(leaveID).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(@NonNull DataSnapshot approvalSnapshot) {
+//                                            String status = null;
+//
+//                                            // Iterate through approvals to find matching leaveRequestID
+//                                            for (DataSnapshot approval : approvalSnapshot.getChildren()) {
+//                                                String approvalLeaveRequestID = approval.child("leaveRequestID").getValue(String.class);
+//                                                if (leaveID.equals(approvalLeaveRequestID)) {
+//                                                    status = approval.child("status").getValue(String.class);
+//                                                    break;
+//                                                }
+//                                            }
+//                                            // Format data
+//                                            String formattedCreatedTime = formatDate(createdTime);
+//                                            String formattedStartTime = FormListActivity.formatDateTime(leaveStartTime);
+//                                            String formattedEndTime = FormListActivity.formatDateTime(leaveEndTime);
+//                                            String dateOff = formattedStartTime + " - " + formattedEndTime;
+//
+//                                            // Add data to the list
+//                                            listFormApprove.add(new FormApprove(
+//                                                    leaveTypeName,
+//                                                    dateOff,
+//                                                    formattedCreatedTime,
+//                                                    reason,
+//                                                    employeeName,
+//                                                    status
+//                                            ));
+//
+//                                            // Notify adapter
+//                                            listfilterFormApprove.clear();
+//                                            listfilterFormApprove.addAll(listFormApprove);
+//                                            faAdapter.notifyDataSetChanged();
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(@NonNull DatabaseError error) {
+//                                            Log.e("Firebase", "Failed to fetch LeaveRequestApproval", error.toException());
+//                                        }
+//                                    });
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError error) {
+//                                    Log.e("Firebase", "Failed to fetch Employee", error.toException());
+//                                }
+//                            });
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError error) {
+//                            Log.e("Firebase", "Failed to fetch LeaveType", error.toException());
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.e("Firebase", "Failed to fetch LeaveRequest", error.toException());
+//            }
+//        });
+//    }
+    private void loadDataFAFromFirebase() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        // Clear the current list
+        listFormApprove.clear();
+
+        databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot leaveRequestSnapshot : snapshot.getChildren()) {
+                    String leaveID = leaveRequestSnapshot.getKey();
+                    String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
+                    String leaveStartTime = leaveRequestSnapshot.child("startDate").getValue(String.class);
+                    String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
+                    String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
+                    String createdTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
+                    String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
+
+
+                    // Fetch LeaveType to get LeaveTypeName
+                    databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
+                            String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
+
+                            // Fetch Employee to get EmployeeName
+                            databaseReference.child("employees").child(employeeID).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
+                                    String employeeName = employeeSnapshot.child("employeeName").getValue(String.class);
+
+                                    // Search in LeaveRequestApproval for matching leaveRequestID
+                                    databaseReference.child("leaverequestapprovals").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot approvalSnapshot) {
+                                            String status = null;
+
+                                            // Iterate through approvals to find matching leaveRequestID
+                                            for (DataSnapshot approval : approvalSnapshot.getChildren()) {
+                                                String approvalLeaveRequestID = approval.child("leaveRequestID").getValue(String.class);
+                                                if (leaveID.equals(approvalLeaveRequestID)) {
+                                                    status = approval.child("status").getValue(String.class);
+                                                    break;
+                                                }
+                                            }
+
+                                            String formattedCreatedTime = formatDate(createdTime);
+
+                                            // Format data and add to listForms
+                                            String formattedStartTime = formatDateTime(leaveStartTime);
+                                            String formattedEndTime = formatDateTime(leaveEndTime);
+                                            String dateOff = formattedStartTime + " - " + formattedEndTime;
+
+                                            listFormApprove.add(new FormApprove(leaveID, leaveTypeName,
+                                                        dateOff,
+                                                        formattedCreatedTime,
+                                                        reason,
+                                                        employeeName,
+                                                        status));
+                                            listfilterFormApprove.clear();
+                                            listfilterFormApprove.addAll(listFormApprove);
+
+                                            // Notify adapter after updating listForms
+                                            faAdapter.notifyDataSetChanged();
+                                            loadInitialData();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Log.e("Firebase", "Failed to fetch LeaveRequestApproval", error.toException());
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.e("Firebase", "Failed to fetch Employee", error.toException());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("Firebase", "Failed to fetch LeaveType", error.toException());
+                        }
+                    });
                 }
-            } while (cursor.moveToNext());
-        }
+            }
 
-        if (cursor != null) {
-            cursor.close();
-        }
-        return leaveTypeNames;
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Failed to fetch LeaveRequests", error.toException());
+            }
+        });
     }
 
 
-
-    private void loadDataFAFromDatabase() {
-        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-                "LeaveRequest.LeaveID AS LeaveID, " +
-                "LeaveRequestApproval.Status AS Status, " +
-                "LeaveRequest.Reason AS Reason, " +
-                "LeaveRequest.CreatedTime AS CreatedTime, " +
-                "Employee.EmployeeName AS EmployeeName " +
-                "FROM LeaveRequest " +
-                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
-                "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
-                "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
-
-
-        SQLiteDatabase db = DBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            listFormApprove.clear();
-            do {
-//                int formIDindex = cursor.getColumnIndex("LeaveID");
-                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-                int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
-                int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
-                int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-                int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-                int reasonIndex = cursor.getColumnIndex("Reason");
-                int statussIndex = cursor.getColumnIndex("Status");
-
-                if (nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
-                    String nameForm = cursor.getString(nameFormIndex);
-                    String employeeName = cursor.getString(employeeNameIndex);
-                    String createdTime = cursor.getString(createdTimeIndex);
-                    String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-                    String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-                    String reason = cursor.getString(reasonIndex);
-                    String status = cursor.getString(statussIndex);
-
-                    String formattedCreatedTime = formatDate(createdTime);
-                    String formattedStartTime = FormListActivity.formatDateTime(leaveStartTime);
-                    String formattedEndTime = FormListActivity.formatDateTime(leaveEndTime);
-
-                    String dateOff = formattedStartTime + " - " + formattedEndTime;
-
-                    listFormApprove.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
-                }
-            } while (cursor.moveToNext());
-        }
-
-
-        if (cursor != null) {
-            cursor.close();
-        }
-        listfilterFormApprove.clear();
-        listfilterFormApprove.addAll(listFormApprove);
-//        fAdapter.notifyDataSetChanged();
-    }
 
     public static String formatDate(String dateTime) {
+
+        if (dateTime == null || dateTime.isEmpty()) {
+            return ""; // Trả về chuỗi rỗng hoặc giá trị mặc định
+        }
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
 

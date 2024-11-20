@@ -1,6 +1,7 @@
 package com.example.on_time.models;
 
 public class FormApprove {
+    String leaveRequestID;
     String nameFormApprover;
     String dateoffApprover;
     String CreateTimeApprover;
@@ -8,13 +9,22 @@ public class FormApprove {
     String nameApprover;
     String statusApprover;
 
-    public FormApprove(String nameFormApprover, String dateoffApprover,String CreateTimeApprover, String reasonApprover, String nameApprover, String statusApprover){
+    public FormApprove(String leaveRequestID,String nameFormApprover, String dateoffApprover,String CreateTimeApprover, String reasonApprover, String nameApprover, String statusApprover){
+        this.leaveRequestID = leaveRequestID;
         this.nameFormApprover = nameFormApprover;
         this.dateoffApprover = dateoffApprover;
         this.CreateTimeApprover = CreateTimeApprover;
         this.reasonApprover = reasonApprover;
         this.nameApprover = nameApprover;
         this.statusApprover = statusApprover;
+    }
+
+    public String getLeaveRequestID() {
+        return leaveRequestID;
+    }
+
+    public void setLeaveRequestID(String leaveRequestID) {
+        this.leaveRequestID = leaveRequestID;
     }
 
     public String getNameFormApprove(){

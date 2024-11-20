@@ -35,6 +35,7 @@ public class ApproverBTAdapter extends BaseAdapter implements Filterable {
     private String selectedApproverName = null;
     private HashSet<String> selectedApprovers ;
     private List<ApproverBT> listApprovers;// Danh sách người phê duyệt
+    ApproverBT approver;
 
 
     public ApproverBTAdapter(Context context, ArrayList<ApproverBT> forms, OnFormClickListener listener) {
@@ -166,9 +167,17 @@ public class ApproverBTAdapter extends BaseAdapter implements Filterable {
     private void updateApproverList() {
 
     }
-    public String getSelectedApproverName() {
-        return selectedApproverName; // Trả về tên người phê duyệt đã chọn
+//    public ApproverBT getSelectedApproverName() {
+//        return approver; // Trả về tên người phê duyệt đã chọn
+//    }
+
+    public ApproverBT getSelectedApproverName() {
+        if (selectedPosition != -1 && selectedPosition < filteredList.size()) {
+            return filteredList.get(selectedPosition); // Trả về người phê duyệt đã chọn
+        }
+        return null;
     }
+
 
     private void initFilter() {
         approverFilter = new Filter() {

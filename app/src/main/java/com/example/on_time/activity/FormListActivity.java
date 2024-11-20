@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
@@ -88,9 +89,13 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+//        DBHelper.syncDataToFirebase();
 
-        loadDataFromDatabase();
-        loadDataTypeFormFromDatabase();
+//        loadDataFromDatabase();
+//        loadDataTypeFormFromDatabase();
+        loadDataFromFirebase();
+        loadDataTypeFormFromFirebase();
+//
 //        DBHelper.syncDataToFirebase();
 
         lvForm = findViewById(R.id.form_lv);
@@ -162,15 +167,45 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     }
 
 
-    private void loadDataTypeFormFromDatabase() {
-        List<List> leaveType = DBHelper.loadDataHandler("LeaveType", null, null);
-            ListtypeForm.clear();
-        for (List<String> row : leaveType) {
-            String nameTypeform = row.get(1);
-            ListtypeForm.add(new TypeForm(nameTypeform));
-        }
-//        fAdapter.notifyDataSetChanged();
+//    private void loadDataTypeFormFromDatabase() {
+//        List<List> leaveType = DBHelper.loadDataHandler("LeaveType", null, null);
+//            ListtypeForm.clear();
+//        for (List<String> row : leaveType) {
+//            String nameTypeform = row.get(1);
+//            ListtypeForm.add(new TypeForm(nameTypeform));
+//        }
+////        fAdapter.notifyDataSetChanged();
+//    }
+
+    private void loadDataTypeFormFromFirebase() {
+        DatabaseReference leaveTypeRef = FirebaseDatabase.getInstance().getReference("leavetypes");
+
+        // Xóa danh sách cũ trước khi thêm dữ liệu mới
+        ListtypeForm.clear();
+
+        leaveTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        String nameTypeform = data.child("leaveTypeName").getValue(String.class);
+                        if (nameTypeform != null) {
+                            ListtypeForm.add(new TypeForm(nameTypeform));
+                        }
+                    }
+                    // Thông báo adapter (nếu đang sử dụng RecyclerView hoặc ListView)
+                    fAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi khi tải dữ liệu thất bại
+                Log.e("FirebaseError", "Failed to load data: " + error.getMessage());
+            }
+        });
     }
+
 
 //    private void loadDataFromDatabase() {
 //        List<List> leaveRequests = DBHelper.loadDataHandler("LeaveRequest", null, null);
@@ -186,55 +221,156 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 //        filteredForms.addAll(listForms);
 ////        fAdapter.notifyDataSetChanged();
 //    }
-    private void loadDataFromDatabase() {
-    String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-            "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-            "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-            "LeaveRequest.LeaveID AS LeaveID, " +
-            "LeaveRequest.Status AS Status, " +
-            "LeaveRequest.Reason AS Reason " +
-            "FROM LeaveRequest " +
-            "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID";
 
-    SQLiteDatabase db = DBHelper.getReadableDatabase();
-    Cursor cursor = db.rawQuery(query, null);
+    private void loadDataFromFirebase() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-    if (cursor != null && cursor.moveToFirst()) {
+        // Clear the current list
         listForms.clear();
-        do {
-            int formIDindex = cursor.getColumnIndex("LeaveID");
-            int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-            int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-            int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-            int reasonIndex = cursor.getColumnIndex("Reason");
-            int statussIndex = cursor.getColumnIndex("Status");
 
-            if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
-                String formID = cursor.getString(formIDindex);
-                String nameForm = cursor.getString(nameFormIndex);
-                String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-                String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-                String reason = cursor.getString(reasonIndex);
-                String status = cursor.getString(statussIndex);
+        databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot leaveRequestSnapshot : snapshot.getChildren()) {
+                    String leaveID = leaveRequestSnapshot.getKey();
+                    String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
+                    String leaveStartTime = leaveRequestSnapshot.child("startDate").getValue(String.class);
+                    String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
+                    String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
+                    String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
 
-                String formattedStartTime = formatDateTime(leaveStartTime);
-                String formattedEndTime = formatDateTime(leaveEndTime);
+                    // Fetch LeaveType to get LeaveTypeName
+                    databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
+                            String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
 
-                String dateOff = formattedStartTime + " - " + formattedEndTime;
+                            // Fetch Employee to get EmployeeName
+                            databaseReference.child("employees").child(employeeID).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
+                                    String employeeName = employeeSnapshot.child("employeeName").getValue(String.class);
 
-                listForms.add(new Form(formID,nameForm, dateOff, reason, status));
+                                    // Search in LeaveRequestApproval for matching leaveRequestID
+                                    databaseReference.child("leaverequestapprovals").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot approvalSnapshot) {
+                                            String status = null;
+
+                                            // Iterate through approvals to find matching leaveRequestID
+                                            for (DataSnapshot approval : approvalSnapshot.getChildren()) {
+                                                String approvalLeaveRequestID = approval.child("leaveRequestID").getValue(String.class);
+                                                if (leaveID.equals(approvalLeaveRequestID)) {
+                                                    status = approval.child("status").getValue(String.class);
+                                                    break;
+                                                }
+                                            }
+
+                                            // Format data and add to listForms
+                                            String formattedStartTime = formatDateTime(leaveStartTime);
+                                            String formattedEndTime = formatDateTime(leaveEndTime);
+                                            String dateOff = formattedStartTime + " - " + formattedEndTime;
+
+                                            listForms.add(new Form(leaveID, leaveTypeName, dateOff, reason, status));
+                                            filteredForms.clear();
+                                            filteredForms.addAll(listForms);
+
+                                            // Notify adapter after updating listForms
+                                            fAdapter.notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Log.e("Firebase", "Failed to fetch LeaveRequestApproval", error.toException());
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.e("Firebase", "Failed to fetch Employee", error.toException());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("Firebase", "Failed to fetch LeaveType", error.toException());
+                        }
+                    });
+                }
             }
-        } while (cursor.moveToNext());
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Failed to fetch LeaveRequests", error.toException());
+            }
+        });
     }
 
 
-    if (cursor != null) {
-        cursor.close();
-    }
-        filteredForms.clear();
-        filteredForms.addAll(listForms);
-//        fAdapter.notifyDataSetChanged();
-    }
+//    private void loadDataFromDatabase() {
+////    String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
+////            "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
+////            "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
+////            "LeaveRequest.LeaveID AS LeaveID, " +
+////            "LeaveRequest.Status AS Status, " +
+////            "LeaveRequest.Reason AS Reason " +
+////            "FROM LeaveRequest " +
+////            "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID";
+//
+//        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
+//                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
+//                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
+//                "LeaveRequest.LeaveID AS LeaveID, " +
+//                "LeaveRequestApproval.Status AS Status, " +
+//                "LeaveRequest.Reason AS Reason, " +
+//                "LeaveRequest.CreatedTime AS CreatedTime, " +
+//                "Employee.EmployeeName AS EmployeeName " +
+//                "FROM LeaveRequest " +
+//                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
+//                "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
+//                "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
+//
+//    SQLiteDatabase db = DBHelper.getReadableDatabase();
+//    Cursor cursor = db.rawQuery(query, null);
+//
+//    if (cursor != null && cursor.moveToFirst()) {
+//        listForms.clear();
+//        do {
+//            int formIDindex = cursor.getColumnIndex("LeaveID");
+//            int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+//            int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
+//            int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
+//            int reasonIndex = cursor.getColumnIndex("Reason");
+//            int statussIndex = cursor.getColumnIndex("Status");
+//
+//            if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+//                String formID = cursor.getString(formIDindex);
+//                String nameForm = cursor.getString(nameFormIndex);
+//                String leaveStartTime = cursor.getString(leaveStartTimeIndex);
+//                String leaveEndTime = cursor.getString(leaveEndTimeIndex);
+//                String reason = cursor.getString(reasonIndex);
+//                String status = cursor.getString(statussIndex);
+//
+//                String formattedStartTime = formatDateTime(leaveStartTime);
+//                String formattedEndTime = formatDateTime(leaveEndTime);
+//
+//                String dateOff = formattedStartTime + " - " + formattedEndTime;
+//
+//                listForms.add(new Form(formID,nameForm, dateOff, reason, status));
+//            }
+//        } while (cursor.moveToNext());
+//    }
+//
+//
+//    if (cursor != null) {
+//        cursor.close();
+//    }
+//        filteredForms.clear();
+//        filteredForms.addAll(listForms);
+////        fAdapter.notifyDataSetChanged();
+//    }
 
     public static String formatDateTime(String dateTime) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

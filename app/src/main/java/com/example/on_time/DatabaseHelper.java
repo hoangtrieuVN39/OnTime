@@ -160,7 +160,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void addLeaveRequest(String leaveTypeName, String employeeID,
+    public void addLeaveRequests(String leaveTypeName, String employeeID,
                                 String startDate, String startTime,
                                 String endDate, String endTime,
                                 String reason, List<String> approvers) {
@@ -330,6 +330,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //    }
 
 
+
+
     private String generateNewLeaveID() {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT LeaveID FROM LeaveRequest ORDER BY LeaveID DESC LIMIT 1";
@@ -458,6 +460,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         db.close();
     }
+
+
 
 
 }

@@ -202,7 +202,7 @@ public class AllFormListActivity extends Activity implements OnFormClickListener
                     String dateOff = formattedStartTime + " - " + formattedEndTime;
 
 //                    listFormApprove.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
-                    listAllForm.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
+                    listAllForm.add(new FormApprove(formID,nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
                     listAllForm.add(new Form(formID,nameForm, dateOff, reason, status));
                 }
             } while (cursor.moveToNext());
