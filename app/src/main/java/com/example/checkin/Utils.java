@@ -8,11 +8,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 
 import com.example.checkin.checkinhistory.CheckinHistoryActivity;
 import com.example.checkin.checkinmain.CheckinMainActivity;
+import com.example.checkin.leave.formapprove.FormApproveActivity;
+import com.example.checkin.leave.formlist.FormListActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 import com.example.checkin.models.classes.Account;
 import com.example.checkin.models.classes.Attendance;
@@ -40,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
 
 public class Utils {
 
@@ -237,6 +242,32 @@ public class Utils {
             }
         });
     }
+
+    public static void onCreateSubNav(Context context, BottomNavigationView bottomNavigation, int selected){
+        bottomNavigation.setSelectedItemId(selected);
+        bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.formPersonal)
+                {
+                    context.startActivity(new Intent(context, FormPersonalActivity.class));
+                    return true;
+                }
+                else if (item.getItemId() == R.id.formApprove)
+                {
+                    context.startActivity(new Intent(context, FormApproveActivity.class));
+                    return true;
+                }
+                else if (item.getItemId() == R.id.formList)
+                {
+                    context.startActivity(new Intent(context, FormListActivity.class));
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
 
     public static void addLeaveRequest(String leaveTypeName, String employeeID,
                                 String startDate, String startTime,
@@ -436,8 +467,4 @@ public class Utils {
             return null;
         }
     }
-
-
-
-
 }

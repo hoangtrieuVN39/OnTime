@@ -22,6 +22,7 @@ import androidx.annotation.RequiresApi;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
+import com.example.checkin.Utils;
 import com.example.checkin.leave.formcreate.FormCreateActivity;
 import com.example.checkin.leave.FormAdapter;
 import com.example.checkin.leave.MonthSpinnerAdapter;
@@ -67,7 +68,10 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.forms_layout);
+        setContentView(R.layout.formpersonal_layout);
+
+//        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formPersonal);
+        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
 
         setListMonth();
         setListStatus();

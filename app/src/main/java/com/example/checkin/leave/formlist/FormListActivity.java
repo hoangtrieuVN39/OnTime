@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
+import com.example.checkin.Utils;
 import com.example.checkin.leave.formapprove.FormApproveActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 import com.example.checkin.leave.AllFormAdapter;
@@ -72,7 +73,10 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.listform_layout);
+        setContentView(R.layout.formlist_layout);
+
+        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formList);
+        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
 
         try {
             DBHelper = new DatabaseHelper(this, null);

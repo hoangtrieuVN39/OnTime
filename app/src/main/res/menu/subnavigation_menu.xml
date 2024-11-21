@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/formPersonal"
+        android:icon="@drawable/leave"
+        android:title="Cá nhân" />
+    <item
+        android:id="@+id/formApprove"
+        android:icon="@drawable/checkin"
+        android:title="Phê duyệt" />
+    <item
+        android:id="@+id/formList"
+        android:icon="@drawable/history"
+        android:title="Danh sách" />
+</menu>

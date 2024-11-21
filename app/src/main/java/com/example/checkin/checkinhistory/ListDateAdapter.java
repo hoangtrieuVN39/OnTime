@@ -105,6 +105,7 @@ public class ListDateAdapter extends BaseAdapter {
 
         work_count_txt.setText((work_count*work_per_shift)+"");
 
+
         ListDateShiftAdapter adapter = new ListDateShiftAdapter(
                 context,
                 shiftchecks

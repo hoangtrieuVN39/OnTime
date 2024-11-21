@@ -21,6 +21,7 @@ import androidx.annotation.RequiresApi;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
+import com.example.checkin.Utils;
 import com.example.checkin.leave.FormApproveAdapter;
 import com.example.checkin.leave.MonthSpinnerAdapter;
 import com.example.checkin.leave.StatusSpinnerAdapter;
@@ -72,7 +73,10 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.listform_approve_layout);
+        setContentView(R.layout.formapprove_layout);
+
+        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formApprove);
+        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
 
         setListMonth();
         setListStatus();

@@ -28,12 +28,12 @@ public class ListDateShiftAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return position;
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
@@ -55,9 +55,7 @@ public class ListDateShiftAdapter extends BaseAdapter {
         if (shifts.get(position)[2].equals("Không có")){
             Checkout_time.setTextColor(Color.parseColor("#BB1B1B"));
         }
-
         return v;
     }
-
 
 }

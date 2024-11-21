@@ -3,6 +3,8 @@ package com.example.checkin.checkinhistory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.example.checkin.ActivityBase;
@@ -25,13 +27,16 @@ public class CheckinHistoryActivity extends ActivityBase {
     DatabaseHelper dbHelper;
     ExecutorService executor;
     ListView lvShift;
+    LinearLayout loadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkinhistory_layout);
 
-        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.checkinHistory);
+        loadingIndicator = findViewById(R.id.loading_indicator);
+
+        Utils.onCreateNav(this, findViewById(R.id.subnav_bar), R.id.checkinHistory);
 
         executor = Executors.newSingleThreadExecutor();
 
@@ -45,7 +50,11 @@ public class CheckinHistoryActivity extends ActivityBase {
         ChipGroup filterChips = this.findViewById(R.id.chips);
 
         runCheckReloadBackground(executor, filterChips.getCheckedChipId());
-        filterChips.setOnCheckedStateChangeListener((group, checkedIds) -> runCheckReloadBackground(executor, filterChips.getCheckedChipId()));
+        filterChips.setOnCheckedStateChangeListener((group, checkedIds) ->
+        {
+            loadingIndicator.setVisibility(View.VISIBLE);
+            runCheckReloadBackground(executor, filterChips.getCheckedChipId());
+        });
     }
 
     private void runCheckReloadBackground(ExecutorService executor, int filterid){
@@ -53,7 +62,15 @@ public class CheckinHistoryActivity extends ActivityBase {
             List<Date> listDates = getDates(filterid);
             new Handler(Looper.getMainLooper()).post(()-> {
                 try {
-                    onCreateShiftCheck(listDates);
+                    ListDateAdapter shiftAdapter = new ListDateAdapter(this,
+                            listDates,
+                            dbHelper,
+                            getListShift(),
+                            "NV003");
+                    runOnUiThread(()->{
+                        lvShift.setAdapter(shiftAdapter);
+                        loadingIndicator.setVisibility(View.INVISIBLE);
+                    });
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -95,16 +112,6 @@ public class CheckinHistoryActivity extends ActivityBase {
             }
         }
         return dates;
-    }
-
-
-    private void onCreateShiftCheck(List<Date> listDates) throws IOException {
-        ListDateAdapter shiftAdapter = new ListDateAdapter(this,
-                listDates,
-                dbHelper,
-                getListShift(),
-                "NV003");
-        lvShift.setAdapter(shiftAdapter);
     }
 
     private List<Shift> getListShift() throws IOException {
