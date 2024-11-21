@@ -2,9 +2,7 @@
 package com.example.on_time.activity;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -47,11 +44,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.temporal.ChronoField;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 import java.time.format.DateTimeFormatter;
@@ -271,7 +265,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                                             String formattedEndTime = formatDateTime(leaveEndTime);
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                                            listForms.add(new Form(leaveID, leaveTypeName, dateOff, reason, status));
+                                            listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, status));
                                             filteredForms.clear();
                                             filteredForms.addAll(listForms);
 
@@ -488,7 +482,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
             boolean matchesStatus = true;
 
             if (filterByMonth) {
-                String formDate = form.getDateoff().substring(0, 10);
+                String formDate = form.getDateoffstart().substring(0, 10);
                 switch (selectedMonth) {
                     case "Tuần này":
                         matchesMonth = isDateInCurrentWeek(formDate);
@@ -510,7 +504,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                         break;
                     default:
                         String monthNumber = getMonthNumberFromSpinner(selectedMonth);
-                        String formMonth = form.getDateoff().substring(5, 7);
+                        String formMonth = form.getDateoffstart().substring(5, 7);
                         matchesMonth = formMonth.equals(monthNumber);
                         break;
                 }
@@ -632,7 +626,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
 //                String[] dateParts = form.getDateoff().split("/");
 //                String formMonth = dateParts[1];
-                String formMonth = form.getDateoff().substring(5, 7);
+                String formMonth = form.getDateoffstart().substring(5, 7);
 
                 if (formMonth.equals(monthNumber)) {
                     filteredForms.add(form);
@@ -665,9 +659,19 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         return String.format("%02d", month);
     }
 
+//    @Override
+//    public void onFormClick(String nameForm) {
+//        Toast.makeText(this, "Đơn từ: " + nameForm, Toast.LENGTH_SHORT).show();
+//    }
     @Override
-    public void onFormClick(String formName) {
-        Toast.makeText(this, "Đơn từ: " + formName, Toast.LENGTH_SHORT).show();
+    public void onFormClick(Form form) {
+        Intent intent = new Intent(this,FormDetailActivity.class);
+        intent.putExtra("formName", form.getNameForm());
+        intent.putExtra("dateOff", form.getDateoffstart());
+        intent.putExtra("dateoff", form.getDateoffend());
+        intent.putExtra("reason", form.getReason());
+        startActivity(intent);
+        finish();
     }
 }
 

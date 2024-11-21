@@ -27,11 +27,13 @@ import androidx.annotation.NonNull;
 
 import com.example.on_time.DatabaseHelper;
 import com.example.on_time.OnFormClickListener;
+import com.example.on_time.OnFormNameClickListener;
 import com.example.on_time.OnIDGeneratedListener;
 import com.example.on_time.R;
 import com.example.on_time.adapter.ApproverBTAdapter;
 import com.example.on_time.adapter.FormAdapter;
 import com.example.on_time.models.ApproverBT;
+import com.example.on_time.models.Form;
 import com.example.on_time.models.modelsfirebase.LeaveRequest;
 import com.example.on_time.models.modelsfirebase.LeaveRequestApproval;
 import com.example.on_time.models.modelsfirebase.WorkShift;
@@ -58,7 +60,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.checkerframework.checker.units.qual.C;
 
-public class CreateFormActivity extends Activity implements OnFormClickListener {
+public class CreateFormActivity extends Activity implements OnFormNameClickListener {
     String selectedType;
     Spinner typeformNameSpinner;
     TextView titleApplyTime;
@@ -473,7 +475,7 @@ public class CreateFormActivity extends Activity implements OnFormClickListener 
 
         ImageButton closeButton = sheetView.findViewById(R.id.close_btn);
         Button cancelButton = sheetView.findViewById(R.id.cancel_btn);
-        ApproverBTAdapter approverBTAdapter = new ApproverBTAdapter(this, ListApproverForm, this);
+        ApproverBTAdapter approverBTAdapter = new ApproverBTAdapter(this, ListApproverForm,this);
         lvApproverForm.setAdapter(approverBTAdapter);
 
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -886,11 +888,19 @@ private void generateNewFirebaseID(String prefix, String tableName, OnIDGenerate
     }
 
 
-
-
     @Override
-    public void onFormClick(String nameApprover) {
-//        Toast.makeText(this, "Người phê duyệt: " + nameApprover, Toast.LENGTH_SHORT).show();
+    public void onFormNameClick(String nameForm) {
+
     }
+
+//    @Override
+//    public void onFormClick(String nameForm) {
+//
+//    }
+//
+//    @Override
+//    public void onFormClick(Form form) {
+//
+//    }
 }
 

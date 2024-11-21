@@ -936,8 +936,14 @@ public class FormListApproveActivity extends Activity implements OnFormClickList
         return String.format("%02d", month);
     }
 
+//    @Override
+//    public void onFormClick(String formName) {
+//        Toast.makeText(this, "Đơn từ cần phê duyệt: " + formName, Toast.LENGTH_SHORT).show();
+//    }
+
+
     @Override
-    public void onFormClick(String formName) {
-        Toast.makeText(this, "Đơn từ cần phê duyệt: " + formName, Toast.LENGTH_SHORT).show();
+    public void onFormClick(Form form) {
+
     }
 }

@@ -50,12 +50,12 @@ public class FilterTypeFormAdapter extends BaseAdapter {
 
         btnFilterTypeForm.setText(ftForm.get(i).getNameFilterTypeform());
 
-        btnFilterTypeForm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ftListener.onFormClick(ftForm.get(i).getNameFilterTypeform());
-            }
-        });
+//        btnFilterTypeForm.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ftListener.onFormClick(ftForm.get(i).getNameFilterTypeform());
+//            }
+//        });
 
         return view;
     }

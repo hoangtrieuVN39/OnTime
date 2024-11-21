@@ -66,13 +66,15 @@ public class FormAdapter extends BaseAdapter {
         Form form = fForm.get(i);
 
         TextView txtNameForm = view.findViewById(R.id.titleTypeform_txt);
-        TextView txtDateoff = view.findViewById(R.id.ngaynghi_txt);
+        TextView txtDateoffstart = view.findViewById(R.id.ngaynghistart_txt);
+        TextView txtDateoffend = view.findViewById(R.id.ngaynghiend_txt);
         TextView txtReason = view.findViewById(R.id.lydo_txt);
         TextView txtStatus = view.findViewById(R.id.status_txt);
         ViewGroup recallLayoutContainer = view.findViewById(R.id.Recall_ll);
 
         txtNameForm.setText(fForm.get(i).getNameForm());
-        txtDateoff.setText(fForm.get(i).getDateoff());
+        txtDateoffstart.setText(fForm.get(i).getDateoffstart());
+        txtDateoffend.setText(fForm.get(i).getDateoffend());
         txtReason.setText(fForm.get(i).getReason());
         txtStatus.setText(fForm.get(i).getStatus());
 
@@ -126,10 +128,17 @@ public class FormAdapter extends BaseAdapter {
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick (View view){
-                fListener.onFormClick(fForm.get(i).getNameForm());
+            public void onClick(View view) {
+                fListener.onFormClick(fForm.get(i));
             }
         });
+
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick (View view){
+//                fListener.onFormClick(fForm.get(i).getNameForm());
+//            }
+//        });
         return view;
     }
 

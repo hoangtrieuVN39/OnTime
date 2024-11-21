@@ -149,7 +149,7 @@ public class FormApproveAdapter extends BaseAdapter {
 //        });
 
 
-        view.setOnClickListener(v -> faListener.onFormClick(formApprove.getNameFormApprove()));
+//        view.setOnClickListener(v -> faListener.onFormClick(formApprove.getNameFormApprove()));
 
 //        view.setOnClickListener(new View.OnClickListener() {
 //            @Override

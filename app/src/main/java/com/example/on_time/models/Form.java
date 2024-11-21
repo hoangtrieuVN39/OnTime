@@ -3,13 +3,15 @@ package com.example.on_time.models;
 public class Form {
     String FormID;
     String nameForm;
-    String dateoff;
+    String dateoffstart;
+    String dateoffend;
     String reason;
     String status;
-    public Form(String FormID, String nameForm, String dateoff, String reason, String status){
+    public Form(String FormID, String nameForm, String dateoffstart,String dateoffend, String reason, String status){
         this.FormID = FormID;
         this.nameForm = nameForm;
-        this.dateoff = dateoff;
+        this.dateoffstart = dateoffstart;
+        this.dateoffend = dateoffend;
         this.reason = reason;
         this.status = status;
     }
@@ -26,12 +28,18 @@ public class Form {
     public void setNameForm(String nameForm){
         this.nameForm = nameForm;
     }
-    public String getDateoff(){
-        return dateoff;
+
+    public String getDateoffstart() {
+        return dateoffstart;
     }
-    public void setDateoff(String dateoff){
-        this.dateoff = dateoff;
+
+    public void setDateoffstart(String dateoffstart) {
+        this.dateoffstart = dateoffstart;
     }
+    public String getDateoffend() {
+        return dateoffend;
+    }
+
     public String getReason(){
         return reason;
     }

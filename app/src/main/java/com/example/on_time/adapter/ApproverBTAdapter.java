@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.on_time.OnFormClickListener;
+import com.example.on_time.OnFormNameClickListener;
 import com.example.on_time.R;
 import com.example.on_time.models.ApproverBT;
 
@@ -24,7 +25,7 @@ import java.util.Set;
 public class ApproverBTAdapter extends BaseAdapter implements Filterable {
 
     Context AbtfContext;
-    OnFormClickListener AbtfListener;
+    OnFormNameClickListener AbtfListener;
 
     private List<ApproverBT> originalList; // Danh sách gốc
     private List<ApproverBT> filteredList; // Danh sách sau khi lọc
@@ -38,7 +39,7 @@ public class ApproverBTAdapter extends BaseAdapter implements Filterable {
     ApproverBT approver;
 
 
-    public ApproverBTAdapter(Context context, ArrayList<ApproverBT> forms, OnFormClickListener listener) {
+    public ApproverBTAdapter(Context context, ArrayList<ApproverBT> forms, OnFormNameClickListener listener) {
         this.AbtfContext = context;
         this.originalList = forms;
         this.filteredList = new ArrayList<>(forms); // Khởi tạo danh sách lọc từ danh sách gốc
@@ -152,7 +153,7 @@ public class ApproverBTAdapter extends BaseAdapter implements Filterable {
                 addApprover(selectedApproverName);
             }
             notifyDataSetChanged(); // Cập nhật lại giao diện ListView
-//            AbtfListener.onFormClick(approver.getNameApproveform());
+            AbtfListener.onFormNameClick(approver.getNameApproveform());
         });
 
         return view;

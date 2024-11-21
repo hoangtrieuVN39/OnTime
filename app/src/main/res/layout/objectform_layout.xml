@@ -21,7 +21,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginBottom="10dp">
         <ImageView
             android:layout_width="30dp"
@@ -31,8 +30,23 @@
             android:layout_marginRight="10dp">
         </ImageView>
         <TextView
-            android:id="@+id/ngaynghi_txt"
-            android:layout_width="match_parent"
+            android:id="@+id/ngaynghistart_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ngày nghỉ:"
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:textColor="#2E333D"> <!--android:alpha="0.5" -->
+        </TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="   -   ">
+        </TextView>
+        <TextView
+            android:id="@+id/ngaynghiend_txt"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ngày nghỉ:"
             android:textSize="16dp"

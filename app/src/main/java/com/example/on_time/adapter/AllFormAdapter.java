@@ -96,13 +96,15 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
         if(viewType == TYPE_FORM){
             Form form = (Form) filteredList.get(i);
             TextView txtNameForm = view.findViewById(R.id.titleTypeform_txt);
-            TextView txtDateoff = view.findViewById(R.id.ngaynghi_txt);
+            TextView txtDateoffstart = view.findViewById(R.id.ngaynghistart_txt);
+            TextView txtDateoffend = view.findViewById(R.id.ngaynghiend_txt);
             TextView txtReason = view.findViewById(R.id.lydo_txt);
             TextView txtStatus = view.findViewById(R.id.status_txt);
             ViewGroup recallLayoutContainer = view.findViewById(R.id.Recall_ll);
 
             txtNameForm.setText(form.getNameForm());
-            txtDateoff.setText(form.getDateoff());
+            txtDateoffstart.setText(form.getDateoffstart());
+            txtDateoffend.setText(form.getDateoffend());
             txtReason.setText(form.getReason());
             txtStatus.setText(form.getStatus());
 
@@ -124,12 +126,12 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                 recallLayoutContainer.setVisibility(View.GONE);
             }
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick (View view){
-                    afListener.onFormClick(form.getNameForm());
-                }
-            });
+//            view.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick (View view){
+//                    afListener.onFormClick(form.getNameForm());
+//                }
+//            });
         }
         else if(viewType == TYPE_FORM_APPROVE){
             FormApprove formApprove = (FormApprove) filteredList.get(i);
@@ -161,12 +163,12 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                 recallLayoutContainer.setVisibility(View.GONE);
             }
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick (View view){
-                    afListener.onFormClick(formApprove.getNameFormApprove());
-                }
-            });
+//            view.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick (View view){
+//                    afListener.onFormClick(formApprove.getNameFormApprove());
+//                }
+//            });
         }
         return view;
     }

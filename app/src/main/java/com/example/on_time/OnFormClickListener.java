@@ -1,5 +1,8 @@
 package com.example.on_time;
 
+import com.example.on_time.models.Form;
+
 public interface OnFormClickListener {
-    void onFormClick(String nameForm);
+    public void onFormClick(Form form);
+//    void onFormClick(String nameForm);
 }
