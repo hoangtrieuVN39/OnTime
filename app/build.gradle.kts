@@ -6,8 +6,8 @@ plugins {
 
 android {
 	namespace = "com.example.checkin"
-	compileSdk = 34
-	
+	compileSdk = 35
+
 	defaultConfig {
 		applicationId = "com.example.checkin"
 		minSdk = 28
