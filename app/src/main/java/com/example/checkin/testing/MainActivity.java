@@ -1,6 +1,7 @@
 package com.example.checkin.testing;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,21 +46,27 @@ public class MainActivity extends AppCompatActivity {
         checkinMainFragment = new CheckinMainFragment(viewModel);
         checkinHistoryFragment = new CheckinHistoryFragment(viewModel);
 
-        getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainerView.getId(), checkinHistoryFragment).commit();
-
         bottomNavigation = binding.subnavBar;
-        bottomNavigation.setSelectedItemId(R.id.checkinMain);
-        bottomNavigation.setOnItemSelectedListener( item -> {
-            if (item.getItemId() == R.id.checkinMain){
-                getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainerView.getId(), checkinMainFragment).commit();
-            }
-            else if (item.getItemId() == R.id.checkinHistory){
-                getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainerView.getId(), checkinHistoryFragment).commit();
-            }
-            else if (item.getItemId() == R.id.leave){
+        bottomNavigation.setOnItemSelectedListener(this::onItemSelectedListener);
+        bottomNavigation.setSelectedItemId(R.id.checkinHistory);
+
+//        getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainerView.getId(), checkinHistoryFragment).commit();
+//
+//        bottomNavigation.setSelectedItemId(R.id.checkinMain);
+
+    }
+
+    private boolean onItemSelectedListener(MenuItem item){
+        if (item.getItemId() == R.id.checkinMain){
+            getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainerView.getId(), checkinMainFragment).commit();
+        }
+        else if (item.getItemId() == R.id.checkinHistory){
+            getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainerView.getId(), checkinHistoryFragment).commit();
+        }
+        else if (item.getItemId() == R.id.leave){
+            bottomNavigation.setSelectedItemId(R.id.leave);
 //                getSupportFragmentManager().beginTransaction().
-            }
-            return true;
-        });
+        }
+        return true;
     }
 }

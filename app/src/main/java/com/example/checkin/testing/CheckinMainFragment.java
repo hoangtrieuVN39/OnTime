@@ -49,6 +49,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class CheckinMainFragment extends Fragment implements OnMapReadyCallback {
 
@@ -80,6 +84,7 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
     private Runnable uiUpdateRunnable;
     SupportMapFragment mapFragment;
+
 
     public CheckinMainFragment(BaseViewModel _parent){
         parent = _parent;
@@ -115,6 +120,29 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         check_btn = view.findViewById(R.id.checkin_btn);
         checkin_txt = view.findViewById(R.id.checkin_txt);
         listShift = view.findViewById(R.id.list_shift);
+
+        // Request location permissions
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationLayout.setVisibility(View.VISIBLE);
+            Button requestLocationButton = view.findViewById(R.id.request_btn);
+            requestLocationButton.setOnClickListener(v -> {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_PERMISSION_REQUEST_CODE);
+                onCreateMap();
+            });
+        } else {
+            requestLocationLayout.setVisibility(View.INVISIBLE);
+            onCreateMap();
+        }
+
+
+
+        uiUpdateRunnable = () -> {
+            current = new Date();
+            viewModel.updateData(current);
+            uiHandler.postDelayed(uiUpdateRunnable, 1000);
+        };
+
+        uiHandler.post(uiUpdateRunnable);
 
         Switch sw = view.findViewById(R.id.map_sw);
         sw.setOnCheckedChangeListener(this::switchMap);
@@ -154,27 +182,7 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
             }
         });
 
-        // Request location permissions
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationLayout.setVisibility(View.VISIBLE);
-        } else {
-            requestLocationLayout.setVisibility(View.INVISIBLE);
-            onCreateMap();
-        }
 
-        Button requestLocationButton = view.findViewById(R.id.request_btn);
-        requestLocationButton.setOnClickListener(v -> {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_PERMISSION_REQUEST_CODE);
-            onCreateMap();
-        });
-
-        uiUpdateRunnable = () -> {
-            current = new Date();
-            viewModel.updateData(current);
-            uiHandler.postDelayed(uiUpdateRunnable, 1000);
-        };
-
-        uiHandler.post(uiUpdateRunnable);
         return view;
     }
 

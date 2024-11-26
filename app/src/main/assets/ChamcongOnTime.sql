@@ -1,6 +1,7 @@
--- Bảng Place
+﻿-- Bảng Place
 CREATE TABLE Place (
     PlaceID VARCHAR(10) PRIMARY KEY,
+	PlaceName varchar(50),
     Latitude DECIMAL(9, 6), 
     Longitude DECIMAL(9, 6)
 );
@@ -46,6 +47,7 @@ CREATE TABLE LeaveRequest (
     LeaveStartTime DATETIME,
     LeaveEndTime DATETIME,
     Reason TEXT,
+	CountShift int,
     FOREIGN KEY (LeaveTypeID) REFERENCES LeaveType(LeaveTypeID),
     FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)
 );
@@ -76,9 +78,9 @@ CREATE TABLE LeaveRequestApproval (
 );
 
 -- Thêm dữ liệu mẫu cho bảng Place
-INSERT INTO Place (PlaceID, Latitude, Longitude) VALUES
-('VT001', 16.04590, 108.24151),
-('VT002', 16.04821, 108.23918);
+INSERT INTO Place (PlaceID,PlaceName,Latitude, Longitude) VALUES
+('VT001','DHKT', 16.04590, 108.24151),
+('VT002','Phòng họp', 16.04821, 108.23918);
 
 
 -- Thêm dữ liệu mẫu cho bảng WorkShift
@@ -128,17 +130,17 @@ INSERT INTO LeaveType (LeaveTypeID, LeaveTypeName) VALUES
 ('LDT010', 'Nghỉ thai sản');
 
 -- Thêm dữ liệu mẫu cho bảng LeaveRequest
-INSERT INTO LeaveRequest (LeaveID, CreatedTime, Status, LeaveTypeID, EmployeeID, LeaveStartTime, LeaveEndTime, Reason) VALUES
-('DT001', '2024-01-01 08:00:00', 'Đồng ý', 'LDT001', 'NV001', '2024-09-02 08:00:00', '2024-09-05 18:00:00', 'Lý do y tế'),
-('DT002', '2024-09-10 10:00:00', 'Chưa phê duyệt', 'LDT002', 'NV002', '2024-09-11 08:00:00', '2024-09-12 18:00:00', 'Gia đình khẩn cấp'),
-('DT003', '2024-09-15 11:00:00', 'Đồng ý', 'LDT003', 'NV003', '2024-09-16 08:00:00', '2025-02-28 18:00:00', 'Nghỉ thai sản'),
-('DT004', '2024-09-20 12:00:00', 'Loại bỏ', 'LDT004', 'NV004', '2024-09-25 08:00:00', '2024-09-26 18:00:00', ''),
-('DT005', '2024-10-01 13:00:00', 'Chưa phê duyệt', 'LDT005', 'NV005', '2024-10-02 08:00:00', '2024-10-03 18:00:00', 'Chuyến công tác'),
-('DT006', '2024-10-05 14:00:00', 'Đồng ý', 'LDT006', 'NV006', '2024-10-10 08:00:00', '2024-10-20 18:00:00', 'Nghỉ phép'),
-('DT007', '2024-10-08 15:00:00', 'Chưa phê duyệt', 'LDT007', 'NV007', '2024-10-11 08:00:00', '2024-10-12 18:00:00', ''),
-('DT008', '2024-10-10 16:00:00', 'Đồng ý', 'LDT008', 'NV008', '2024-10-15 08:00:00', '2024-10-20 18:00:00', 'Nghỉ phép'),
-('DT009', '2024-10-15 17:00:00', 'Chưa phê duyệt', 'LDT009', 'NV009', '2024-10-16 08:00:00', '2024-10-20 18:00:00', ''),
-('DT010', '2024-10-20 18:00:00', 'Đồng ý', 'LDT010', 'NV010', '2024-10-21 08:00:00', '2024-10-24 18:00:00', 'Nghỉ phép');
+INSERT INTO LeaveRequest (LeaveID, CreatedTime, Status, LeaveTypeID, EmployeeID, LeaveStartTime, LeaveEndTime, Reason, CountShift) VALUES
+('DT001', '2024-01-01 08:00:00', 'Đồng ý', 'LDT001', 'NV001', '2024-09-02 08:00:00', '2024-09-05 18:00:00', 'Lý do y tế', 12),
+('DT002', '2024-09-10 10:00:00', 'Chưa phê duyệt', 'LDT002', 'NV002', '2024-09-11 08:00:00', '2024-09-12 18:00:00', 'Gia đình khẩn cấp', 6),
+('DT003', '2024-09-15 11:00:00', 'Đồng ý', 'LDT003', 'NV003', '2024-09-16 08:00:00', '2025-02-28 18:00:00', 'Nghỉ thai sản', 1026),
+('DT004', '2024-09-20 12:00:00', 'Loại bỏ', 'LDT004', 'NV004', '2024-09-25 08:00:00', '2024-09-26 18:00:00', '', 6),
+('DT005', '2024-10-01 13:00:00', 'Chưa phê duyệt', 'LDT005', 'NV005', '2024-10-02 08:00:00', '2024-10-03 18:00:00', 'Chuyến công tác', 6),
+('DT006', '2024-10-05 14:00:00', 'Đồng ý', 'LDT006', 'NV006', '2024-10-10 08:00:00', '2024-10-20 18:00:00', 'Nghỉ phép', 33),
+('DT007', '2024-10-08 15:00:00', 'Chưa phê duyệt', 'LDT007', 'NV007', '2024-10-11 08:00:00', '2024-10-12 18:00:00', '', 6),
+('DT008', '2024-10-10 16:00:00', 'Đồng ý', 'LDT008', 'NV008', '2024-10-15 08:00:00', '2024-10-20 18:00:00', 'Nghỉ phép', 18),
+('DT009', '2024-10-15 17:00:00', 'Chưa phê duyệt', 'LDT009', 'NV009', '2024-10-16 08:00:00', '2024-10-20 18:00:00', '', 15),
+('DT010', '2024-10-20 18:00:00', 'Đồng ý', 'LDT010', 'NV010', '2024-10-21 08:00:00', '2024-10-24 18:00:00', 'Nghỉ phép', 12);
 
 -- Thêm dữ liệu mẫu cho bảng Attendance
 INSERT INTO Attendance (AttendanceID, CreatedTime, AttendanceType, EmployeeID, ShiftID, PlaceID, Latitude, Longitude) VALUES
@@ -146,12 +148,12 @@ INSERT INTO Attendance (AttendanceID, CreatedTime, AttendanceType, EmployeeID, S
 ('AT002', '2024-10-01 12:00:00', 'checkout', 'NV001', 'CA001', 'VT001', 16.04590, 108.24151),
 ('AT003', '2024-10-01 13:00:00', 'checkin', 'NV002', 'CA002', 'VT002',  16.04590, 108.24151),
 ('AT004', '2024-10-01 17:00:00', 'checkout', 'NV002', 'CA002', 'VT002',  16.04590, 108.24151),
-('AT005', '2024-10-01 08:00:00', 'checkin', 'NV003', 'CA001', 'VT003',  16.04590, 108.24151),
-('AT006', '2024-10-01 12:00:00', 'checkout', 'NV003', 'CA001', 'VT003',  16.04590, 108.24151),
-('AT007', '2024-10-01 13:00:00', 'checkin', 'NV004', 'CA002', 'VT004',  16.04590, 108.24151),
-('AT008', '2024-10-01 17:00:00', 'checkout', 'NV004', 'CA002', 'VT004',  16.04590, 108.24151),
-('AT009', '2024-10-01 08:00:00', 'checkin', 'NV005', 'CA001', 'VT005',  16.04590, 108.24151),
-('AT010', '2024-10-01 12:00:00', 'checkout', 'NV005', 'CA001', 'VT005',  16.04590, 108.24151);
+('AT005', '2024-10-01 08:00:00', 'checkin', 'NV003', 'CA001', 'VT001',  16.04590, 108.24151),
+('AT006', '2024-10-01 12:00:00', 'checkout', 'NV003', 'CA001', 'VT002',  16.04590, 108.24151),
+('AT007', '2024-10-01 13:00:00', 'checkin', 'NV004', 'CA002', 'VT001',  16.04590, 108.24151),
+('AT008', '2024-10-01 17:00:00', 'checkout', 'NV004', 'CA002', 'VT002',  16.04590, 108.24151),
+('AT009', '2024-10-01 08:00:00', 'checkin', 'NV005', 'CA001', 'VT002',  16.04590, 108.24151),
+('AT010', '2024-10-01 12:00:00', 'checkout', 'NV005', 'CA001', 'VT001',  16.04590, 108.24151);
 
 -- Thêm dữ liệu mẫu cho bảng LeaveRequestApproval
 INSERT INTO LeaveRequestApproval (LeaveApprovalID, LeaveID, EmployeeID, Status) VALUES
