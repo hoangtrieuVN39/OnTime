@@ -84,7 +84,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
     TextView currentdis;
     LinearLayout check_btn;
     LinearLayout requestLocationLayout;
-    LinearLayout loadingIndicator;
 
     String employeeID = "NV003";
     CheckInvalidDialog checkInvalidDialog;
@@ -102,20 +101,33 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
 
         employeeID = getIntent().getStringExtra("EmployeeID");
 
+        Handler handler = new Handler(Looper.getMainLooper());
 
-        try {
-            dbHelper = new DatabaseHelper(this, null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    dbHelper = new DatabaseHelper(CheckinMainActivity.this, null);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadInBackground();
+                    }
+                });
+            }
+        }).start();
 
-        loadingIndicator = findViewById(R.id.loading_indicator);
         checkin_txt = findViewById(R.id.checkin_txt);
         currentshift_txt = findViewById(R.id.currentshift_txt);
         currenttime_txt = findViewById(R.id.currenttime_txt);
         currentdate_txt = findViewById(R.id.currentdate_txt);
         currentplace_txt = findViewById(R.id.place_txt);
         currentdis = findViewById(R.id.currentdis_txt);
+        requestLocationLayout = findViewById(R.id.request_btn_layout);
+        check_btn = findViewById(R.id.checkin_btn);
         requestLocationLayout = findViewById(R.id.request_btn_layout);
 
         Switch sw = findViewById(R.id.map_sw);
@@ -128,7 +140,7 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
                     requestLocationLayout.setVisibility(View.VISIBLE);
                 }
 
-        loadInBackground();
+//        loadInBackground();
 
         uiUpdateRunnable = () -> {
             try {
@@ -313,6 +325,7 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
 
     private void onCreateMap() {
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
+        System.out.println(mapFragment);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
@@ -333,12 +346,6 @@ public class CheckinMainActivity extends ActivityBase implements OnMapReadyCallb
         }
         fusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
         gMap.setMyLocationEnabled(true);
-        uiHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                loadingIndicator.setVisibility(View.GONE);
-            }
-        }, 5000);
     }
 
     LocationCallback mLocationCallback = new LocationCallback() {

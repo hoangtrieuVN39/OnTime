@@ -155,10 +155,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return results;
     }
 
-    public SQLiteDatabase getReadableDatabase() {
-        return this.getWritableDatabase();
-    }
-
     public void insertDataHandler(String TABLE_NAME, String[] COLUMNS, String[] VALUES) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "INSERT INTO " + TABLE_NAME;

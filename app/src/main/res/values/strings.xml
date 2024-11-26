@@ -3,4 +3,5 @@
     <string name="app_name">OnTime</string>
     <string name="title_activity_history">Checkin History</string>
     <string name="title_activity_main">Checkin Main</string>
+    <string name="canhan">Cá nhân</string>
 </resources>

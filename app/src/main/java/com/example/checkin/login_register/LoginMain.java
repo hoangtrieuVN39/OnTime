@@ -83,6 +83,7 @@ public class LoginMain extends Activity {
                      Intent intent = new Intent(LoginMain.this, CheckinMainActivity.class);
                      intent.putExtra("EmployeeID", User);
                      startActivity(intent);
+                     finish();
                 } else {
                     Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
                 }

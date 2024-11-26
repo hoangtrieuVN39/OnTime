@@ -8,30 +8,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.checkin.checkinhistory.CheckinHistoryActivity;
 import com.example.checkin.checkinmain.CheckinMainActivity;
 import com.example.checkin.leave.formapprove.FormApproveActivity;
 import com.example.checkin.leave.formlist.FormListActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
-import com.example.checkin.models.classes.Account;
-import com.example.checkin.models.classes.Attendance;
-import com.example.checkin.models.classes.Employee;
-import com.example.checkin.models.classes.LeaveRequest;
-import com.example.checkin.models.classes.LeaveRequestApproval;
-import com.example.checkin.models.classes.LeaveType;
 import com.example.checkin.models.classes.Place;
 import com.example.checkin.models.classes.Shift;
-import com.example.checkin.models.classes.TableInfo;
-import com.example.checkin.models.classes.WorkShift;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -44,7 +34,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Handler;
 
 public class Utils {
 
@@ -126,7 +115,7 @@ public class Utils {
     }
 
     public static String getAccount(String email, String password, DatabaseHelper dbHelper) {
-        String query = "SELECT * FROM Account WHERE Email = '" + email + "' AND Passwordd = '" + password + "'";
+        String query = "Email = '" + email + "' AND Passwordd = '" + password + "'";
         List<String> account = dbHelper.getFirst("Account", query, new String[]{"EmployeeID"});
         if (account == null) {
             return null;
@@ -181,7 +170,7 @@ public class Utils {
         return cPlace;
     }
 
-    public static float getDisPlace(Place place, Location clocation) {
+    public static double getDisPlace(Place place, Location clocation) {
         float lat1 = (float) clocation.getLatitude();
         float lon1 = (float) clocation.getLongitude();
         float lat2 = (float) place.getLatitude();
