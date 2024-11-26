@@ -33,6 +33,10 @@ public class Place {
         return name;
     }
 
+    public String setPlaceName() {
+        return name;
+    }
+
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }

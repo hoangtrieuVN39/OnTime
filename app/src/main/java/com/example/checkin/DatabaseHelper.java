@@ -216,7 +216,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void syncDataToFirebase() {
         List<TableInfo> tables = new ArrayList<>();
-        tables.add(new TableInfo("Place", new String[]{"PlaceID", "Latitude", "Longitude"}));
+        tables.add(new TableInfo("Place", new String[]{"PlaceID","PlaceName", "Latitude", "Longitude"}));
         tables.add(new TableInfo("WorkShift", new String[]{"ShiftID", "ShiftName", "StartTime", "EndTime"}));
         tables.add(new TableInfo("Employee", new String[]{"EmployeeID", "EmployeeName", "Phone", "Email"}));
         tables.add(new TableInfo("Account", new String[]{"AccountID", "Passwordd", "Email", "EmployeeID"}));
