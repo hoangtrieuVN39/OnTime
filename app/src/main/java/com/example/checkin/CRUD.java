@@ -1,10 +1,12 @@
 package com.example.checkin;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncListUtil;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,6 +19,17 @@ import java.util.List;
 import java.util.Map;
 
 public class CRUD {
+    DatabaseReference database;
+
+    public CRUD(Context context){
+        FirebaseApp.initializeApp(context);
+        database = FirebaseDatabase.getInstance().getReference();
+    }
+
+    public DatabaseReference getDatabase() {
+        return database;
+    }
+
     public void createFirebase(String tableName, String filter, String[] selectionArgs, DataCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
