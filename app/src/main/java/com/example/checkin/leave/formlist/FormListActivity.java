@@ -206,7 +206,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
 //                    listFormApprove.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
                     listAllForm.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
-                    listAllForm.add(new Form(formID,nameForm, dateOff, reason, status));
+                    listAllForm.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason, status));
                 }
             } while (cursor.moveToNext());
         }
@@ -459,7 +459,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                     String dateOff = formattedStartTime + " - " + formattedEndTime;
 
 //                    listForms.add(new Form(formID,nameForm, dateOff, reason, status));
-                    listAllForm.add(new Form(formID,nameForm, dateOff, reason, status));
+                    listAllForm.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason, status));
                 }
             } while (cursor.moveToNext());
         }
@@ -492,7 +492,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
             String formStatus = null;
 
             if (form instanceof Form) {
-                formDate = ((Form) form).getDateoff().substring(0, 10); // Lấy date từ Form
+                formDate = ((Form) form).getDateoffstart().substring(0, 10); // Lấy date từ Form
                 formStatus = ((Form) form).getStatus(); // Lấy status từ Form
             } else if (form instanceof FormApprove) {
                 formDate = ((FormApprove) form).getDateoffApprove().substring(0, 10); // Lấy date từ FormApprove
@@ -610,8 +610,13 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         return String.format("%02d", month);
     }
 
+//    @Override
+//    public void onFormClick(String nameForm) {
+//
+//    }
+
     @Override
-    public void onFormClick(String nameForm) {
+    public void onFormClick(Form form) {
 
     }
 }

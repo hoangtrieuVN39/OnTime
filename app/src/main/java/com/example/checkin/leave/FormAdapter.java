@@ -14,6 +14,8 @@ import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
 import com.example.checkin.models.Form;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class FormAdapter extends BaseAdapter {
     OnFormClickListener fListener;
     private SQLiteDatabase database;
     DatabaseHelper dbHelper;
+    DatabaseReference firebaseReference;
 
 
     public FormAdapter (Context context, ArrayList<Form> forms, OnFormClickListener listener, DatabaseHelper dbHelper) {
@@ -33,6 +36,8 @@ public class FormAdapter extends BaseAdapter {
         fListener = listener;
         this.dbHelper = dbHelper;
         this.database = dbHelper.getWritableDatabase();
+//        firebaseReference = FirebaseDatabase.getInstance().getReference();
+
 
     }
     @Override
@@ -61,13 +66,15 @@ public class FormAdapter extends BaseAdapter {
         Form form = fForm.get(i);
 
         TextView txtNameForm = view.findViewById(R.id.titleTypeform_txt);
-        TextView txtDateoff = view.findViewById(R.id.ngaynghi_txt);
+        TextView txtDateoffstart = view.findViewById(R.id.ngaynghistart_txt);
+        TextView txtDateoffend = view.findViewById(R.id.ngaynghiend_txt);
         TextView txtReason = view.findViewById(R.id.lydo_txt);
         TextView txtStatus = view.findViewById(R.id.status_txt);
         ViewGroup recallLayoutContainer = view.findViewById(R.id.Recall_ll);
 
         txtNameForm.setText(fForm.get(i).getNameForm());
-        txtDateoff.setText(fForm.get(i).getDateoff());
+        txtDateoffstart.setText(fForm.get(i).getDateoffstart());
+        txtDateoffend.setText(fForm.get(i).getDateoffend());
         txtReason.setText(fForm.get(i).getReason());
         txtStatus.setText(fForm.get(i).getStatus());
 
@@ -93,17 +100,26 @@ public class FormAdapter extends BaseAdapter {
 
 //            notApprovedTxt.setText(form.getStatus());
 
+//            recallBtn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    String leaveId = form.getFormID();  // Lấy LeaveID của đơn từ
+//                    try {
+//                        deleteLeaveRequest(leaveId);  // Xóa đơn từ khỏi cơ sở dữ liệu
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    fForm.remove(i);  // Xóa khỏi danh sách
+//                    notifyDataSetChanged();  //
+//                }
+//            });
             recallBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String leaveId = form.getFormID();  // Lấy LeaveID của đơn từ
-                    try {
-                        deleteLeaveRequest(leaveId);  // Xóa đơn từ khỏi cơ sở dữ liệu
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    fForm.remove(i);  // Xóa khỏi danh sách
-                    notifyDataSetChanged();  //
+                    String leaveId = form.getFormID(); // Lấy LeaveID của đơn từ
+                    deleteLeaveRequestFromFirebase(leaveId); // Xóa đơn từ từ Firebase
+                    fForm.remove(i); // Xóa khỏi danh sách
+                    notifyDataSetChanged(); // Cập nhật lại adapter
                 }
             });
         }
@@ -112,11 +128,27 @@ public class FormAdapter extends BaseAdapter {
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick (View view){
-                fListener.onFormClick(fForm.get(i).getNameForm());
+            public void onClick(View view) {
+                fListener.onFormClick(fForm.get(i));
             }
         });
+
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick (View view){
+//                fListener.onFormClick(fForm.get(i).getNameForm());
+//            }
+//        });
         return view;
+    }
+    private void deleteLeaveRequestFromFirebase(String leaveId) {
+        firebaseReference.child("leaverequests").child(leaveId).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    // Log success or update UI if needed
+                })
+                .addOnFailureListener(e -> {
+                    // Handle the failure
+                });
     }
     private void deleteLeaveRequest(String leaveId) throws IOException {
         if (dbHelper == null) {

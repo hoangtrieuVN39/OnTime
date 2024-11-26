@@ -27,6 +27,7 @@ import com.example.checkin.leave.MonthSpinnerAdapter;
 import com.example.checkin.leave.StatusSpinnerAdapter;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 import com.example.checkin.models.FilterTypeForm;
+import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.models.MonthSpinner;
 import com.example.checkin.models.StatusSpinner;
@@ -565,8 +566,13 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         return String.format("%02d", month);
     }
 
+//    @Override
+//    public void onFormClick(String formName) {
+//        Toast.makeText(this, "Đơn từ cần phê duyệt: " + formName, Toast.LENGTH_SHORT).show();
+//    }
+
     @Override
-    public void onFormClick(String formName) {
-        Toast.makeText(this, "Đơn từ cần phê duyệt: " + formName, Toast.LENGTH_SHORT).show();
+    public void onFormClick(Form form) {
+
     }
 }
