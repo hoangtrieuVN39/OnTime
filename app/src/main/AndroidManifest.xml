@@ -35,7 +35,7 @@
         </activity>
 
         <activity
-            android:name="com.example.checkin.checkinmain.CheckinMainActivity"
+            android:name="com.example.checkin.leave.formpersonal.FormPersonalActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:foregroundServiceType="location"
@@ -65,11 +65,13 @@
             android:name="com.example.checkin.leave.formapprove.FormApproveActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
-        <activity
-            android:name="com.example.checkin.leave.formpersonal.FormPersonalActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
+<!--        <activity-->
+<!--            android:name="com.example.checkin.leave.formpersonal.FormPersonalActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
+<!--        </activity>-->
+
+        <activity android:name=".leave.formdetail.FormDetailActivity"/>
 
         <activity
             android:name=".testing.MainActivity"

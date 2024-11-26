@@ -221,7 +221,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tables.add(new TableInfo("Employee", new String[]{"EmployeeID", "EmployeeName", "Phone", "Email"}));
         tables.add(new TableInfo("Account", new String[]{"AccountID", "Passwordd", "Email", "EmployeeID"}));
         tables.add(new TableInfo("LeaveType", new String[]{"LeaveTypeID", "LeaveTypeName"}));
-        tables.add(new TableInfo("LeaveRequest", new String[]{"LeaveID", "CreatedTime", "Status", "LeaveTypeID", "EmployeeID", "LeaveStartTime", "LeaveEndTime", "Reason"}));
+        tables.add(new TableInfo("LeaveRequest", new String[]{"LeaveID", "CreatedTime", "Status", "LeaveTypeID", "EmployeeID", "LeaveStartTime", "LeaveEndTime", "Reason","CountShift"}));
         tables.add(new TableInfo("Attendance", new String[]{"AttendanceID", "CreatedTime", "AttendanceType", "EmployeeID", "ShiftID", "PlaceID", "Latitude", "Longitude"}));
         tables.add(new TableInfo("LeaveRequestApproval", new String[]{"LeaveApprovalID", "LeaveID", "EmployeeID", "Status"}));
 
@@ -271,7 +271,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                 databaseReference.child("leavetypes").child(values[0]).setValue(leaveType);
                                 break;
                             case "LeaveRequest":
-                                LeaveRequest leaveRequest = new LeaveRequest(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]);
+                                LeaveRequest leaveRequest = new LeaveRequest(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], Integer.parseInt(values[8]));
                                 databaseReference.child("leaverequests").child(values[0]).setValue(leaveRequest);
                                 break;
                             case "Attendance":

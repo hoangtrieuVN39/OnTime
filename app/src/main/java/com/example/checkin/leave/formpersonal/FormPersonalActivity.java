@@ -276,6 +276,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
             "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
             "LeaveRequest.LeaveID AS LeaveID, " +
+            "LeaveRequest.CountShift AS CountShift, " +
             "LeaveRequest.Status AS Status, " +
             "LeaveRequest.Reason AS Reason " +
             "FROM LeaveRequest " +
@@ -293,21 +294,23 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
             int reasonIndex = cursor.getColumnIndex("Reason");
             int statussIndex = cursor.getColumnIndex("Status");
+            int CountshiftIndex = cursor.getColumnIndex("CountShift");
 
-            if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+            if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1) {
                 String formID = cursor.getString(formIDindex);
                 String nameForm = cursor.getString(nameFormIndex);
                 String leaveStartTime = cursor.getString(leaveStartTimeIndex);
                 String leaveEndTime = cursor.getString(leaveEndTimeIndex);
                 String reason = cursor.getString(reasonIndex);
                 String status = cursor.getString(statussIndex);
+                int countShift = cursor.getInt(CountshiftIndex);
 
                 String formattedStartTime = formatDateTime(leaveStartTime);
                 String formattedEndTime = formatDateTime(leaveEndTime);
 
                 String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                listForms.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason, status));
+                listForms.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason, status, countShift));
             }
         } while (cursor.moveToNext());
     }
@@ -622,10 +625,11 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
     @Override
     public void onFormClick(Form form) {
         Intent intent = new Intent(this, FormDetailActivity.class);
-        intent.putExtra("formName", form.getNameForm());
-        intent.putExtra("dateOff", form.getDateoffstart());
-        intent.putExtra("dateoff", form.getDateoffend());
-        intent.putExtra("reason", form.getReason());
+        intent.putExtra("formid", form.getFormID());
+//        intent.putExtra("dateOffstart", form.getDateoffstart());
+//        intent.putExtra("dateoffend", form.getDateoffend());
+//        intent.putExtra("reason", form.getReason());
+//        intent.putExtra("countshift", form.getCountShift());
         startActivity(intent);
         finish();
     }

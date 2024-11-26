@@ -301,13 +301,13 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
     }
 
     public void setFormApprove(){
-        listFormApprove.add(new FormApprove("Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024","12/10/2024" ,"Đi trễ","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Nghỉ không lương", "15/02/2024", "12/10/2024","Nghỉ không lương","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Nghỉ phép - gửi trước 24h", "05/03/2024", "12/10/2024","Nghỉ phép","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Cưới/ tang", "10/04/2024", "12/10/2024","Cưới","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Công tác", "23/05/2024","12/10/2024", "Công tác","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Làm việc từ xa", "30/06/2024","12/10/2024", "Làm việc từ xa","Trịnh Trần Phương Thắng","y"));
-        listFormApprove.add(new FormApprove("Giải trình công", "07/07/2024", "12/10/2024","Giải trình công","Trịnh Trần Phương Thắng","y"));
+        listFormApprove.add(new FormApprove("LAP001","Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024","12/10/2024" ,"Đi trễ","Trịnh Trần Phương Thắng","y",2));
+        listFormApprove.add(new FormApprove("LAP002","Nghỉ không lương", "15/02/2024", "12/10/2024","Nghỉ không lương","Trịnh Trần Phương Thắng","y",3));
+        listFormApprove.add(new FormApprove("LAP003","Nghỉ phép - gửi trước 24h", "05/03/2024", "12/10/2024","Nghỉ phép","Trịnh Trần Phương Thắng","y",4));
+        listFormApprove.add(new FormApprove("LAP004","Cưới/ tang", "10/04/2024", "12/10/2024","Cưới","Trịnh Trần Phương Thắng","y",6));
+        listFormApprove.add(new FormApprove("LAP005","Công tác", "23/05/2024","12/10/2024", "Công tác","Trịnh Trần Phương Thắng","y",7));
+        listFormApprove.add(new FormApprove("LAP006","Làm việc từ xa", "30/06/2024","12/10/2024", "Làm việc từ xa","Trịnh Trần Phương Thắng","y",8));
+        listFormApprove.add(new FormApprove("LAP007","Giải trình công", "07/07/2024", "12/10/2024","Giải trình công","Trịnh Trần Phương Thắng","y",9));
     }
 
     public void setListMonth() {
@@ -365,6 +365,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                 "LeaveRequest.LeaveID AS LeaveID, " +
                 "LeaveRequestApproval.Status AS Status, " +
                 "LeaveRequest.Reason AS Reason, " +
+                "LeaveRequest.CountShift AS CountShift, " +
                 "LeaveRequest.CreatedTime AS CreatedTime, " +
                 "Employee.EmployeeName AS EmployeeName " +
                 "FROM LeaveRequest " +
@@ -379,7 +380,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         if (cursor != null && cursor.moveToFirst()) {
             listFormApprove.clear();
             do {
-//                int formIDindex = cursor.getColumnIndex("LeaveID");
+                int formIDindex = cursor.getColumnIndex("LeaveID");
                 int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
                 int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
                 int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
@@ -387,8 +388,10 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                 int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
                 int reasonIndex = cursor.getColumnIndex("Reason");
                 int statussIndex = cursor.getColumnIndex("Status");
+                int CountshiftIndex = cursor.getColumnIndex("CountShift");
 
-                if (nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+                if (formIDindex != -1  && nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
+                    String formID = cursor.getString(formIDindex);
                     String nameForm = cursor.getString(nameFormIndex);
                     String employeeName = cursor.getString(employeeNameIndex);
                     String createdTime = cursor.getString(createdTimeIndex);
@@ -396,6 +399,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                     String leaveEndTime = cursor.getString(leaveEndTimeIndex);
                     String reason = cursor.getString(reasonIndex);
                     String status = cursor.getString(statussIndex);
+                    int countShift = cursor.getInt(CountshiftIndex);
 
                     String formattedCreatedTime = formatDate(createdTime);
                     String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
@@ -403,7 +407,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
 
                     String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                    listFormApprove.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
+                    listFormApprove.add(new FormApprove(formID,nameForm,dateOff,formattedCreatedTime,reason,employeeName,status,countShift));
                 }
             } while (cursor.moveToNext());
         }

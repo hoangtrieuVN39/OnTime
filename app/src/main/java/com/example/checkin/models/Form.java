@@ -7,13 +7,16 @@ public class Form {
     String dateoffend;
     String reason;
     String status;
-    public Form(String FormID, String nameForm, String dateoffstart,String dateoffend, String reason, String status){
+    int CountShift;
+    public Form(String FormID, String nameForm, String dateoffstart,String dateoffend, String reason, String status,int CountShift){
         this.FormID = FormID;
         this.nameForm = nameForm;
         this.dateoffstart = dateoffstart;
         this.dateoffend = dateoffend;
         this.reason = reason;
         this.status = status;
+        this.CountShift = CountShift;
+
     }
     public String getFormID(){
         return FormID;
@@ -52,4 +55,11 @@ public class Form {
     public void setStatus(String status) {
         this.status = status;
     }
+    public int getCountShift() {
+        return CountShift;
+    }
+    public void setCountShift(int countShift) {
+        CountShift = countShift;
+    }
+
 }

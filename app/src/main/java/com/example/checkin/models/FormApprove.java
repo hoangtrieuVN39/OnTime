@@ -1,20 +1,32 @@
 package com.example.checkin.models;
 
 public class FormApprove {
+    String FormApproveID;
     String nameFormApprover;
     String dateoffApprover;
     String CreateTimeApprover;
     String reasonApprover;
     String nameApprover;
     String statusApprover;
+    int CountShift;
 
-    public FormApprove(String nameFormApprover, String dateoffApprover,String CreateTimeApprover, String reasonApprover, String nameApprover, String statusApprover){
+    public FormApprove(String FormApproveID, String nameFormApprover, String dateoffApprover,String CreateTimeApprover, String reasonApprover, String nameApprover, String statusApprover, int CountShift){
+        this.FormApproveID = FormApproveID;
         this.nameFormApprover = nameFormApprover;
         this.dateoffApprover = dateoffApprover;
         this.CreateTimeApprover = CreateTimeApprover;
         this.reasonApprover = reasonApprover;
         this.nameApprover = nameApprover;
         this.statusApprover = statusApprover;
+        this.CountShift = CountShift;
+    }
+
+
+    public String getFormApproveID(){
+        return FormApproveID;
+    }
+    public void setFormApproveID(String FormApproveID) {
+        this.FormApproveID = FormApproveID;
     }
 
     public String getNameFormApprove(){
@@ -59,5 +71,11 @@ public class FormApprove {
 
     public void setStatusApprover(String statusApprover) {
         this.statusApprover = statusApprover;
+    }
+    public int getCountShift() {
+        return CountShift;
+    }
+    public void setCountShift(int countShift) {
+        CountShift = countShift;
     }
 }

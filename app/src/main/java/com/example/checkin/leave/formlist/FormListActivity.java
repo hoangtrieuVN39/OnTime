@@ -165,6 +165,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                 "LeaveRequest.LeaveID AS LeaveID, " +
                 "LeaveRequestApproval.Status AS Status, " +
                 "LeaveRequest.Reason AS Reason, " +
+                "LeaveRequest.CountShift AS CountShift, " +
                 "LeaveRequest.CreatedTime AS CreatedTime, " +
                 "Employee.EmployeeName AS EmployeeName " +
                 "FROM LeaveRequest " +
@@ -187,8 +188,9 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                 int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
                 int reasonIndex = cursor.getColumnIndex("Reason");
                 int statussIndex = cursor.getColumnIndex("Status");
+                int CountshiftIndex = cursor.getColumnIndex("CountShift");
 
-                if (nameFormIndex != -1  && formIDindex!= -1 && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+                if (nameFormIndex != -1  && formIDindex!= -1 && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
                     String formID = cursor.getString(formIDindex);
                     String nameForm = cursor.getString(nameFormIndex);
                     String employeeName = cursor.getString(employeeNameIndex);
@@ -197,6 +199,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                     String leaveEndTime = cursor.getString(leaveEndTimeIndex);
                     String reason = cursor.getString(reasonIndex);
                     String status = cursor.getString(statussIndex);
+                    int countShift = cursor.getInt(CountshiftIndex);
 
                     String formattedCreatedTime = FormApproveActivity.formatDate(createdTime);
                     String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
@@ -205,8 +208,8 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                     String dateOff = formattedStartTime + " - " + formattedEndTime;
 
 //                    listFormApprove.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
-                    listAllForm.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
-                    listAllForm.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason, status));
+                    listAllForm.add(new FormApprove(formID,nameForm,dateOff,formattedCreatedTime,reason,employeeName,status, countShift));
+                    listAllForm.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason,status, countShift));
                 }
             } while (cursor.moveToNext());
         }
@@ -423,6 +426,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                 "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
                 "LeaveRequest.LeaveID AS LeaveID, " +
                 "LeaveRequestApproval.Status AS Status, " +
+                "LeaveRequest.CountShift AS CountShift, " +
                 "LeaveRequest.Reason AS Reason, " +
                 "LeaveRequest.CreatedTime AS CreatedTime, " +
                 "Employee.EmployeeName AS EmployeeName " +
@@ -444,14 +448,16 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                 int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
                 int reasonIndex = cursor.getColumnIndex("Reason");
                 int statussIndex = cursor.getColumnIndex("Status");
+                int CountshiftIndex = cursor.getColumnIndex("CountShift");
 
-                if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1) {
+                if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
                     String formID = cursor.getString(formIDindex);
                     String nameForm = cursor.getString(nameFormIndex);
                     String leaveStartTime = cursor.getString(leaveStartTimeIndex);
                     String leaveEndTime = cursor.getString(leaveEndTimeIndex);
                     String reason = cursor.getString(reasonIndex);
                     String status = cursor.getString(statussIndex);
+                    int countShift = cursor.getInt(CountshiftIndex);
 
                     String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
                     String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
@@ -459,7 +465,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                     String dateOff = formattedStartTime + " - " + formattedEndTime;
 
 //                    listForms.add(new Form(formID,nameForm, dateOff, reason, status));
-                    listAllForm.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason, status));
+                    listAllForm.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason, status, countShift));
                 }
             } while (cursor.moveToNext());
         }
