@@ -249,21 +249,28 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                 int countShift = Integer.parseInt(row.get("countShift"));
                 String status = row.get("status");
 
+                Log.d("Firebase", "leaveRequestID: " + leaveRequestID);
+                Log.d("Firebase", "leaveTypeID: " + leaveTypeID);
+//                Log.d("Firebase", "startDate: " + startDate);
+//                Log.d("Firebase", "endDate: " + endDate);
+//                Log.d("Firebase", "reason: " + reason);
+
                 // Lấy tên loại nghỉ từ leavetypes
                 if (leaveTypeID != null && !leaveTypeID.isEmpty()) {
-                    crud.readFirebaseStringIndex("leavetypes", "id", leaveTypeID, new String[]{"leaveTypeName"}, leaveTypeResults -> {
+                    crud.readFirebaseStringIndex("leavetypes", "leaveTypeID", leaveTypeID, new String[]{"leaveTypeName"}, leaveTypeResults -> {
                         String leaveTypeName;  // Mặc định nếu không tìm thấy tên
 
                         if (leaveTypeResults != null && !leaveTypeResults.isEmpty()) {
                             // Nếu tìm thấy, lấy tên loại nghỉ
                             leaveTypeName = leaveTypeResults.get(0).get("leaveTypeName");
+                            Log.d("fb","leavetype"+leaveTypeName);
                         } else {
                             leaveTypeName = "Không xác định";
                         }
 
                         // Lấy tên nhân viên từ employees
                         if (employeeID != null && !employeeID.isEmpty()) {
-                            crud.readFirebaseStringIndex("employees", "id", employeeID, new String[]{"employeeName"}, employeeResults -> {
+                            crud.readFirebaseStringIndex("employees", "employeeID", employeeID, new String[]{"employeeName"}, employeeResults -> {
                                 String employeeName = "Không xác định";  // Mặc định nếu không tìm thấy tên nhân viên
 
                                 if (employeeResults != null && !employeeResults.isEmpty()) {
