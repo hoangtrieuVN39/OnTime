@@ -139,18 +139,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = mDatabase.rawQuery(query, null);
 
-        while (cursor.moveToNext()) {
-            List<String> result = new ArrayList<>();
-            for (int i = 0; i < cursor.getColumnCount(); i++) {
-                result.add(cursor.getString(i));
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                List<String> result = new ArrayList<>();
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
+                    result.add(cursor.getString(i));
+                }
+                ;
+                results.add(result);
             }
-            ;
-            results.add(result);
+        } catch (Exception e) {
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
         }
-
-        cursor.close();
         db.close();
         return results;
     }
@@ -165,6 +171,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         query += String.join(", ", VALUES);
         query += ")";
         db.execSQL(query);
+        db.close();
     }
 
     public List<String> getLast(String TABLE_NAME, String FILTER, String[] SELECTION_ARGS) {
@@ -179,16 +186,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
 
-        cursor.moveToLast();
-        if (cursor.getCount() == 0) {
-            return null;
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, null);
+            cursor.moveToLast();
+            if (cursor.getCount() == 0) {
+                return null;
+            }
+            for (int i = 0; i < cursor.getColumnCount(); i++) {
+                results.add(cursor.getString(i));
+            }
+        } catch (Exception e) {
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
         }
-        for (int i = 0; i < cursor.getColumnCount(); i++) {
-            results.add(cursor.getString(i));
-        }
-        cursor.close();
+        db.close();
         return results;
     }
 
@@ -204,91 +219,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        cursor.moveToFirst();
-        for (int i = 0; i < cursor.getColumnCount(); i++) {
-            results.add(cursor.getString(i));
-        }
-        cursor.close();
-        return results;
-    }
-
-    public void syncDataToFirebase() {
-        List<TableInfo> tables = new ArrayList<>();
-        tables.add(new TableInfo("Place", new String[]{"PlaceID", "Latitude", "Longitude"}));
-        tables.add(new TableInfo("WorkShift", new String[]{"ShiftID", "ShiftName", "StartTime", "EndTime"}));
-        tables.add(new TableInfo("Employee", new String[]{"EmployeeID", "EmployeeName", "Phone", "Email"}));
-        tables.add(new TableInfo("Account", new String[]{"AccountID", "Passwordd", "Email", "EmployeeID"}));
-        tables.add(new TableInfo("LeaveType", new String[]{"LeaveTypeID", "LeaveTypeName"}));
-        tables.add(new TableInfo("LeaveRequest", new String[]{"LeaveID", "CreatedTime", "Status", "LeaveTypeID", "EmployeeID", "LeaveStartTime", "LeaveEndTime", "Reason"}));
-        tables.add(new TableInfo("Attendance", new String[]{"AttendanceID", "CreatedTime", "AttendanceType", "EmployeeID", "ShiftID", "PlaceID", "Latitude", "Longitude"}));
-        tables.add(new TableInfo("LeaveRequestApproval", new String[]{"LeaveApprovalID", "LeaveID", "EmployeeID", "Status"}));
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        for (TableInfo table : tables) {
-            String query = "SELECT * FROM " + table.tableName;
-            Cursor cursor = db.rawQuery(query, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    // Lấy dữ liệu từ Cursor
-                    String[] values = new String[table.columnNames.length];
-                    boolean validRow = true;
-
-                    for (int i = 0; i < table.columnNames.length; i++) {
-                        int columnIndex = cursor.getColumnIndex(table.columnNames[i]);
-                        if (columnIndex != -1) {
-                            values[i] = cursor.getString(columnIndex);
-                        } else {
-                            validRow = false;
-                            break;
-                        }
-                    }
-
-                    if (validRow) {
-                        switch (table.tableName) {
-                            case "Place":
-                                Place place = new Place(values[0], (values[1]), (Double.parseDouble(values[2])), (Double.parseDouble(values[3])));
-                                databaseReference.child("places").child(values[0]).setValue(place);
-                                break;
-                            case "WorkShift":
-                                WorkShift workShift = new WorkShift(values[0], values[1], values[2], values[3]);
-                                databaseReference.child("workshifts").child(values[0]).setValue(workShift);
-                                break;
-                            case "Employee":
-                                Employee employee = new Employee(values[0], values[1], values[2], values[3]);
-                                databaseReference.child("employees").child(values[0]).setValue(employee);
-                                break;
-                            case "Account":
-                                Account account = new Account(values[0], values[1], values[2], values[3]);
-                                databaseReference.child("accounts").child(values[0]).setValue(account);
-                                break;
-                            case "LeaveType":
-                                LeaveType leaveType = new LeaveType(values[0], values[1]);
-                                databaseReference.child("leavetypes").child(values[0]).setValue(leaveType);
-                                break;
-                            case "LeaveRequest":
-                                LeaveRequest leaveRequest = new LeaveRequest(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]);
-                                databaseReference.child("leaverequests").child(values[0]).setValue(leaveRequest);
-                                break;
-                            case "Attendance":
-                                Attendance attendance = new Attendance(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]);
-                                databaseReference.child("attendances").child(values[0]).setValue(attendance);
-                                break;
-                            case "LeaveRequestApproval":
-                                LeaveRequestApproval leaveRequestApproval = new LeaveRequestApproval(values[0], values[1], values[2], values[3]);
-                                databaseReference.child("leaverequestapprovals").child(values[0]).setValue(leaveRequestApproval);
-                                break;
-                        }
-                    }
-                } while (cursor.moveToNext());
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, null);
+            cursor.moveToFirst();
+            for (int i = 0; i < cursor.getColumnCount(); i++) {
+                results.add(cursor.getString(i));
             }
-            cursor.close();
+        } catch (Exception e) {
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
         }
         db.close();
+        return results;
     }
-
 }

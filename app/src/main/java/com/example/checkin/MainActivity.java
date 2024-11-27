@@ -1,4 +1,4 @@
-package com.example.checkin.testing;
+package com.example.checkin;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -8,17 +8,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.checkin.R;
+import com.example.checkin.checkinhistory.CheckinHistoryFragment;
 import com.example.checkin.databinding.TestBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
-    private TestBinding binding;
-    private BottomNavigationView bottomNavigation;
+
     private Fragment checkinMainFragment;
     private Fragment checkinHistoryFragment;
+    private Fragment currentFragment;
+
+    private TestBinding binding;
+    private BottomNavigationView bottomNavigation;
     private BaseViewModel viewModel;
     String employeeID;
 
@@ -43,30 +46,44 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-        checkinMainFragment = new CheckinMainFragment(viewModel);
-        checkinHistoryFragment = new CheckinHistoryFragment(viewModel);
+        // Initialize fragments only once
+        if (checkinMainFragment == null) {
+            checkinMainFragment = new CheckinMainFragment(viewModel);
+        }
+        if (checkinHistoryFragment == null) {
+            checkinHistoryFragment = new CheckinHistoryFragment(viewModel);
+        }
+
+        // Initial fragment setup
+        currentFragment = checkinMainFragment;
+        getSupportFragmentManager().beginTransaction()
+                .replace(binding.fragmentContainerView.getId(), currentFragment)
+                .commit();
 
         bottomNavigation = binding.subnavBar;
         bottomNavigation.setOnItemSelectedListener(this::onItemSelectedListener);
         bottomNavigation.setSelectedItemId(R.id.checkinHistory);
 
-//        getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainerView.getId(), checkinHistoryFragment).commit();
-//
-//        bottomNavigation.setSelectedItemId(R.id.checkinMain);
-
     }
 
     private boolean onItemSelectedListener(MenuItem item){
-        if (item.getItemId() == R.id.checkinMain){
-            getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainerView.getId(), checkinMainFragment).commit();
+        Fragment fragmentToShow = null;
+
+        if (item.getItemId() == R.id.checkinMain) {
+            fragmentToShow = checkinMainFragment;
+        } else if (item.getItemId() == R.id.checkinHistory) {
+            fragmentToShow = checkinHistoryFragment;
         }
-        else if (item.getItemId() == R.id.checkinHistory){
-            getSupportFragmentManager().beginTransaction().replace(binding.fragmentContainerView.getId(), checkinHistoryFragment).commit();
+
+        // Only replace if it's a different fragment
+        if (fragmentToShow != null && fragmentToShow != currentFragment) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)  // Optimize transaction
+                    .replace(binding.fragmentContainerView.getId(), fragmentToShow)
+                    .commit();
+            currentFragment = fragmentToShow;
         }
-        else if (item.getItemId() == R.id.leave){
-            bottomNavigation.setSelectedItemId(R.id.leave);
-//                getSupportFragmentManager().beginTransaction().
-        }
+
         return true;
     }
 }

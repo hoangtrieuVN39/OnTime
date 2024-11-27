@@ -1,11 +1,9 @@
-package com.example.checkin.testing;
+package com.example.checkin;
 
 import android.content.Context;
 
 import androidx.lifecycle.ViewModel;
 
-import com.example.checkin.DatabaseHelper;
-import com.example.checkin.Utils;
 import com.example.checkin.models.classes.Place;
 import com.example.checkin.models.classes.Shift;
 

@@ -1,7 +1,5 @@
-package com.example.checkin.testing;
+package com.example.checkin.checkinhistory;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,16 +11,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
-import com.example.checkin.checkinhistory.ListDateAdapter;
-import com.example.checkin.checkinmain.ListShiftCheckAdapter;
-import com.example.checkin.models.classes.Shift;
+import com.example.checkin.BaseViewModel;
 import com.google.android.material.chip.ChipGroup;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 
 
 public class CheckinHistoryFragment extends Fragment {
