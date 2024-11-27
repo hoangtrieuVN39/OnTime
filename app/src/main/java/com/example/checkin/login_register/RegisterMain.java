@@ -1,5 +1,6 @@
 package com.example.checkin.login_register;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -29,7 +30,7 @@ public class RegisterMain extends Activity {
         setContentView(R.layout.register_layout);
 
         try {
-            databaseHelper = new DatabaseHelper(this);
+            databaseHelper = new DatabaseHelper(this, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -63,12 +64,12 @@ public class RegisterMain extends Activity {
                     return;
                 }
 
-                if (!AccountUtils.isEmployeeValid(email)) {
+                if (!AccountUtils.isEmployeeValid(email, databaseHelper)) {
                     Toast.makeText(RegisterMain.this, "Thông tin không khớp với bất kỳ nhân viên nào!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (AccountUtils.addAccount(email, password)) {
+                if (AccountUtils.addAccount(email, password, databaseHelper)) {
                     Toast.makeText(RegisterMain.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
@@ -78,6 +79,7 @@ public class RegisterMain extends Activity {
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setupPasswordVisibilityToggle(final EditText editText) {
         editText.setOnTouchListener((v, event) -> {
             if (event.getAction() == android.view.MotionEvent.ACTION_UP) {

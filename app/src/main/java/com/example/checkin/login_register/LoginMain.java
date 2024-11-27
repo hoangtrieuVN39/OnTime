@@ -1,5 +1,6 @@
 package com.example.checkin.login_register;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.checkin.MainActivity;
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.AccountUtils;
@@ -23,13 +25,14 @@ public class LoginMain extends Activity {
     private EditText passwordEditText;
     private boolean isPasswordVisible = false;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
 
         try {
-            databaseHelper = new DatabaseHelper(this);
+            databaseHelper = new DatabaseHelper(this, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -70,8 +73,11 @@ public class LoginMain extends Activity {
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                if (AccountUtils.checkLogin(email, password)) {
+                if (AccountUtils.checkLogin(email, password, databaseHelper)) {
                     Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginMain.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
                 }

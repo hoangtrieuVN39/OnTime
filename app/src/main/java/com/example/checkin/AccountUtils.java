@@ -11,18 +11,10 @@ import java.io.IOException;
 
 public class AccountUtils {
 
-    private static DatabaseHelper dbHelper;
-
-    public AccountUtils(Context context) throws IOException {
-        if (dbHelper == null) {
-            dbHelper = new DatabaseHelper(context);
-        }
-    }
-
     // Kiểm tra tài khoản có tồn tại trong cơ sở dữ liệu
-    public boolean checkAccountExists(String email) {
+    public boolean checkAccountExists(String email, DatabaseHelper dbHelper) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM Account WHERE EmployeeEmail = ?";
+        String query = "SELECT * FROM Account WHERE Email = ?";
         Cursor cursor = db.rawQuery(query, new String[]{email});
         boolean exists = cursor.getCount() > 0;
         cursor.close();
@@ -31,15 +23,15 @@ public class AccountUtils {
     }
 
     // Kiểm tra đăng nhập hợp lệ
-    public static boolean checkLogin(String email, String password) {
+    public static boolean checkLogin(String email, String password, DatabaseHelper dbHelper) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT Password FROM Account WHERE EmployeeEmail = ?";
+        String query = "SELECT Passwordd FROM Account WHERE Email = ?";
         Cursor cursor = db.rawQuery(query, new String[]{email});
 
         boolean isValidUser = false;
         if (cursor.moveToFirst()) {
-            @SuppressLint("Range") String hashedPassword = cursor.getString(cursor.getColumnIndex("Password"));
-            isValidUser = HashUtils.checkPassword(password, hashedPassword);
+            @SuppressLint("Range") String hashedPassword = cursor.getString(cursor.getColumnIndex("Passwordd"));
+            isValidUser = Utils.checkPassword(password, hashedPassword);
         }
 
         cursor.close();
@@ -48,18 +40,18 @@ public class AccountUtils {
     }
 
     // Thêm tài khoản vào cơ sở dữ liệu
-    public static boolean addAccount(String email, String password) {
+    public static boolean addAccount(String email, String password, DatabaseHelper dbHelper) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String employeeID = getEmployeeID(email);
+        String employeeID = getEmployeeID(email, dbHelper);
         if (employeeID == null) {
             db.close();
             return false;
         }
 
         ContentValues values = new ContentValues();
-        values.put("EmployeeEmail", email);
-        String hashedPassword = HashUtils.hashPassword(password);
-        values.put("Password", hashedPassword);
+        values.put("Email", email);
+        String hashedPassword = Utils.hashPassword(password);
+        values.put("Passwordd", hashedPassword);
         values.put("EmployeeID", employeeID);
 
         long result = db.insert("Account", null, values);
@@ -76,7 +68,7 @@ public class AccountUtils {
 
     // Lấy EmployeeID từ email
     @SuppressLint("Range")
-    public static String getEmployeeID(String email) {
+    public static String getEmployeeID(String email, DatabaseHelper dbHelper) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String query = "SELECT EmployeeID FROM Employee WHERE EmployeeEmail = ?";
         Cursor cursor = db.rawQuery(query, new String[]{email});
@@ -93,9 +85,9 @@ public class AccountUtils {
     }
 
     // Kiểm tra tính hợp lệ của nhân viên
-    public static boolean isEmployeeValid(String email) {
+    public static boolean isEmployeeValid(String email, DatabaseHelper dbHelper) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM Employee WHERE EmployeeEmail = ?";
+        String query = "SELECT * FROM Employee WHERE Email = ?";
         Cursor cursor = db.rawQuery(query, new String[]{email});
 
         boolean isValid = cursor.getCount() > 0;
