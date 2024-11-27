@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.checkin.checkinhistory.CheckinHistoryFragment;
+import com.example.checkin.checkinmain.CheckinMainFragment;
 import com.example.checkin.databinding.TestBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
