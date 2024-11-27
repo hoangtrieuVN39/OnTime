@@ -12,6 +12,9 @@ import java.io.IOException;
 public class AccountUtils {
 
     private static DatabaseHelper dbHelper;
+    public static void setDbHelper(DatabaseHelper helper) {
+        dbHelper = helper;
+    }
 
     public AccountUtils(Context context) throws IOException {
         if (dbHelper == null) {
