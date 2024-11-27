@@ -12,8 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.example.checkin.DatabaseHelper;
-import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 import com.example.checkin.R;
+import com.example.checkin.leave.formpersonal.FormPersonalActivity;
+
 import com.example.checkin.models.Form;
 
 import java.io.IOException;
@@ -44,10 +45,7 @@ public class FormDetailActivity extends Activity {
 
 
         String formid = getIntent().getStringExtra("formid");
-        Log.d( "onCreate: ", "formid: " + formid);
         getLeaveDetails(formid);
-
-
 
         btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(this, FormPersonalActivity.class);
@@ -67,7 +65,7 @@ public class FormDetailActivity extends Activity {
                 "WHERE LeaveRequest.LeaveID = ?";
 
         Cursor cursor = db.rawQuery(query, new String[]{leaveID});
-        Log.d("getLeaveDetails", "leaveID: " + leaveID);  // Debug log để kiểm tra leaveID
+        Log.d("getLeaveDetails", "leaveID: " + leaveID);
 
         if (cursor != null && cursor.moveToFirst()) {
             int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
@@ -76,7 +74,6 @@ public class FormDetailActivity extends Activity {
             int reasonIndex = cursor.getColumnIndex("Reason");
             int countShiftIndex = cursor.getColumnIndex("CountShift");
 
-            // Kiểm tra chỉ mục và lấy dữ liệu từ cursor
             if (nameFormIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 &&
                     reasonIndex != -1 && countShiftIndex != -1) {
                 String nameForm = cursor.getString(nameFormIndex);
@@ -85,33 +82,17 @@ public class FormDetailActivity extends Activity {
                 String reason = cursor.getString(reasonIndex);
                 int countShift = cursor.getInt(countShiftIndex);
 
-                // Định dạng lại thời gian
                 String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
                 String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
 
-                // Hiển thị thông tin vào các TextView
                 tvLeaveTypeName.setText(nameForm);
                 tvLeaveStartTime.setText(formattedStartTime);
                 tvLeaveEndTime.setText(formattedEndTime);
                 tvReason.setText(reason);
                 tvCountShift.setText(String.valueOf(countShift));
 
-            } else {
-                // Nếu một trong các chỉ mục không hợp lệ, hiển thị thông báo lỗi
-                tvLeaveTypeName.setText("Thông tin không có");
-                tvLeaveStartTime.setText("Thông tin không có");
-                tvLeaveEndTime.setText("Thông tin không có");
-                tvReason.setText("Thông tin không có");
-                tvCountShift.setText("Thông tin không có");
             }
-            cursor.close();  // Đừng quên đóng cursor
-        } else {
-            // Trường hợp không tìm thấy LeaveID trong cơ sở dữ liệu
-            tvLeaveTypeName.setText("Thông tin không có");
-            tvLeaveStartTime.setText("Thông tin không có");
-            tvLeaveEndTime.setText("Thông tin không có");
-            tvReason.setText("Thông tin không có");
-            tvCountShift.setText("Thông tin không có");
+            cursor.close();
         }
     }
 

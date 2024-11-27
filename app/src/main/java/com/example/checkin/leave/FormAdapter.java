@@ -36,7 +36,7 @@ public class FormAdapter extends BaseAdapter {
         fListener = listener;
         this.dbHelper = dbHelper;
         this.database = dbHelper.getWritableDatabase();
-//        firebaseReference = FirebaseDatabase.getInstance().getReference();
+        firebaseReference = FirebaseDatabase.getInstance().getReference();
 
 
     }

@@ -38,6 +38,7 @@ public class TestingActivity extends Activity {
 //                    Log.d("test", snapshot.getKey());
 //                    System.out.println(snapshot.getValue().toString());
 //                }
+                Log.d("test", task.getResult().getValue().toString());
                 System.out.println(task.getResult().getValue());
             }
         });

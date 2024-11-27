@@ -21,6 +21,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.example.checkin.CRUD;
+import com.example.checkin.DataCallback;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
@@ -37,6 +39,11 @@ import com.example.checkin.models.StatusSpinner;
 import com.example.checkin.models.TypeForm;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 import java.io.IOException;
@@ -50,6 +57,7 @@ import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class FormPersonalActivity extends Activity implements OnFormClickListener {
@@ -67,6 +75,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
     ListView lvTypeForm;
     DatabaseHelper DBHelper;
     SQLiteDatabase db;
+    DatabaseReference mDatabase;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -80,6 +89,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         setListMonth();
         setListStatus();
 
+
         try {
             DBHelper = new DatabaseHelper(this, null);
             db = DBHelper.getWritableDatabase();
@@ -89,8 +99,8 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 
 //        DBHelper.syncDataToFirebase();
 
-        loadDataFromDatabase();
-//        loadDataFromFirebase();
+//        loadDataFromDatabase();
+        loadDataFromFirebase();
         loadDataTypeFormFromDatabase();
 //        DBHelper.syncDataToFirebase();
 
@@ -171,6 +181,121 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         }
 //        fAdapter.notifyDataSetChanged();
     }
+
+
+//    private void loadDataFromFirebase() {
+//        // Clear the current list
+//        listForms.clear();
+//
+//        CRUD crud = new CRUD(getApplicationContext());
+//
+//        // Đọc dữ liệu từ bảng leaverequests
+//        crud.readFirebaseStringIndex("leaverequests", null, null, new String[]{"leaveRequestID", "leaveTypeID", "startDate", "endDate", "reason", "employeeID", "countShift", "status"}, results -> {
+//            for (Map<String, String> row : results) {
+//                String leaveRequestID = row.get("leaveRequestID");
+//                String leaveTypeID = row.get("leaveTypeID");
+//                String leaveStartTime = row.get("startDate");
+//                String leaveEndTime = row.get("endDate");
+//                String reason = row.get("reason");
+//                String employeeID = row.get("employeeID");
+//                int countShift = Integer.parseInt(row.get("countShift"));
+//                String status = row.get("status");
+//
+//
+//                // Lấy tên leaveTypeName từ leavetypes
+//                crud.readFirebaseStringIndex("leavetypes", "id", leaveTypeID, new String[]{"leaveTypeName"}, leaveTypeResults -> {
+//                    String leaveTypeName = leaveTypeResults.isEmpty() ? "Unknown" : leaveTypeResults.get(0).get(0);
+//
+//                    // Lấy tên employeeName từ employees
+//                    crud.readFirebaseStringIndex("employees", "id", employeeID, new String[]{"employeeName"}, employeeResults -> {
+//                        String employeeName = employeeResults.isEmpty() ? "Unknown" : employeeResults.get(0).get(0);
+//
+//                        // Lấy trạng thái từ leaverequestapprovals
+//                        crud.readFirebaseStringIndex("leaverequestapprovals", "leaveRequestID", leaveTypeID, new String[]{"status"}, approvalResults -> {
+//                            String statuss = approvalResults.isEmpty() ? "Pending" : approvalResults.get(0).get(0);
+//
+//                            // Format ngày tháng
+//                            String formattedStartTime = formatDateTime(leaveStartTime);
+//                            String formattedEndTime = formatDateTime(leaveEndTime);
+//                            String dateOff = formattedStartTime + " - " + formattedEndTime;
+//
+//                            // Thêm vào danh sách
+//                            listForms.add(new Form(leaveTypeID, leaveTypeName, formattedStartTime, formattedEndTime, reason, status, countShift));
+//                            filteredForms.clear();
+//                            filteredForms.addAll(listForms);
+//
+//                            // Cập nhật adapter
+//                            fAdapter.notifyDataSetChanged();
+//                        });
+//                    });
+//                });
+//            }
+//        });
+//    }
+
+    private void loadDataFromFirebase() {
+        listForms.clear();
+
+        CRUD crud = new CRUD(getApplicationContext());
+
+        crud.readFirebaseStringIndex("leaverequests", null, null, new String[]{"leaveRequestID", "leaveTypeID", "startDate", "endDate", "reason", "employeeID", "countShift", "status"}, results -> {
+            for (Map<String, String> row : results) {
+                String leaveRequestID = row.get("leaveRequestID");
+                String leaveTypeID = row.get("leaveTypeID");
+                String startDate = row.get("startDate");
+                String endDate = row.get("endDate");
+                String reason = row.get("reason");
+                String employeeID = row.get("employeeID");
+                int countShift = Integer.parseInt(row.get("countShift"));
+                String status = row.get("status");
+
+                // Lấy tên loại nghỉ từ leavetypes
+                if (leaveTypeID != null && !leaveTypeID.isEmpty()) {
+                    crud.readFirebaseStringIndex("leavetypes", "id", leaveTypeID, new String[]{"leaveTypeName"}, leaveTypeResults -> {
+                        String leaveTypeName;  // Mặc định nếu không tìm thấy tên
+
+                        if (leaveTypeResults != null && !leaveTypeResults.isEmpty()) {
+                            // Nếu tìm thấy, lấy tên loại nghỉ
+                            leaveTypeName = leaveTypeResults.get(0).get("leaveTypeName");
+                        } else {
+                            leaveTypeName = "Không xác định";
+                        }
+
+                        // Lấy tên nhân viên từ employees
+                        if (employeeID != null && !employeeID.isEmpty()) {
+                            crud.readFirebaseStringIndex("employees", "id", employeeID, new String[]{"employeeName"}, employeeResults -> {
+                                String employeeName = "Không xác định";  // Mặc định nếu không tìm thấy tên nhân viên
+
+                                if (employeeResults != null && !employeeResults.isEmpty()) {
+                                    // Nếu tìm thấy, lấy tên nhân viên
+                                    employeeName = employeeResults.get(0).get("employeeName");
+                                }
+
+                                // Format ngày tháng
+                                String formattedStartDate = formatDateTime(startDate);
+                                String formattedEndDate = formatDateTime(endDate);
+                                String dateOff = formattedStartDate + " - " + formattedEndDate;
+
+                                // Thêm vào danh sách
+                                listForms.add(new Form(leaveRequestID, leaveTypeName, formattedStartDate, formattedEndDate, reason, status, countShift));
+                                filteredForms.clear();
+                                filteredForms.addAll(listForms);
+
+                                // Cập nhật adapter
+                                fAdapter.notifyDataSetChanged();
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+
+
+
+
+
 //    private void loadDataFromFirebase() {
 //        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 //
@@ -187,6 +312,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 //                    String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
 //                    String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
 //                    String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
+//                    int countshift = leaveRequestSnapshot.child("countShift").getValue(int.class);
 //
 //                    // Fetch LeaveType to get LeaveTypeName
 //                    databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -220,7 +346,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 //                                            String formattedEndTime = formatDateTime(leaveEndTime);
 //                                            String dateOff = formattedStartTime + " - " + formattedEndTime;
 //
-//                                            listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, status));
+//                                            listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, status,countshift));
 //                                            filteredForms.clear();
 //                                            filteredForms.addAll(listForms);
 //
@@ -257,20 +383,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 //        });
 //    }
 
-//    private void loadDataFromDatabase() {
-//        List<List> leaveRequests = DBHelper.loadDataHandler("LeaveRequest", null, null);
-//
-//        listForms.clear();
-//        for (List<String> row : leaveRequests) {
-//            String nameForm = row.get(0); // cột LeaveTypeName
-//            String dateOff = row.get(1); // cột CreatedTime
-//            String reason = row.get(2); // cột Statuss
-//            listForms.add(new Form(nameForm, dateOff, reason));
-//        }
-//
-//        filteredForms.addAll(listForms);
-////        fAdapter.notifyDataSetChanged();
-//    }
     private void loadDataFromDatabase() {
     String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
             "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
@@ -401,32 +513,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         bottomSheetDialog.show();
     }
 
-//    private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
-//        filteredForms.clear();
-//        boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Tất cả"));
-//        boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("All"));
-//
-//        for (Form form : listForms) {
-//            boolean matchesMonth = true;
-//            boolean matchesStatus = true;
-//
-//            if (filterByMonth) {
-//                String monthNumber = getMonthNumberFromSpinner(selectedMonth);
-//                String formMonth = form.getDateoff().substring(5, 7);
-//                matchesMonth = formMonth.equals(monthNumber);
-//            }
-//
-//            if (filterByStatus) {
-//                matchesStatus = form.getStatus().equals(selectedStatus);
-//            }
-//
-//            if (matchesMonth && matchesStatus) {
-//                filteredForms.add(form);
-//            }
-//        }
-//
-//        fAdapter.notifyDataSetChanged();
-//    }
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
         filteredForms.clear();
@@ -553,23 +639,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         return (today.getYear() - 1) == inputDate.getYear();
     }
 
-//    private String getMonthNumberFromSpinner(String selectedMonth)
-//        switch (selectedMonth) {
-//            case "Tháng 1": return "01";
-//            case "Tháng 2": return "02";
-//            case "Tháng 3": return "03";
-//            case "Tháng 4": return "04";
-//            case "Tháng 5": return "05";
-//            case "Tháng 6": return "06";
-//            case "Tháng 7": return "07";
-//            case "Tháng 8": return "08";
-//            case "Tháng 9": return "09";
-//            case "Tháng 10": return "10";
-//            case "Tháng 11": return "11";
-//            case "Tháng 12": return "12";
-//            default: return "";
-//        }
-//    }
 
 
 
@@ -626,10 +695,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
     public void onFormClick(Form form) {
         Intent intent = new Intent(this, FormDetailActivity.class);
         intent.putExtra("formid", form.getFormID());
-//        intent.putExtra("dateOffstart", form.getDateoffstart());
-//        intent.putExtra("dateoffend", form.getDateoffend());
-//        intent.putExtra("reason", form.getReason());
-//        intent.putExtra("countshift", form.getCountShift());
         startActivity(intent);
         finish();
     }
