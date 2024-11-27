@@ -1,4 +1,4 @@
-package com.example.checkin.testing;
+package com.example.checkin.checkinmain;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -27,12 +27,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
-import com.example.checkin.checkinmain.ListShiftCheckAdapter;
+import com.example.checkin.databinding.CheckinmaintestLayoutBinding;
 import com.example.checkin.models.classes.Place;
 import com.example.checkin.models.classes.Shift;
+import com.example.checkin.BaseViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -50,9 +50,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class CheckinMainFragment extends Fragment implements OnMapReadyCallback {
 
@@ -85,7 +83,6 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
     private Runnable uiUpdateRunnable;
     SupportMapFragment mapFragment;
 
-
     public CheckinMainFragment(BaseViewModel _parent){
         parent = _parent;
     }
@@ -96,45 +93,41 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(CheckinMainViewModel.class);
 
-        // Load Database
-        try {
-            viewModel.loadDataFromParent(parent);
-            viewModel.loadData(getContext(), parent.getEmployeeID());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        // Load Database asynchronously
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            try {
+                viewModel.loadDataFromParent(parent);
+                viewModel.loadData(getContext(), parent.getEmployeeID());
+                uiHandler.post(() -> {
+                    updateUIListView(viewModel.getListShift());
+                });
+                if (getContext() != null){
+                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+                }
+            } catch (IOException e) {
+                e.printStackTrace(); // Handle the exception properly
+            }
+        });
     }
+
+    CheckinmaintestLayoutBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.checkinmaintest_layout, container, false);
+        binding = CheckinmaintestLayoutBinding.inflate(inflater, container, false);
 
         // Initialize components
-        currentshift_txt = view.findViewById(R.id.currentshift_txt);
-        currenttime_txt = view.findViewById(R.id.currenttime_txt);
-        currentdate_txt = view.findViewById(R.id.currentdate_txt);
-        currentplace_txt = view.findViewById(R.id.place_txt);
-        currentdis = view.findViewById(R.id.currentdis_txt);
-        requestLocationLayout = view.findViewById(R.id.request_btn_layout);
-        check_btn = view.findViewById(R.id.checkin_btn);
-        checkin_txt = view.findViewById(R.id.checkin_txt);
-        listShift = view.findViewById(R.id.list_shift);
-
-        // Request location permissions
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationLayout.setVisibility(View.VISIBLE);
-            Button requestLocationButton = view.findViewById(R.id.request_btn);
-            requestLocationButton.setOnClickListener(v -> {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_PERMISSION_REQUEST_CODE);
-                onCreateMap();
-            });
-        } else {
-            requestLocationLayout.setVisibility(View.INVISIBLE);
-            onCreateMap();
-        }
-
-
+        currentshift_txt = binding.currentshiftTxt;
+        currenttime_txt = binding.currenttimeTxt;
+        currentdate_txt = binding.currentdateTxt;
+        currentplace_txt = binding.placeTxt;
+        currentdis = binding.currentdisTxt;
+        requestLocationLayout = binding.requestBtnLayout;
+        check_btn = binding.checkinBtn;
+        checkin_txt = binding.checkinTxt;
+        listShift = binding.listShift;
 
         uiUpdateRunnable = () -> {
             current = new Date();
@@ -144,7 +137,7 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
 
         uiHandler.post(uiUpdateRunnable);
 
-        Switch sw = view.findViewById(R.id.map_sw);
+        Switch sw = binding.mapSw;
         sw.setOnCheckedChangeListener(this::switchMap);
 
         updateUIListView(viewModel.getListShift());
@@ -182,8 +175,20 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
             }
         });
 
+        // Request location permissions
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationLayout.setVisibility(View.VISIBLE);
+            Button requestLocationButton = binding.requestBtn;
+            requestLocationButton.setOnClickListener(v -> {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_PERMISSION_REQUEST_CODE);
+                onCreateMap();
+            });
+        } else {
+            requestLocationLayout.setVisibility(View.INVISIBLE);
+            onCreateMap();
+        }
 
-        return view;
+        return binding.getRoot();
     }
 
     private void updateUIListView(List<Shift> shifts) {
@@ -270,7 +275,6 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
     }
 
     @Override
@@ -291,13 +295,13 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
-            super.onLocationResult(locationResult);
-            clocation = locationResult.getLastLocation();
-            if (clocation != null) {
-                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(clocation.getLatitude(), clocation.getLongitude()), 19));
-                requestLocationLayout.setVisibility(View.INVISIBLE);
-                viewModel.updateLocation(clocation);
-            }
+        super.onLocationResult(locationResult);
+        clocation = locationResult.getLastLocation();
+        if (clocation != null) {
+            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(clocation.getLatitude(), clocation.getLongitude()), 19), 300, null);
+            requestLocationLayout.setVisibility(View.INVISIBLE);
+            viewModel.updateLocation(clocation);
+        }
         }
     };
 

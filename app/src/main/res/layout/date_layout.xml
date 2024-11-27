@@ -87,7 +87,7 @@
 
     </LinearLayout>
 
-    <com.example.checkin.ShowAllListView
+    <com.example.checkin.models.ShowAllListView
         android:id="@+id/shift_lv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -359,7 +359,7 @@
                             android:orientation="vertical"
                             android:padding="8dp">
 
-                            <com.example.checkin.ShowAllListView
+                            <com.example.checkin.models.ShowAllListView
                                 android:id="@+id/list_shift"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"

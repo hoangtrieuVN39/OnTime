@@ -1,4 +1,4 @@
-package com.example.checkin;
+package com.example.checkin.models;
 
 import android.content.Context;
 import android.util.AttributeSet;
