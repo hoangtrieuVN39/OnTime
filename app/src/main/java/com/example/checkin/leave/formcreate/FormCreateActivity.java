@@ -672,16 +672,16 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         return shifts;
     }
 
-//        public void addLeaveRequest(String leaveTypeName, String employeeID,
+//    public void addLeaveRequest(String leaveTypeName, String employeeID,
 //                                String startDate, String startTime,
-//                                String endDate, String endTime,int countShift,
+//                                String endDate, String endTime, int countShift,
 //                                String reason, List<String> approvers) {
 //
 //        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 //        DatabaseReference leaveRequestRef = database.child("leaverequests");
 //        DatabaseReference leaveApprovalRef = database.child("leaverequestapprovals");
 //        DatabaseReference leaveTypeRef = database.child("leavetypes");
-//        DatabaseReference employeeRef = database.child("employees");
+//        DatabaseReference employeeRef = database.child("employees"); // Thêm tham chiếu đến bảng employees
 //
 //        // Kiểm tra LeaveTypeID từ tên
 //        leaveTypeRef.orderByChild("leaveTypeName").equalTo(leaveTypeName)
@@ -701,7 +701,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 //                        String createdTime = getCurrentDateTime();
 //                        String leaveStartTime = startDate + " " + startTime;
 //                        String leaveEndTime = endDate + " " + endTime;
-//                        int countShift = getWorkShifts();
+////                        int countshift = countShift;
 //
 //                        // Gọi generateNewFirebaseID để tạo ID mới cho LeaveRequest
 //                        generateNewFirebaseID("DT", "leaverequests", new OnIDGeneratedListener() {
@@ -709,22 +709,45 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 //                            public void onIDGenerated(String leaveID) {
 //                                // Thêm dữ liệu vào bảng LeaveRequest
 //                                LeaveRequest leaveRequest = new LeaveRequest(leaveID, createdTime, "Chưa phê duyệt",
-//                                        leaveTypeID, employeeID, leaveStartTime, leaveEndTime, reason,);
+//                                        leaveTypeID, employeeID, leaveStartTime, leaveEndTime, reason,countShift);
 //                                leaveRequestRef.child(leaveID).setValue(leaveRequest)
 //                                        .addOnSuccessListener(aVoid -> {
 //                                            Log.d("AddLeaveRequest", "Inserted LeaveRequest successfully: " + leaveID);
 //
 //                                            // Thêm người phê duyệt vào LeaveRequestApproval
-//                                            for (String approverID : approvers) {
-//                                                generateNewFirebaseID("LAP", "leaverequestapprovals", new OnIDGeneratedListener() {
-//                                                    @Override
-//                                                    public void onIDGenerated(String leaveApprovalID) {
-//                                                        LeaveRequestApproval leaveApproval = new LeaveRequestApproval(leaveApprovalID, leaveID, approverID, "Chưa phê duyệt");
-//                                                        leaveApprovalRef.child(leaveApprovalID).setValue(leaveApproval)
-//                                                                .addOnSuccessListener(aVoid1 -> Log.d("AddLeaveRequest", "Inserted approver successfully: " + approverID))
-//                                                                .addOnFailureListener(e -> Log.e("AddLeaveRequest", "Error adding approver: " + approverID, e));
-//                                                    }
-//                                                });
+//                                            for (String approverName : approvers) {
+//                                                // Tìm kiếm employeeID từ tên nhân viên
+//                                                employeeRef.orderByChild("employeeName").equalTo(approverName)
+//                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+//                                                            @Override
+//                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                                                if (!snapshot.exists()) {
+//                                                                    Log.e("AddLeaveRequest", "Không tìm thấy nhân viên: " + approverName);
+//                                                                    return;
+//                                                                }
+//
+//                                                                // Lấy employeeID từ tên nhân viên
+//                                                                String approverID = snapshot.getChildren().iterator().next().getKey();
+//                                                                Log.d("AddLeaveRequest", "Found approverID: " + approverID);
+//                                                                if (approverID == null) return;
+//
+//                                                                // Tiến hành thêm vào bảng leaveRequestApprovals
+//                                                                generateNewFirebaseLAPID("LAP", "leaverequestapprovals", new OnIDGeneratedListener() {
+//                                                                    @Override
+//                                                                    public void onIDGenerated(String leaveApprovalID) {
+//                                                                        LeaveRequestApproval leaveApproval = new LeaveRequestApproval(leaveApprovalID, leaveID, approverID, "Chưa phê duyệt");
+//                                                                        leaveApprovalRef.child(leaveApprovalID).setValue(leaveApproval)
+//                                                                                .addOnSuccessListener(aVoid1 -> Log.d("AddLeaveRequest", "Inserted approver successfully: " + approverID))
+//                                                                                .addOnFailureListener(e -> Log.e("AddLeaveRequest", "Error adding approver: " + approverID, e));
+//                                                                    }
+//                                                                });
+//                                                            }
+//
+//                                                            @Override
+//                                                            public void onCancelled(@NonNull DatabaseError error) {
+//                                                                Log.e("AddLeaveRequest", "Error fetching employee data: " + error.getMessage());
+//                                                            }
+//                                                        });
 //                                            }
 //                                        })
 //                                        .addOnFailureListener(e -> Log.e("AddLeaveRequest", "Error adding LeaveRequest", e));
@@ -738,6 +761,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 //                    }
 //                });
 //    }
+
     public void addLeaveRequest(String leaveTypeName, String employeeID,
                                 String startDate, String startTime,
                                 String endDate, String endTime, int countShift,
@@ -747,7 +771,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         DatabaseReference leaveRequestRef = database.child("leaverequests");
         DatabaseReference leaveApprovalRef = database.child("leaverequestapprovals");
         DatabaseReference leaveTypeRef = database.child("leavetypes");
-        DatabaseReference employeeRef = database.child("employees"); // Thêm tham chiếu đến bảng employees
+        DatabaseReference employeeRef = database.child("employees");
 
         // Kiểm tra LeaveTypeID từ tên
         leaveTypeRef.orderByChild("leaveTypeName").equalTo(leaveTypeName)
@@ -767,7 +791,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                         String createdTime = getCurrentDateTime();
                         String leaveStartTime = startDate + " " + startTime;
                         String leaveEndTime = endDate + " " + endTime;
-//                        int countshift = countShift;
 
                         // Gọi generateNewFirebaseID để tạo ID mới cho LeaveRequest
                         generateNewFirebaseID("DT", "leaverequests", new OnIDGeneratedListener() {
@@ -775,46 +798,13 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                             public void onIDGenerated(String leaveID) {
                                 // Thêm dữ liệu vào bảng LeaveRequest
                                 LeaveRequest leaveRequest = new LeaveRequest(leaveID, createdTime, "Chưa phê duyệt",
-                                        leaveTypeID, employeeID, leaveStartTime, leaveEndTime, reason,countShift);
+                                        leaveTypeID, employeeID, leaveStartTime, leaveEndTime, reason, countShift);
                                 leaveRequestRef.child(leaveID).setValue(leaveRequest)
                                         .addOnSuccessListener(aVoid -> {
                                             Log.d("AddLeaveRequest", "Inserted LeaveRequest successfully: " + leaveID);
 
-                                            // Thêm người phê duyệt vào LeaveRequestApproval
-                                            for (String approverName : approvers) {
-                                                // Tìm kiếm employeeID từ tên nhân viên
-                                                employeeRef.orderByChild("employeeName").equalTo(approverName)
-                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                if (!snapshot.exists()) {
-                                                                    Log.e("AddLeaveRequest", "Không tìm thấy nhân viên: " + approverName);
-                                                                    return;
-                                                                }
-
-                                                                // Lấy employeeID từ tên nhân viên
-                                                                String approverID = snapshot.getChildren().iterator().next().getKey();
-                                                                Log.d("AddLeaveRequest", "Found approverID: " + approverID);
-                                                                if (approverID == null) return;
-
-                                                                // Tiến hành thêm vào bảng leaveRequestApprovals
-                                                                generateNewFirebaseLAPID("LAP", "leaverequestapprovals", new OnIDGeneratedListener() {
-                                                                    @Override
-                                                                    public void onIDGenerated(String leaveApprovalID) {
-                                                                        LeaveRequestApproval leaveApproval = new LeaveRequestApproval(leaveApprovalID, leaveID, approverID, "Chưa phê duyệt");
-                                                                        leaveApprovalRef.child(leaveApprovalID).setValue(leaveApproval)
-                                                                                .addOnSuccessListener(aVoid1 -> Log.d("AddLeaveRequest", "Inserted approver successfully: " + approverID))
-                                                                                .addOnFailureListener(e -> Log.e("AddLeaveRequest", "Error adding approver: " + approverID, e));
-                                                                    }
-                                                                });
-                                                            }
-
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
-                                                                Log.e("AddLeaveRequest", "Error fetching employee data: " + error.getMessage());
-                                                            }
-                                                        });
-                                            }
+                                            // Thêm người phê duyệt vào LeaveRequestApproval (tuần tự)
+                                            addApproversRecursively(new ArrayList<>(approvers), leaveID, leaveApprovalRef, employeeRef);
                                         })
                                         .addOnFailureListener(e -> Log.e("AddLeaveRequest", "Error adding LeaveRequest", e));
                             }
@@ -824,6 +814,60 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         Log.e("AddLeaveRequest", "Database error: " + error.getMessage());
+                    }
+                });
+    }
+
+    private void addApproversRecursively(List<String> approvers, String leaveID, DatabaseReference leaveApprovalRef, DatabaseReference employeeRef) {
+        if (approvers.isEmpty()) {
+            Log.d("AddLeaveRequest", "All approvers have been added.");
+            return; // Kết thúc khi danh sách trống
+        }
+
+        // Lấy người phê duyệt đầu tiên
+        String approverName = approvers.remove(0);
+
+        // Tìm kiếm EmployeeID của người phê duyệt
+        employeeRef.orderByChild("employeeName").equalTo(approverName)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!snapshot.exists()) {
+                            Log.e("AddLeaveRequest", "Không tìm thấy nhân viên: " + approverName);
+                            addApproversRecursively(approvers, leaveID, leaveApprovalRef, employeeRef); // Tiếp tục với người tiếp theo
+                            return;
+                        }
+
+                        // Lấy EmployeeID
+                        String approverID = snapshot.getChildren().iterator().next().getKey();
+                        if (approverID == null) {
+                            addApproversRecursively(approvers, leaveID, leaveApprovalRef, employeeRef); // Tiếp tục với người tiếp theo
+                            return;
+                        }
+
+                        // Tạo LeaveApprovalID và thêm vào bảng leaveRequestApprovals
+                        generateNewFirebaseLAPID("LAP", "leaverequestapprovals", new OnIDGeneratedListener() {
+                            @Override
+                            public void onIDGenerated(String leaveApprovalID) {
+                                LeaveRequestApproval leaveApproval = new LeaveRequestApproval(leaveApprovalID, leaveID, approverID, "Chưa phê duyệt");
+                                leaveApprovalRef.child(leaveApprovalID).setValue(leaveApproval)
+                                        .addOnSuccessListener(aVoid -> {
+                                            Log.d("AddLeaveRequest", "Inserted approver successfully: " + approverID);
+                                            addApproversRecursively(approvers, leaveID, leaveApprovalRef, employeeRef); // Tiếp tục với người tiếp theo
+                                            Log.d("IDGeneration", "Generated LeaveID: " + leaveID);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e("AddLeaveRequest", "Error adding approver: " + approverID, e);
+                                            addApproversRecursively(approvers, leaveID, leaveApprovalRef, employeeRef); // Tiếp tục với người tiếp theo
+                                        });
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("AddLeaveRequest", "Error fetching employee data: " + error.getMessage());
+                        addApproversRecursively(approvers, leaveID, leaveApprovalRef, employeeRef); // Tiếp tục với người tiếp theo
                     }
                 });
     }
