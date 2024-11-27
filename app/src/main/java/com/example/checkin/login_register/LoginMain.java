@@ -16,6 +16,8 @@ import com.example.checkin.MainActivity;
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.AccountUtils;
+import com.example.checkin.Utils;
+
 import java.io.IOException;
 
 public class LoginMain extends Activity {
@@ -73,7 +75,7 @@ public class LoginMain extends Activity {
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                if (AccountUtils.checkLogin(email, password, databaseHelper)) {
+                if (Utils.getAccount(email, password, databaseHelper) != null) {
                     Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginMain.this, MainActivity.class);
                     startActivity(intent);
