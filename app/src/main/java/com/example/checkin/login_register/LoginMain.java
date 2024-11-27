@@ -29,7 +29,8 @@ public class LoginMain extends Activity {
         setContentView(R.layout.login_layout);
 
         try {
-            databaseHelper = new DatabaseHelper(this);
+            databaseHelper = new DatabaseHelper(this, null);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

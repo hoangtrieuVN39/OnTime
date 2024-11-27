@@ -15,7 +15,7 @@ public class AccountUtils {
 
     public AccountUtils(Context context) throws IOException {
         if (dbHelper == null) {
-            dbHelper = new DatabaseHelper(context);
+            dbHelper = new DatabaseHelper(context, null);
         }
     }
 
