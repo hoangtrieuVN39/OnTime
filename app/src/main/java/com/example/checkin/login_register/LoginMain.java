@@ -75,8 +75,6 @@ public class LoginMain extends Activity {
 
                 if (AccountUtils.checkLogin(email, password)) {
                     Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent(LoginMain.this, MainActivity.class);
-//                    startActivity(intent);
                 } else {
                     Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
                 }
