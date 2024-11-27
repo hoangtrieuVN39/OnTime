@@ -11,10 +11,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -107,7 +109,7 @@ public class CRUD {
                 });
     }
 
-    public void readFirebase(String tableName, String filter, String filterValue, String[] selectionArgs, DataCallback callback) {
+    public void readFirebaseIntIndex(String tableName, String filter, String filterValue, String[] selectionArgs, DataCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Nếu có filter, thực hiện truy vấn
@@ -147,6 +149,57 @@ public class CRUD {
             }
         });
     }
+
+    public void readFirebaseStringIndex(String tableName, String filter, String filterValue, String[] selectionArgs, DataMapCallback callback) {
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
+
+        // Thực hiện lọc nếu có filter
+        Query query = database;
+        if (filter != null && filterValue != null) {
+//            database = (DatabaseReference) database.orderByChild(filter).equalTo(filterValue);
+            query = database.orderByChild(filter).equalTo(filterValue);
+        }
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Map<String, String>> results = new ArrayList<>();
+
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Map<String, String> row = new HashMap<>();
+
+                    if (selectionArgs != null) {
+                        for (DataSnapshot field : data.getChildren()) {
+                            Object value = field.getValue();
+                            if (value != null) {
+                                row.put(field.getKey(), value.toString()); // Chuyển đổi sang String nếu có giá trị
+                            } else {
+                                row.put(field.getKey(), null); // Nếu không tồn tại, thêm null
+                            }
+                        }
+                    } else {
+                        for (DataSnapshot field : data.getChildren()) {
+                            row.put(field.getKey(), field.getValue(String.class));
+                        }
+                    }
+
+                    results.add(row);
+                }
+
+                callback.onDataLoaded(results);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Error reading data: " + error.getMessage());
+            }
+        });
+    }
+    public interface DataMapCallback {
+        void onDataLoaded(List<Map<String, String>> data);
+    }
+
+
 
 
 }
