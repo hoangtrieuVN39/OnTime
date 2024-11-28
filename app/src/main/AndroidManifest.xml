@@ -26,21 +26,29 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAG8XlQgVklvP9ij4BtszizRjD1zAdz2Uc" />
 
-        <activity android:name="com.example.checkin.login_register.LoginMain"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:exported="true">
-        </activity>
+<!--        <activity android:name="com.example.checkin.login_register.LoginMain"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
+<!--            android:exported="true">-->
+<!--        </activity>-->
 
-        <activity android:name="com.example.checkin.login_register.RegisterMain"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
+<!--        <activity android:name="com.example.checkin.login_register.RegisterMain"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
+<!--        </activity>-->
+
+<!--        <activity-->
+<!--            android:name="com.example.checkin.checkinmain.CheckinMainActivity"-->
+<!--            android:exported="true"-->
+<!--            android:label="@string/title_activity_main"-->
+<!--            android:foregroundServiceType="location"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
+
+<!--        </activity>-->
 
         <activity
-            android:name="com.example.checkin.checkinmain.CheckinMainActivity"
+            android:name="com.example.checkin.checkinhistory.CheckinHistoryFragment"
             android:exported="true"
-            android:label="@string/title_activity_main"
-            android:foregroundServiceType="location"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
+            tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -48,35 +56,33 @@
         </activity>
 
         <activity
-            android:name="com.example.checkin.checkinhistory.CheckinHistoryActivity"
-            android:exported="true"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-            </activity>
-
-        <activity
-            android:name="com.example.checkin.leave.formcreate.FormCreateActivity"
+            android:name="com.example.checkin.workingdetails.WorkingDetail"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
+<!--        <activity-->
+<!--            android:name="com.example.checkin.leave.formcreate.FormCreateActivity"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
+<!--        </activity>-->
 
-        <activity
-            android:name="com.example.checkin.leave.formlist.FormListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+<!--        <activity-->
+<!--            android:name="com.example.checkin.leave.formlist.FormListActivity"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>-->
 
-        <activity
-            android:name="com.example.checkin.leave.formapprove.FormApproveActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+<!--        <activity-->
+<!--            android:name="com.example.checkin.leave.formapprove.FormApproveActivity"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>-->
 
-        <activity
-            android:name="com.example.checkin.leave.formpersonal.FormPersonalActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
+<!--        <activity-->
+<!--            android:name="com.example.checkin.leave.formpersonal.FormPersonalActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
+<!--        </activity>-->
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
+<!--        <activity-->
+<!--            android:name=".MainActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
+<!--        </activity>-->
 
     </application>
 

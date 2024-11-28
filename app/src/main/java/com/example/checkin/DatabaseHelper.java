@@ -235,4 +235,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return results;
     }
+    public Cursor getAttendanceDetails() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT A.AttendanceID, A.CreatedTime, A.AttendanceType, E.EmployeeName, " +
+                "W.ShiftName, P.PlaceName, A.Latitude, A.Longitude " +
+                "FROM Attendance A " +
+                "INNER JOIN Employee E ON A.EmployeeID = E.EmployeeID " +
+                "INNER JOIN WorkShift W ON A.ShiftID = W.ShiftID " +
+                "INNER JOIN Place P ON A.PlaceID = P.PlaceID";
+        return db.rawQuery(query, null);
+    }
+
 }
