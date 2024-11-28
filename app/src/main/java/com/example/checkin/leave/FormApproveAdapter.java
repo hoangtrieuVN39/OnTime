@@ -3,6 +3,7 @@ package com.example.checkin.leave;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,15 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
 import com.example.checkin.models.FormApprove;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -22,12 +29,14 @@ public class FormApproveAdapter extends BaseAdapter {
     ArrayList<FormApprove> faForm;
     OnFormClickListener faListener;
     private final SQLiteDatabase database;
+    DatabaseReference firebaseReference;
 
     public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormClickListener falistener, SQLiteDatabase db) {
         this.faContext = listFormApproveContext;
         this.faForm = faForm;
         this.faListener = falistener;
         this.database = db;
+        this.firebaseReference = firebaseReference;
     }
 
     @Override
@@ -62,6 +71,9 @@ public class FormApproveAdapter extends BaseAdapter {
         TextView txtCreateTime = view.findViewById(R.id.ngaytaodon_txt);
         ViewGroup recallLayoutContainer = view.findViewById(R.id.recallApprover_ll);
 
+        Button btnReject = view.findViewById(R.id.reject_btn);
+        Button btnApprove = view.findViewById(R.id.approver_btn);
+
 
         txtNameFormApprove.setText(faForm.get(i).getNameFormApprove());
         txtDateoffApprove.setText(faForm.get(i).getDateoffApprove());
@@ -73,31 +85,28 @@ public class FormApproveAdapter extends BaseAdapter {
         recallLayoutContainer.setVisibility(View.GONE);
 
         if ("Đồng ý".equals(formApprove.getStatusApprover())) {
-            txtStatusApprove.setText(formApprove.getStatusApprover());
+            txtStatusApprove.setText("Đồng ý");
+//            txtStatusApprove.setText(formApprove.getStatusApprover());
             txtStatusApprove.setTextColor(Color.parseColor("#D9AF03"));
             txtStatusApprove.setVisibility(View.VISIBLE);
             recallLayoutContainer.setVisibility(View.GONE);
         }
         else if ("Loại bỏ".equals(formApprove.getStatusApprover())) {
-                txtStatusApprove.setText(formApprove.getStatusApprover());
+            txtStatusApprove.setText("Loại bỏ");
+//                txtStatusApprove.setText(formApprove.getStatusApprover());
                 txtStatusApprove.setTextColor(Color.parseColor("#575E72"));
                 txtStatusApprove.setVisibility(View.VISIBLE);
                 recallLayoutContainer.setVisibility(View.GONE);
         }else if ("Chưa phê duyệt".equals(formApprove.getStatusApprover())){
-//            txtStatusApprove.setVisibility(View.GONE);
-//            recallLayoutContainer.setVisibility(View.VISIBLE);
-
-            // Nếu trạng thái là "Chưa phê duyệt", mặc định ẩn recallLayoutContainer
-            txtStatusApprove.setVisibility(View.VISIBLE);
+            txtStatusApprove.setText("Chưa phê duyệt");
             txtStatusApprove.setTextColor(Color.parseColor("#BB1B1B"));
+            txtStatusApprove.setVisibility(View.VISIBLE);
+            recallLayoutContainer.setVisibility(View.GONE);
 
-            Button btnReject = view.findViewById(R.id.reject_btn);
-            Button btnApprove = view.findViewById(R.id.approver_btn);
+            btnApprove.setOnClickListener(v -> updateStatusInFirebase(formApprove, "Đồng ý", i));
+            btnReject.setOnClickListener(v -> updateStatusInFirebase(formApprove, "Loại bỏ", i));
 
-        }
-        txtStatusApprove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            txtStatusApprove.setOnClickListener(v -> {
                 if (recallLayoutContainer.getVisibility() == View.GONE) {
                     txtStatusApprove.setVisibility(View.GONE); // Ẩn status
                     recallLayoutContainer.setVisibility(View.VISIBLE); // Hiển thị recallLayout
@@ -105,8 +114,23 @@ public class FormApproveAdapter extends BaseAdapter {
                     txtStatusApprove.setVisibility(View.VISIBLE); // Hiển thị lại status
                     recallLayoutContainer.setVisibility(View.GONE); // Ẩn recallLayout
                 }
-            }
-        });
+            });
+
+
+
+        }
+//        txtStatusApprove.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (recallLayoutContainer.getVisibility() == View.GONE) {
+//                    txtStatusApprove.setVisibility(View.GONE); // Ẩn status
+//                    recallLayoutContainer.setVisibility(View.VISIBLE); // Hiển thị recallLayout
+//                } else {
+//                    txtStatusApprove.setVisibility(View.VISIBLE); // Hiển thị lại status
+//                    recallLayoutContainer.setVisibility(View.GONE); // Ẩn recallLayout
+//                }
+//            }
+//        });
 
 
 //        view.setOnClickListener(new View.OnClickListener() {
@@ -116,5 +140,32 @@ public class FormApproveAdapter extends BaseAdapter {
 //            }
 //        });
         return view;
+    }
+
+    private void updateStatusInFirebase(FormApprove formApprove, String newStatus, int position) {
+        firebaseReference.child("leaverequestapprovals")
+                .orderByChild("leaveRequestID")
+                .equalTo(formApprove.getFormApproveID())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot approvalSnapshot : snapshot.getChildren()) {
+                            // Cập nhật trạng thái trong Firebase
+                            approvalSnapshot.getRef().child("status").setValue(newStatus);
+
+                            // Cập nhật dữ liệu trong adapter
+                            formApprove.setStatusApprover(newStatus);
+                            faForm.set(position, formApprove);
+
+                            // Làm mới danh sách hiển thị
+                            notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("FirebaseUpdate", "Failed to update status", error.toException());
+                    }
+                });
     }
 }
