@@ -3,6 +3,7 @@ package com.example.checkin.leave;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
 import com.example.checkin.models.Form;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -141,15 +143,93 @@ public class FormAdapter extends BaseAdapter {
 //        });
         return view;
     }
-    private void deleteLeaveRequestFromFirebase(String leaveId) {
-        firebaseReference.child("leaverequests").child(leaveId).removeValue()
-                .addOnSuccessListener(aVoid -> {
-                    // Log success or update UI if needed
-                })
-                .addOnFailureListener(e -> {
-                    // Handle the failure
+//    private void deleteLeaveRequestFromFirebase(String leaveId) {
+//        firebaseReference.child("leaverequests").child(leaveId).removeValue()
+//                .addOnSuccessListener(aVoid -> {
+//                    // Log success or update UI if needed
+//                })
+//                .addOnFailureListener(e -> {
+//                    // Handle the failure
+//                });
+//    }
+//    private void deleteLeaveRequestFromFirebase(String leaveRequestID) {
+//        DatabaseReference leaveRequestRef = firebaseReference.child("leaverequests").child(leaveRequestID);
+//        DatabaseReference approvalsRef = firebaseReference.child("leaverequestapprovals");
+//
+//        // Bước 1: Lấy danh sách các leaveRequestApprovals liên quan
+//        approvalsRef.orderByChild("leaveRequestID").equalTo(leaveRequestID).get()
+//                .addOnCompleteListener(task -> {
+//                    if (task.isSuccessful() && task.getResult().exists()) {
+//                        // Lấy tổng số lượng bản ghi cần xóa
+//                        int totalApprovals = (int) task.getResult().getChildrenCount();
+//                        final int[] approvalsDeleted = {0}; // Đếm số bản ghi đã xóa thành công
+//
+//                        for (DataSnapshot approvalSnapshot : task.getResult().getChildren()) {
+//                            // Bước 2: Xóa từng leaveRequestApproval liên quan
+//                            approvalSnapshot.getRef().removeValue()
+//                                    .addOnSuccessListener(aVoid -> {
+//                                        approvalsDeleted[0]++; // Tăng số bản ghi đã xóa
+//
+//                                        // Nếu tất cả các approval đã xóa xong, xóa leaveRequest
+//                                        if (approvalsDeleted[0] == totalApprovals) {
+//                                            deleteLeaveRequest(leaveRequestRef);
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(e -> {
+//                                        Log.e("Firebase", "Failed to delete approval: " + e.getMessage());
+//                                    });
+//                        }
+//                    } else {
+//                        // Nếu không có approval nào liên quan, xóa trực tiếp leaveRequest
+//                        deleteLeaveRequest(leaveRequestRef);
+//                    }
+//                })
+//                .addOnFailureListener(e -> {
+//                    Log.e("Firebase", "Failed to query approvals: " + e.getMessage());
+//                });
+//        }
+//
+//        // Hàm riêng để xóa leaveRequest
+//        private void deleteLeaveRequest(DatabaseReference leaveRequestRef) {
+//            leaveRequestRef.removeValue()
+//                    .addOnSuccessListener(aVoid -> {
+//                        Log.d("Firebase", "Successfully deleted leaveRequest.");
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        Log.e("Firebase", "Failed to delete leaveRequest: " + e.getMessage());
+//                    });
+//        }
+
+    private void deleteLeaveRequestFromFirebase(String leaveRequestID) {
+        DatabaseReference leaveRequestRef = firebaseReference.child("leaverequests").child(leaveRequestID);
+        DatabaseReference approvalsRef = firebaseReference.child("leaverequestapprovals");
+
+        // Bước 1: Lấy danh sách các leaveRequestApprovals liên quan
+        approvalsRef.orderByChild("leaveRequestID").equalTo(leaveRequestID).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        // Bước 2: Xóa từng leaveRequestApproval liên quan
+                        for (DataSnapshot approvalSnapshot : task.getResult().getChildren()) {
+                            approvalSnapshot.getRef().removeValue()
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Log thành công nếu cần
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Xử lý lỗi nếu cần
+                                    });
+                        }
+                    }
+                    // Bước 3: Sau khi xóa các approval, xóa leaveRequest
+                    leaveRequestRef.removeValue()
+                            .addOnSuccessListener(aVoid -> {
+                                // Log thành công nếu cần
+                            })
+                            .addOnFailureListener(e -> {
+                                // Xử lý lỗi nếu cần
+                            });
                 });
     }
+
     private void deleteLeaveRequest(String leaveId) throws IOException {
         if (dbHelper == null) {
             dbHelper = new DatabaseHelper(fContext,null);
