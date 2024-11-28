@@ -103,6 +103,8 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         loadDataTypeFormFromDatabase();
 //        loadInitialData();
         listfilterFormApprove.addAll(listFormApprove);
+//        Log.d("listfilterFormApprover", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
+
 
         spTrangThai = findViewById(R.id.approveStatus_spinner);
         spThang = findViewById(R.id.approveMonth_spinner);
@@ -454,13 +456,13 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
     }
 
     public void setFormApprove(){
-        listFormApprove.add(new FormApprove("LAP001","Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024","12/10/2024" ,"Đi trễ","Trịnh Trần Phương Thắng","y",2));
-        listFormApprove.add(new FormApprove("LAP002","Nghỉ không lương", "15/02/2024", "12/10/2024","Nghỉ không lương","Trịnh Trần Phương Thắng","y",3));
-        listFormApprove.add(new FormApprove("LAP003","Nghỉ phép - gửi trước 24h", "05/03/2024", "12/10/2024","Nghỉ phép","Trịnh Trần Phương Thắng","y",4));
-        listFormApprove.add(new FormApprove("LAP004","Cưới/ tang", "10/04/2024", "12/10/2024","Cưới","Trịnh Trần Phương Thắng","y",6));
-        listFormApprove.add(new FormApprove("LAP005","Công tác", "23/05/2024","12/10/2024", "Công tác","Trịnh Trần Phương Thắng","y",7));
-        listFormApprove.add(new FormApprove("LAP006","Làm việc từ xa", "30/06/2024","12/10/2024", "Làm việc từ xa","Trịnh Trần Phương Thắng","y",8));
-        listFormApprove.add(new FormApprove("LAP007","Giải trình công", "07/07/2024", "12/10/2024","Giải trình công","Trịnh Trần Phương Thắng","y",9));
+        listFormApprove.add(new FormApprove("LAP001","Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024","12/10/2024" ,"28/11/2024","Đi trễ","Trịnh Trần Phương Thắng","y",2));
+        listFormApprove.add(new FormApprove("LAP002","Nghỉ không lương", "15/02/2024", "12/10/2024","28/11/2024","Nghỉ không lương","Trịnh Trần Phương Thắng","y",3));
+        listFormApprove.add(new FormApprove("LAP003","Nghỉ phép - gửi trước 24h", "05/03/2024", "12/10/2024","28/11/2024","Nghỉ phép","Trịnh Trần Phương Thắng","y",4));
+        listFormApprove.add(new FormApprove("LAP004","Cưới/ tang", "10/04/2024", "12/10/2024","28/11/2024","Cưới","Trịnh Trần Phương Thắng","y",6));
+        listFormApprove.add(new FormApprove("LAP005","Công tác", "23/05/2024","12/10/2024", "28/11/2024","Công tác","Trịnh Trần Phương Thắng","y",7));
+        listFormApprove.add(new FormApprove("LAP006","Làm việc từ xa", "30/06/2024","12/10/2024","28/11/2024", "Làm việc từ xa","Trịnh Trần Phương Thắng","y",8));
+        listFormApprove.add(new FormApprove("LAP007","Giải trình công", "07/07/2024", "12/10/2024","28/11/2024","Giải trình công","Trịnh Trần Phương Thắng","y",9));
     }
 
     public void setListMonth() {
@@ -564,13 +566,16 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
 
                                             listFormApprove.add(new FormApprove(leaveID, leaveTypeName,
-                                                    dateOff,
+                                                    formattedStartTime,
+                                                    formattedEndTime,
                                                     formattedCreatedTime,
                                                     reason,
                                                     employeeName,
                                                     status,countShift));
                                             listfilterFormApprove.clear();
                                             listfilterFormApprove.addAll(listFormApprove);
+
+                                            Log.d("listfilterFormApproverr", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
 
                                             // Notify adapter after updating listForms
                                             faAdapter.notifyDataSetChanged();
@@ -700,7 +705,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
             boolean matchesStatus = true;
 
             if (filterByMonth) {
-                String formDate = form.getDateoffApprove().substring(0, 10);
+                String formDate = form.getDateoffstartApprove().substring(0, 10);
                 switch (selectedMonth) {
                     case "Tuần này":
                         matchesMonth = isDateInCurrentWeek(formDate);
@@ -722,7 +727,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                         break;
                     default:
                         String monthNumber = getMonthNumberFromSpinner(selectedMonth);
-                        String formMonth = form.getDateoffApprove().substring(5, 7);
+                        String formMonth = form.getDateoffstartApprove().substring(5, 7);
                         matchesMonth = formMonth.equals(monthNumber);
                         break;
                 }

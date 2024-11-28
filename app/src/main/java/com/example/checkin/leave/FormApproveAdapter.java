@@ -64,7 +64,8 @@ public class FormApproveAdapter extends BaseAdapter {
         FormApprove formApprove = faForm.get(i);
 
         TextView txtNameFormApprove = view.findViewById(R.id.tenloaidontuApprove_txt);
-        TextView txtDateoffApprove = view.findViewById(R.id.ngaynghiApprover_txt);
+        TextView txtDateoffstartApprover = view.findViewById(R.id.ngaynghistartApprover_txt);
+        TextView txtDateoffendApprover = view.findViewById(R.id.ngaynghiendApprover_txt);
         TextView txtStatusApprove = view.findViewById(R.id.statusApprover_txt);
         TextView txtReasonApprove = view.findViewById(R.id.lydoApprover_txt);
         TextView txtApprover = view.findViewById(R.id.nguoipheduyet_txt);
@@ -76,7 +77,8 @@ public class FormApproveAdapter extends BaseAdapter {
 
 
         txtNameFormApprove.setText(faForm.get(i).getNameFormApprove());
-        txtDateoffApprove.setText(faForm.get(i).getDateoffApprove());
+        txtDateoffstartApprover.setText(faForm.get(i).getDateoffstartApprove());
+        txtDateoffendApprover.setText(faForm.get(i).getDateoffendApprover());
         txtReasonApprove.setText(faForm.get(i).getReasonApprove());
         txtApprover.setText(faForm.get(i).getNameApprover());
         txtStatusApprove.setText(faForm.get(i).getStatusApprover());

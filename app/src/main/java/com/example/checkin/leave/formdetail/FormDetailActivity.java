@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.checkin.DatabaseHelper;
@@ -16,6 +17,11 @@ import com.example.checkin.R;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 
 import com.example.checkin.models.Form;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 
@@ -54,46 +60,97 @@ public class FormDetailActivity extends Activity {
         });
 
     }
+//    private void getLeaveDetails(String leaveID) {
+//        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
+//                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
+//                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
+//                "LeaveRequest.CountShift AS CountShift, " +
+//                "LeaveRequest.Reason AS Reason " +
+//                "FROM LeaveRequest " +
+//                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
+//                "WHERE LeaveRequest.LeaveID = ?";
+//
+//        Cursor cursor = db.rawQuery(query, new String[]{leaveID});
+//        Log.d("getLeaveDetails", "leaveID: " + leaveID);
+//
+//        if (cursor != null && cursor.moveToFirst()) {
+//            int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+//            int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
+//            int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
+//            int reasonIndex = cursor.getColumnIndex("Reason");
+//            int countShiftIndex = cursor.getColumnIndex("CountShift");
+//
+//            if (nameFormIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 &&
+//                    reasonIndex != -1 && countShiftIndex != -1) {
+//                String nameForm = cursor.getString(nameFormIndex);
+//                String leaveStartTime = cursor.getString(leaveStartTimeIndex);
+//                String leaveEndTime = cursor.getString(leaveEndTimeIndex);
+//                String reason = cursor.getString(reasonIndex);
+//                int countShift = cursor.getInt(countShiftIndex);
+//
+//                String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
+//                String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
+//
+//                tvLeaveTypeName.setText(nameForm);
+//                tvLeaveStartTime.setText(formattedStartTime);
+//                tvLeaveEndTime.setText(formattedEndTime);
+//                tvReason.setText(reason);
+//                tvCountShift.setText(String.valueOf(countShift));
+//
+//            }
+//            cursor.close();
+//        }
+//    }
     private void getLeaveDetails(String leaveID) {
-        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-                "LeaveRequest.CountShift AS CountShift, " +
-                "LeaveRequest.Reason AS Reason " +
-                "FROM LeaveRequest " +
-                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
-                "WHERE LeaveRequest.LeaveID = ?";
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        Cursor cursor = db.rawQuery(query, new String[]{leaveID});
-        Log.d("getLeaveDetails", "leaveID: " + leaveID);
+        // Truy xuất dữ liệu từ node leaverequests
+        databaseReference.child("leaverequests").child(leaveID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String leaveTypeID = snapshot.child("leaveTypeID").getValue(String.class);
+                    String leaveStartTime = snapshot.child("startDate").getValue(String.class);
+                    String leaveEndTime = snapshot.child("endDate").getValue(String.class);
+                    String reason = snapshot.child("reason").getValue(String.class);
+                    int countShift = snapshot.child("countShift").getValue(int.class);
 
-        if (cursor != null && cursor.moveToFirst()) {
-            int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-            int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-            int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-            int reasonIndex = cursor.getColumnIndex("Reason");
-            int countShiftIndex = cursor.getColumnIndex("CountShift");
+                    // Fetch LeaveType to get LeaveTypeName
+                    databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
+                            if (leaveTypeSnapshot.exists()) {
+                                String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
 
-            if (nameFormIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 &&
-                    reasonIndex != -1 && countShiftIndex != -1) {
-                String nameForm = cursor.getString(nameFormIndex);
-                String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-                String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-                String reason = cursor.getString(reasonIndex);
-                int countShift = cursor.getInt(countShiftIndex);
+                                // Format start and end time
+                                String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
+                                String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
 
-                String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
-                String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
+                                // Set data to UI elements
+                                tvLeaveTypeName.setText(leaveTypeName);
+                                tvLeaveStartTime.setText(formattedStartTime);
+                                tvLeaveEndTime.setText(formattedEndTime);
+                                tvReason.setText(reason);
+                                tvCountShift.setText(String.valueOf(countShift));
+                            }
+                        }
 
-                tvLeaveTypeName.setText(nameForm);
-                tvLeaveStartTime.setText(formattedStartTime);
-                tvLeaveEndTime.setText(formattedEndTime);
-                tvReason.setText(reason);
-                tvCountShift.setText(String.valueOf(countShift));
-
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("Firebase", "Failed to fetch LeaveType", error.toException());
+                        }
+                    });
+                } else {
+                    Log.d("getLeaveDetails", "No data found for leaveID: " + leaveID);
+                }
             }
-            cursor.close();
-        }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Failed to fetch LeaveRequest", error.toException());
+            }
+        });
     }
+
 
 }

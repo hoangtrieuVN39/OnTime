@@ -102,6 +102,7 @@ dependencies {
 	implementation(libs.androidx.fragment)
 	implementation(libs.androidx.fragment.ktx)
 	implementation(libs.androidx.material)
+	implementation("com.google.android.material:material:1.9.0")
 	implementation(libs.androidx.core.splashscreen)
 	implementation(libs.androidx.lifecycle.viewmodel.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx.v286)

@@ -64,7 +64,6 @@ public class FormAdapter extends BaseAdapter {
             view = inf.inflate(R.layout.objectform_layout, viewGroup, false);
         }
 
-
         Form form = fForm.get(i);
 
         TextView txtNameForm = view.findViewById(R.id.titleTypeform_txt);

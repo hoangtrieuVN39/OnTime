@@ -15,6 +15,8 @@ import com.example.checkin.OnFormClickListener;
 import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     private SQLiteDatabase database;
     private final List<Object> originalList; // Danh sách gốc
     private List<Object> filteredList;
+    DatabaseReference firebaseReference;
 
 //    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormClickListener aflistener, SQLiteDatabase db) {
 //        this.afContext = listAllFormContext;
@@ -39,13 +42,15 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
 //        this.afListener = aflistener;
 //        this.database = db;
 //    }
-    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormClickListener aflistener) {
+    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormClickListener aflistener,SQLiteDatabase db) {
         this.inflater = LayoutInflater.from(listAllFormContext);
         this.afForm = afForm;
         this.afListener = aflistener;
         this.originalList = afForm;
         this.filteredList = new ArrayList<>(afForm);
+        this.database = db;
         initFilter();
+        firebaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -135,7 +140,8 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
             FormApprove formApprove = (FormApprove) filteredList.get(i);
 
             TextView txtNameFormApprove = view.findViewById(R.id.tenloaidontuApprove_txt);
-            TextView txtDateoffApprove = view.findViewById(R.id.ngaynghiApprover_txt);
+            TextView txtDateoffstartApprover = view.findViewById(R.id.ngaynghistartApprover_txt);
+            TextView txtDateoffendApprover = view.findViewById(R.id.ngaynghiendApprover_txt);
             TextView txtStatusApprove = view.findViewById(R.id.statusApprover_txt);
             TextView txtReasonApprove = view.findViewById(R.id.lydoApprover_txt);
             TextView txtApprover = view.findViewById(R.id.nguoipheduyet_txt);
@@ -143,7 +149,8 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
             ViewGroup recallLayoutContainer = view.findViewById(R.id.recallApprover_ll);
 
             txtNameFormApprove.setText(formApprove.getNameFormApprove());
-            txtDateoffApprove.setText(formApprove.getDateoffApprove());
+            txtDateoffstartApprover.setText(formApprove.getDateoffstartApprove());
+            txtDateoffendApprover.setText(formApprove.getDateoffendApprover());
             txtReasonApprove.setText(formApprove.getReasonApprove());
             txtApprover.setText(formApprove.getNameApprover());
             txtStatusApprove.setText(formApprove.getStatusApprover());
@@ -178,39 +185,82 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
         notifyDataSetChanged();
     }
 
+//    private void initFilter() {
+//         allFormFilter = new Filter() {
+//            @Override
+//            protected FilterResults performFiltering(CharSequence constraint) {
+//                FilterResults results = new FilterResults();
+//
+//                if (constraint == null || constraint.length() == 0) {
+//                    // Nếu không có điều kiện lọc, trả về toàn bộ danh sách gốc
+//                    results.values = new ArrayList<>(originalList);
+//                    results.count = originalList.size();
+//                } else {
+//                    String filterPattern = constraint.toString().toLowerCase().trim();
+//                    List<FormApprove> filtered = new ArrayList<>();
+//
+//                    // Lọc qua originalList để tìm các đối tượng FormApprove có tên nhân viên phù hợp
+//                    for (Object approver : originalList) {
+//                        if (approver instanceof FormApprove) {
+//                            FormApprove formApprove = (FormApprove) approver;
+//                            if (formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
+//                                filtered.add(formApprove);
+//                            }
+//                        }
+//                    }
+////                    for (Object item : originalList) {
+////                        if (item instanceof FormApprove) {
+////                            FormApprove formApprove = (FormApprove) item;
+////                            if (formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
+////                                filtered.add(formApprove);
+////                            }
+////                        } else {
+////                            filtered.add((FormApprove) item);
+////                        }
+////                    }
+//
+//                    results.values = filtered;
+//                    results.count = filtered.size();
+//                }
+//                return results;
+//            }
+//
+//
+//            @Override
+//            protected void publishResults(CharSequence constraint, FilterResults results) {
+//                filteredList = (List<Object>) results.values;
+//                notifyDataSetChanged(); // Cập nhật lại ListView
+//            }
+//        };
+//
+//    }
+
     private void initFilter() {
-         allFormFilter = new Filter() {
+        allFormFilter = new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
 
                 if (constraint == null || constraint.length() == 0) {
-                    // Nếu không có điều kiện lọc, trả về toàn bộ danh sách gốc
+                    // Nếu không có điều kiện lọc, trả về danh sách gốc
                     results.values = new ArrayList<>(originalList);
                     results.count = originalList.size();
                 } else {
                     String filterPattern = constraint.toString().toLowerCase().trim();
-                    List<FormApprove> filtered = new ArrayList<>();
+                    List<Object> filtered = new ArrayList<>();
 
-                    // Lọc qua originalList để tìm các đối tượng FormApprove có tên nhân viên phù hợp
-                    for (Object approver : originalList) {
-                        if (approver instanceof FormApprove) {
-                            FormApprove formApprove = (FormApprove) approver;
-                            if (formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
+                    // Lọc qua danh sách gốc
+                    for (Object item : originalList) {
+                        if (item instanceof FormApprove) {
+                            FormApprove formApprove = (FormApprove) item;
+                            if (formApprove.getNameApprover() != null && formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
                                 filtered.add(formApprove);
                             }
+                        } else {
+                            // Thêm các kiểm tra khác nếu cần cho các loại đối tượng khác
+                            filtered.add(item);
                         }
                     }
-//                    for (Object item : originalList) {
-//                        if (item instanceof FormApprove) {
-//                            FormApprove formApprove = (FormApprove) item;
-//                            if (formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
-//                                filtered.add(formApprove);
-//                            }
-//                        } else {
-//                            filtered.add((FormApprove) item);
-//                        }
-//                    }
 
                     results.values = filtered;
                     results.count = filtered.size();
@@ -218,15 +268,16 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                 return results;
             }
 
-
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredList = (List<Object>) results.values;
-                notifyDataSetChanged(); // Cập nhật lại ListView
+                if (results.values != null) {
+                    filteredList = (List<Object>) results.values;
+                    notifyDataSetChanged(); // Cập nhật ListView
+                }
             }
         };
-
     }
+
     @Override
     public Filter getFilter() {
         return allFormFilter;
