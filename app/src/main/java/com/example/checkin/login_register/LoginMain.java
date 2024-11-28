@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.checkin.MainActivity;
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.AccountUtils;
@@ -30,6 +31,7 @@ public class LoginMain extends Activity {
 
         try {
             databaseHelper = new DatabaseHelper(this, null);
+            AccountUtils.setDbHelper(databaseHelper);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -73,6 +75,8 @@ public class LoginMain extends Activity {
 
                 if (AccountUtils.checkLogin(email, password)) {
                     Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+//                    Intent intent = new Intent(LoginMain.this, MainActivity.class);
+//                    startActivity(intent);
                 } else {
                     Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
                 }
