@@ -279,12 +279,16 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                                 }
 
                                 // Format ngày tháng
-                                String formattedStartDate = formatDateTime(startDate);
-                                String formattedEndDate = formatDateTime(endDate);
-                                String dateOff = formattedStartDate + " - " + formattedEndDate;
+                                System.out.println(startDate);
+                                System.out.println(endDate);
+
+//                                String formattedStartDate = formatDateTime(startDate);
+//                                String formattedEndDate = formatDateTime(endDate);
+//                                String dateOff = formattedStartDate + " - " + formattedEndDate;
+
 
                                 // Thêm vào danh sách
-                                listForms.add(new Form(leaveRequestID, leaveTypeName, formattedStartDate, formattedEndDate, reason, status, countShift));
+//                                listForms.add(new Form(leaveRequestID, leaveTypeName, formattedStartDate, formattedEndDate, reason, status, countShift));
                                 filteredForms.clear();
                                 filteredForms.addAll(listForms);
 
@@ -424,6 +428,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                 String status = cursor.getString(statussIndex);
                 int countShift = cursor.getInt(CountshiftIndex);
 
+                System.out.println(leaveStartTime);
                 String formattedStartTime = formatDateTime(leaveStartTime);
                 String formattedEndTime = formatDateTime(leaveEndTime);
 

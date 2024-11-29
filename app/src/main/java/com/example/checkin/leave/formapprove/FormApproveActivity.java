@@ -83,9 +83,6 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.formapprove_layout);
 
-        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formApprove);
-        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
-
         setListMonth();
         setListStatus();
 
@@ -108,7 +105,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
 
         spTrangThai = findViewById(R.id.approveStatus_spinner);
         spThang = findViewById(R.id.approveMonth_spinner);
-        btnFilter = findViewById(R.id.button_filter);
+//        btnFilter = findViewById(R.id.button_filter);
 
         msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
         msAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
