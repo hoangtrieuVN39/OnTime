@@ -54,6 +54,7 @@ import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class FormListActivity extends Activity implements OnFormClickListener {
@@ -90,7 +91,11 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formList);
         Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
 
+        setListMonth();
+        setListStatus();
+
         lvAllForm = findViewById(R.id.formList_lv);
+
 
         try {
             DBHelper = new DatabaseHelper(this, null);
@@ -103,9 +108,8 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 //        loadDataFormFromDatabase();
 //        loadDataFAFromDatabase();
 //        loadInitialData();
-        setListMonth();
-        setListStatus();
-        Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
+
+        Log.d("AllFormrr", "Dữ liệu listfilterAllForm: " + listfilterAllForm.size());
 
         listfilterAllForm.addAll(listAllForm);
 
@@ -117,6 +121,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         spThang = findViewById(R.id.listMonth_spinner);
         msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
         spThang.setAdapter(msAdapter);
+
 
 
 
@@ -175,12 +180,125 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         });
     }
 
+
+//    private void loadDataFAFromFirebase() {
+//        DatabaseReference leaveRequestsRef = FirebaseDatabase.getInstance().getReference("leaverequests");
+//        DatabaseReference leaveTypesRef = FirebaseDatabase.getInstance().getReference("leavetypes");
+//        DatabaseReference leaveRequestApprovalsRef = FirebaseDatabase.getInstance().getReference("leaverequestapprovals");
+//        DatabaseReference employeesRef = FirebaseDatabase.getInstance().getReference("employees");
+//
+//        listAllForm.clear();
+//
+//        // Lấy dữ liệu từ tất cả các nhánh và ánh xạ
+//        leaveRequestsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot leaveRequestsSnapshot) {
+//                leaveTypesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot leaveTypesSnapshot) {
+//                        leaveRequestApprovalsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot leaveRequestApprovalsSnapshot) {
+//                                employeesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                    @Override
+//                                    public void onDataChange(@NonNull DataSnapshot employeesSnapshot) {
+//                                        for (DataSnapshot requestSnapshot : leaveRequestsSnapshot.getChildren()) {
+//                                            String leaveRequestID = requestSnapshot.getKey();
+//                                            String leaveTypeID = requestSnapshot.child("leaveTypeID").getValue(String.class);
+//                                            String employeeID = requestSnapshot.child("employeeID").getValue(String.class);
+//                                            String reason = requestSnapshot.child("reason").getValue(String.class);
+//                                            String startDate = requestSnapshot.child("startDate").getValue(String.class);
+//                                            String endDate = requestSnapshot.child("endDate").getValue(String.class);
+//                                            String createTime = requestSnapshot.child("createTime").getValue(String.class);
+//                                            String statuslr = requestSnapshot.child("status").getValue(String.class);
+//                                            Long countShift = requestSnapshot.child("countShift").getValue(Long.class);
+//
+//                                            // Lấy LeaveTypeName từ leavetypes
+//                                            String leaveTypeName = leaveTypesSnapshot.child(leaveTypeID).child("leaveTypeName").getValue(String.class);
+//
+//                                            // Lấy EmployeeName từ employees
+//                                            String employeeName = employeesSnapshot.child(employeeID).child("employeeName").getValue(String.class);
+//
+//                                            // Lấy Status từ leaverequestapprovals
+//                                            String status = null;
+//                                            for (DataSnapshot approvalSnapshot : leaveRequestApprovalsSnapshot.getChildren()) {
+//                                                if (leaveRequestID.equals(approvalSnapshot.child("leaveRequestID").getValue(String.class))) {
+//                                                    status = approvalSnapshot.child("status").getValue(String.class);
+//                                                    break;
+//                                                }
+//                                            }
+//
+//                                            // Format dữ liệu
+//                                            String formattedCreateTime = FormApproveActivity.formatDate(createTime);
+//                                            String formattedStartDate = FormPersonalActivity.formatDateTime(startDate);
+//                                            String formattedEndDate = FormPersonalActivity.formatDateTime(endDate);
+//                                            String dateOff = formattedStartDate + " - " + formattedEndDate;
+//
+//                                            // Thêm vào danh sách
+//                                            listAllForm.add(new FormApprove(
+//                                                    leaveRequestID,
+//                                                    leaveTypeName,
+//                                                    formattedStartDate,
+//                                                    formattedEndDate,
+//                                                    formattedCreateTime,
+//                                                    reason,
+//                                                    employeeName,
+//                                                    status,
+//                                                    countShift != null ? countShift.intValue() : 0
+//                                            ));
+//                                            listAllForm.add(new Form(
+//                                                    leaveRequestID,
+//                                                    leaveTypeName,
+//                                                    formattedStartDate,
+//                                                    formattedEndDate,
+//                                                    reason,
+//                                                    statuslr,
+//                                                    countShift != null ? countShift.intValue() : 0
+//                                            ));
+//                                        }
+//
+//                                        // Cập nhật giao diện
+//                                        listfilterAllForm.clear();
+//                                        listfilterAllForm.addAll(listAllForm);
+//                                        Log.d("AllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
+////                                    afAdapter.notifyDataSetChanged();
+//                                    }
+//
+//                                    @Override
+//                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                                        Log.e("FirebaseError", "Lỗi khi lấy dữ liệu employees: " + databaseError.getMessage());
+//                                    }
+//                                });
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                                Log.e("FirebaseError", "Lỗi khi lấy dữ liệu leaveRequestApprovals: " + databaseError.getMessage());
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                        Log.e("FirebaseError", "Lỗi khi lấy dữ liệu leavetypes: " + databaseError.getMessage());
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                Log.e("FirebaseError", "Lỗi khi lấy dữ liệu leaverequests: " + databaseError.getMessage());
+//            }
+//        });
+//    }
+
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void loadDataFAFromFirebase() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         // Clear the current list
         listAllForm.clear();
-        listfilterAllForm.clear();
+//        listfilterAllForm.clear();
 
         databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -234,21 +352,23 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                                             listAllForm.add(new FormApprove(leaveID,leaveTypeName,formattedStartTime,formattedEndTime,formattedCreatedTime,reason,employeeName,status, countShift));
                                             listAllForm.add(new Form(leaveID,leaveTypeName, formattedStartTime,formattedEndTime, reason,statusLR, countShift));
 
-                                            if (snapshot.getChildrenCount() == listAllForm.size() / 2) {
-                                                // Copy all data to listfilterAllForm after fetching is complete
-                                                listfilterAllForm.addAll(listAllForm);
-                                                // Notify adapter
-                                                afAdapter.notifyDataSetChanged();
-                                                Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
 
-                                                loadInitialData();
-                                            }
-//                                            listfilterAllForm.clear();
-//                                            listfilterAllForm.addAll(listAllForm);
-//                                            Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
-//                                            // Notify adapter after updating listForms
-//                                            afAdapter.notifyDataSetChanged();
-//                                            loadInitialData();
+//                                            if (snapshot.getChildrenCount() == listAllForm.size() / 2) {
+//                                                // Copy all data to listfilterAllForm after fetching is complete
+//                                                listfilterAllForm.addAll(listAllForm);
+//                                                // Notify adapter
+//                                                afAdapter.notifyDataSetChanged();
+//                                                Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
+//
+//                                                loadInitialData();
+//                                                Log.d("ogList", "Dữ liệu listfilterAllForm: " + originalList);
+//                                            }
+                                            listfilterAllForm.clear();
+                                            listfilterAllForm.addAll(listAllForm);
+                                            Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
+                                            // Notify adapter after updating listForms
+                                            afAdapter.notifyDataSetChanged();
+                                            loadInitialData();
                                         }
 
                                         @Override
@@ -343,7 +463,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         }
         listfilterAllForm.clear();
         listfilterAllForm.addAll(listAllForm);
-        Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
+//        Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
 //        afAdapter.notifyDataSetChanged();
     }
 

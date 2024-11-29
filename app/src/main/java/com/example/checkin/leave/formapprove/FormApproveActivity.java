@@ -100,10 +100,10 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
 
 //        loadDataFAFromDatabase();
         loadDataFAFromFirebase();
-        loadDataTypeFormFromDatabase();
+//        loadDataTypeFormFromDatabase();
 //        loadInitialData();
         listfilterFormApprove.addAll(listFormApprove);
-//        Log.d("listfilterFormApprover", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
+        Log.d("FormApproverss", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
 
 
         spTrangThai = findViewById(R.id.approveStatus_spinner);
@@ -575,7 +575,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                                             listfilterFormApprove.clear();
                                             listfilterFormApprove.addAll(listFormApprove);
 
-                                            Log.d("listfilterFormApproverr", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
+//                                            Log.d("listfilterFormApproverr", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
 
                                             // Notify adapter after updating listForms
                                             faAdapter.notifyDataSetChanged();

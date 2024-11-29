@@ -36,12 +36,6 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     private List<Object> filteredList;
     DatabaseReference firebaseReference;
 
-//    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormClickListener aflistener, SQLiteDatabase db) {
-//        this.afContext = listAllFormContext;
-//        this.afForm = afForm;
-//        this.afListener = aflistener;
-//        this.database = db;
-//    }
     public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormClickListener aflistener,SQLiteDatabase db) {
         this.inflater = LayoutInflater.from(listAllFormContext);
         this.afForm = afForm;
@@ -50,7 +44,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
         this.filteredList = new ArrayList<>(afForm);
         this.database = db;
         initFilter();
-        firebaseReference = FirebaseDatabase.getInstance().getReference();
+        this.firebaseReference = firebaseReference;
     }
 
     @Override
@@ -237,6 +231,36 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
 
     private void initFilter() {
         allFormFilter = new Filter() {
+//            @Override
+//            protected FilterResults performFiltering(CharSequence constraint) {
+//                FilterResults results = new FilterResults();
+//
+//                if (constraint == null || constraint.length() == 0) {
+//                    // Nếu không có điều kiện lọc, trả về danh sách gốc
+//                    results.values = new ArrayList<>(originalList);
+//                    results.count = originalList.size();
+//                } else {
+//                    String filterPattern = constraint.toString().toLowerCase().trim();
+//                    List<Object> filtered = new ArrayList<>();
+//
+//                    // Lọc qua danh sách gốc
+//                    for (Object item : originalList) {
+//                        if (item instanceof FormApprove) {
+//                            FormApprove formApprove = (FormApprove) item;
+//                            if (formApprove.getNameApprover() != null && formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
+//                                filtered.add(formApprove);
+//                            }
+//                        } else {
+//                            // Thêm các kiểm tra khác nếu cần cho các loại đối tượng khác
+//                            filtered.add(item);
+//                        }
+//                    }
+//
+//                    results.values = filtered;
+//                    results.count = filtered.size();
+//                }
+//                return results;
+//            }
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
@@ -251,14 +275,16 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
 
                     // Lọc qua danh sách gốc
                     for (Object item : originalList) {
-                        if (item instanceof FormApprove) {
+                        if (item instanceof Form) {
+                            Form form = (Form) item;
+                            if (form.getNameForm().toLowerCase().contains(filterPattern)) {
+                                filtered.add(form);
+                            }
+                        } else if (item instanceof FormApprove) {
                             FormApprove formApprove = (FormApprove) item;
                             if (formApprove.getNameApprover() != null && formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
                                 filtered.add(formApprove);
                             }
-                        } else {
-                            // Thêm các kiểm tra khác nếu cần cho các loại đối tượng khác
-                            filtered.add(item);
                         }
                     }
 
@@ -267,6 +293,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                 }
                 return results;
             }
+
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
