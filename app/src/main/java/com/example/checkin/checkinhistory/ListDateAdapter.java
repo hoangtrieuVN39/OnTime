@@ -17,6 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 public class ListDateAdapter extends BaseAdapter {
     private final List<Date> dates;
@@ -24,6 +27,8 @@ public class ListDateAdapter extends BaseAdapter {
     private final DatabaseHelper dbHelper;
     private final List<Shift> listShift;
     private final String employee;
+
+    private OnItemClickListener listener;
 
     public ListDateAdapter(Context context, List<Date> dates, DatabaseHelper dbHelper, List<Shift> listShift, String employee) {
         this.dates = dates;
@@ -33,6 +38,14 @@ public class ListDateAdapter extends BaseAdapter {
         this.employee = employee;
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
     @Override
     public int getCount() {
         return dates.size();
@@ -40,22 +53,22 @@ public class ListDateAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return dates.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inf = LayoutInflater.from(context);
-        View v = inf.inflate(R.layout.date_layout, null);
+        View view  = inf.inflate(R.layout.date_layout, null);
 
-        TextView date_txt = v.findViewById(R.id.date);
-        TextView work_count_txt = v.findViewById(R.id.wordcount_txt);
-        ListView shift_lv = v.findViewById(R.id.shift_lv);
+        TextView date_txt = view.findViewById(R.id.date);
+        TextView work_count_txt = view.findViewById(R.id.wordcount_txt);
+        ListView shift_lv = view.findViewById(R.id.shift_lv);
 
         Double work_per_shift = 1.0;
         String DOW = "T2";
@@ -102,9 +115,13 @@ public class ListDateAdapter extends BaseAdapter {
             }
             shiftchecks.add(new String[]{shift.getShift_name(), checkinTime, checkoutTime});
         }
-
         work_count_txt.setText((work_count*work_per_shift)+"");
-
+        view.setOnClickListener(v -> {
+            if (listener != null) {
+//                Log.d("dasd", "123" +  shifts.get(position));
+                listener.onItemClick(position);
+            }
+        });
 
         ListDateShiftAdapter adapter = new ListDateShiftAdapter(
                 context,
@@ -113,7 +130,7 @@ public class ListDateAdapter extends BaseAdapter {
 
         shift_lv.setAdapter(adapter);
 
-        return v;
+        return view;
     }
 
     private List<String[]> getListCheck(Date date, Shift shift, String employee) throws ParseException {
