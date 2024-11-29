@@ -151,12 +151,20 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
             txtCreateTime.setText(formApprove.getCreateTimeApprover());
 
             if ("Đồng ý".equals(formApprove.getStatusApprover())) {
-                txtStatusApprove.setText(formApprove.getStatusApprover());
+                txtStatusApprove.setText("Đồng ý");
+//            txtStatusApprove.setText(formApprove.getStatusApprover());
                 txtStatusApprove.setTextColor(Color.parseColor("#D9AF03"));
                 txtStatusApprove.setVisibility(View.VISIBLE);
                 recallLayoutContainer.setVisibility(View.GONE);
-            }else{
-                txtStatusApprove.setText(formApprove.getStatusApprover());
+            }
+            else if ("Loại bỏ".equals(formApprove.getStatusApprover())) {
+                txtStatusApprove.setText("Loại bỏ");
+//                txtStatusApprove.setText(formApprove.getStatusApprover());
+                txtStatusApprove.setTextColor(Color.parseColor("#575E72"));
+                txtStatusApprove.setVisibility(View.VISIBLE);
+                recallLayoutContainer.setVisibility(View.GONE);
+            }else if ("Chưa phê duyệt".equals(formApprove.getStatusApprover())) {
+                txtStatusApprove.setText("Chưa phê duyệt");
                 txtStatusApprove.setTextColor(Color.parseColor("#BB1B1B"));
                 txtStatusApprove.setVisibility(View.VISIBLE);
                 recallLayoutContainer.setVisibility(View.GONE);

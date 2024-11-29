@@ -104,7 +104,12 @@ public class FormListActivity extends Activity implements OnFormClickListener {
             e.printStackTrace();
         }
 
-        loadDataFAFromFirebase();
+        loadDataFAFromFirebase(new DataLoadCallback() {
+            @Override
+            public void onDataLoaded() {
+                Log.d("AllFormrr", "Dữ liệu listfilterAllForm: " + listfilterAllForm.size());
+            }
+        });
 //        loadDataFormFromDatabase();
 //        loadDataFAFromDatabase();
 //        loadInitialData();
@@ -294,7 +299,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void loadDataFAFromFirebase() {
+    private void loadDataFAFromFirebase(DataLoadCallback callback) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         // Clear the current list
         listAllForm.clear();
@@ -348,7 +353,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                                             String formattedStartTime = formatDateTime(leaveStartTime);
                                             String formattedEndTime = formatDateTime(leaveEndTime);
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
-
                                             listAllForm.add(new FormApprove(leaveID,leaveTypeName,formattedStartTime,formattedEndTime,formattedCreatedTime,reason,employeeName,status, countShift));
                                             listAllForm.add(new Form(leaveID,leaveTypeName, formattedStartTime,formattedEndTime, reason,statusLR, countShift));
 
@@ -365,7 +369,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 //                                            }
                                             listfilterAllForm.clear();
                                             listfilterAllForm.addAll(listAllForm);
-                                            Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
+                                            Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm.size());
                                             // Notify adapter after updating listForms
                                             afAdapter.notifyDataSetChanged();
                                             loadInitialData();
@@ -391,6 +395,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                         }
                     });
                 }
+                callback.onDataLoaded();
             }
 
             @Override
@@ -969,5 +974,8 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     @Override
     public void onFormClick(Form form) {
 
+    }
+    public interface DataLoadCallback {
+        void onDataLoaded();
     }
 }
