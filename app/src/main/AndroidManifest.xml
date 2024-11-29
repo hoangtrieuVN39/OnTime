@@ -51,7 +51,11 @@
             android:name="com.example.checkin.checkinhistory.CheckinHistoryActivity"
             android:exported="true"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-            </activity>
+        </activity>
+        <activity
+            android:name="com.example.checkin.checkinhistory.CheckinHistoryDetail"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            />
 
         <activity
             android:name="com.example.checkin.leave.formcreate.FormCreateActivity"

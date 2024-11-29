@@ -54,8 +54,8 @@ public class CheckinHistoryFragment extends Fragment {
         updateListView(filterChips.getCheckedChipId());
 
         filterChips.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            updateListView(checkedIds.get(0));
-            }
+                    updateListView(checkedIds.get(0));
+                }
         );
 
         return view;

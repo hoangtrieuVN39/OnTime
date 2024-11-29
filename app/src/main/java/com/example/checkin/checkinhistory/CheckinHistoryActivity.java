@@ -1,8 +1,10 @@
 package com.example.checkin.checkinhistory;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -50,8 +52,10 @@ public class CheckinHistoryActivity extends ActivityBase {
         ChipGroup filterChips = this.findViewById(R.id.chips);
 
         runCheckReloadBackground(executor, filterChips.getCheckedChipId());
+
         filterChips.setOnCheckedStateChangeListener((group, checkedIds) ->
         {
+
             loadingIndicator.setVisibility(View.VISIBLE);
             runCheckReloadBackground(executor, filterChips.getCheckedChipId());
         });
@@ -67,8 +71,14 @@ public class CheckinHistoryActivity extends ActivityBase {
                             dbHelper,
                             getListShift(),
                             "NV003");
+
                     runOnUiThread(()->{
                         lvShift.setAdapter(shiftAdapter);
+                        shiftAdapter.setOnItemClickListener(position -> {
+                            Intent intent = new Intent(CheckinHistoryActivity.this, CheckinHistoryDetail.class);
+                            startActivity(intent);
+                            Log.d("Activity", "Received click event for position: " + position);
+                        });
                         loadingIndicator.setVisibility(View.INVISIBLE);
                     });
                 } catch (IOException e) {
@@ -114,6 +124,7 @@ public class CheckinHistoryActivity extends ActivityBase {
         return dates;
     }
 
+
     private List<Shift> getListShift() throws IOException {
 
         List<Shift> shiftList = new ArrayList<>();
@@ -122,9 +133,11 @@ public class CheckinHistoryActivity extends ActivityBase {
 
         for (int i = 0; i < table.size(); i++) {
             Shift shift = new Shift(table.get(i).get(0).toString(), table.get(i).get(1).toString(), table.get(i).get(2).toString(), table.get(i).get(3).toString());
+            Log.d("getListShift " , "shift" + table.get(i));
             shiftList.add(shift);
         }
 
         return shiftList;
     }
+
 }
