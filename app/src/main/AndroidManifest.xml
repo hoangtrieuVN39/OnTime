@@ -59,7 +59,7 @@
 <!--        </activity>-->
 
         <activity
-            android:name="com.example.checkin.leave.formlist.FormListActivity"
+            android:name="com.example.checkin.leave.formapprove.FormApproveActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:foregroundServiceType="location"

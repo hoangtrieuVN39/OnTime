@@ -89,8 +89,8 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.formlist_layout);
 
-        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formList);
-        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
+//        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formList);
+//        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
 
         setListMonth();
         setListStatus();

@@ -282,13 +282,13 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                                 System.out.println(startDate);
                                 System.out.println(endDate);
 
-//                                String formattedStartDate = formatDateTime(startDate);
-//                                String formattedEndDate = formatDateTime(endDate);
-//                                String dateOff = formattedStartDate + " - " + formattedEndDate;
+                                String formattedStartDate = formatDateTime(startDate);
+                                String formattedEndDate = formatDateTime(endDate);
+                                String dateOff = formattedStartDate + " - " + formattedEndDate;
 
 
                                 // Thêm vào danh sách
-//                                listForms.add(new Form(leaveRequestID, leaveTypeName, formattedStartDate, formattedEndDate, reason, status, countShift));
+                                listForms.add(new Form(leaveRequestID, leaveTypeName, formattedStartDate, formattedEndDate, reason, status, countShift));
                                 filteredForms.clear();
                                 filteredForms.addAll(listForms);
 

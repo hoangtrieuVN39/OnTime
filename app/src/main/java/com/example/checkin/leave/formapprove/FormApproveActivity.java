@@ -105,7 +105,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
 
         spTrangThai = findViewById(R.id.approveStatus_spinner);
         spThang = findViewById(R.id.approveMonth_spinner);
-//        btnFilter = findViewById(R.id.button_filter);
+        btnFilter = findViewById(R.id.button_filter);
 
         msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
         msAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -452,15 +452,6 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         });
     }
 
-    public void setFormApprove(){
-        listFormApprove.add(new FormApprove("LAP001","Đi trễ/ về sớm (trong vòng 1h)", "20/12/2024","12/10/2024" ,"28/11/2024","Đi trễ","Trịnh Trần Phương Thắng","y",2));
-        listFormApprove.add(new FormApprove("LAP002","Nghỉ không lương", "15/02/2024", "12/10/2024","28/11/2024","Nghỉ không lương","Trịnh Trần Phương Thắng","y",3));
-        listFormApprove.add(new FormApprove("LAP003","Nghỉ phép - gửi trước 24h", "05/03/2024", "12/10/2024","28/11/2024","Nghỉ phép","Trịnh Trần Phương Thắng","y",4));
-        listFormApprove.add(new FormApprove("LAP004","Cưới/ tang", "10/04/2024", "12/10/2024","28/11/2024","Cưới","Trịnh Trần Phương Thắng","y",6));
-        listFormApprove.add(new FormApprove("LAP005","Công tác", "23/05/2024","12/10/2024", "28/11/2024","Công tác","Trịnh Trần Phương Thắng","y",7));
-        listFormApprove.add(new FormApprove("LAP006","Làm việc từ xa", "30/06/2024","12/10/2024","28/11/2024", "Làm việc từ xa","Trịnh Trần Phương Thắng","y",8));
-        listFormApprove.add(new FormApprove("LAP007","Giải trình công", "07/07/2024", "12/10/2024","28/11/2024","Giải trình công","Trịnh Trần Phương Thắng","y",9));
-    }
 
     public void setListMonth() {
         listMonth.add(new MonthSpinner("Chọn thời gian"));

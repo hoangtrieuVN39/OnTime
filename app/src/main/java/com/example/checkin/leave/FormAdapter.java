@@ -133,13 +133,6 @@ public class FormAdapter extends BaseAdapter {
                 fListener.onFormClick(fForm.get(i));
             }
         });
-
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick (View view){
-//                fListener.onFormClick(fForm.get(i).getNameForm());
-//            }
-//        });
         return view;
     }
 //    private void deleteLeaveRequestFromFirebase(String leaveId) {
@@ -228,6 +221,36 @@ public class FormAdapter extends BaseAdapter {
                             });
                 });
     }
+
+//    private void deleteLeaveRequestFromFirebase(String leaveRequestID) {
+//        DatabaseReference leaveRequestRef = firebaseReference.child("leaverequests").child(leaveRequestID);
+//        DatabaseReference approvalsRef = firebaseReference.child("leaverequestapprovals");
+//
+//        // Bước 1: Lấy danh sách các leaveRequestApprovals liên quan
+//        approvalsRef.orderByChild("leaveRequestID").equalTo(leaveRequestID).get()
+//                .addOnCompleteListener(task -> {
+//                    if (task.isSuccessful() && task.getResult().exists()) {
+//                        // Bước 2: Xóa từng leaveRequestApproval liên quan
+//                        for (DataSnapshot approvalSnapshot : task.getResult().getChildren()) {
+//                            approvalSnapshot.getRef().removeValue()
+//                                    .addOnSuccessListener(aVoid -> {
+//                                        // Log thành công nếu cần
+//                                    })
+//                                    .addOnFailureListener(e -> {
+//                                        // Xử lý lỗi nếu cần
+//                                    });
+//                        }
+//                    }
+//                    // Bước 3: Sau khi xóa các approval, xóa leaveRequest
+//                    leaveRequestRef.removeValue()
+//                            .addOnSuccessListener(aVoid -> {
+//                                // Log thành công nếu cần
+//                            })
+//                            .addOnFailureListener(e -> {
+//                                // Xử lý lỗi nếu cần
+//                            });
+//                });
+//    }
 
     private void deleteLeaveRequest(String leaveId) throws IOException {
         if (dbHelper == null) {
