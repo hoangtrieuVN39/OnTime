@@ -163,20 +163,21 @@
                             android:dividerHeight="8dp" />
                     </LinearLayout>
                 </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/addForm_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginBottom="100dp"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/add_circle" />
             </RelativeLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <ImageButton
+        android:id="@+id/addForm_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="0dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/add_circle" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

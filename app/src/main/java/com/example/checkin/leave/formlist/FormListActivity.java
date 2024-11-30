@@ -71,15 +71,10 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     ImageButton btnFilter;
     SearchView searchView;
 
-
     private final List<Object> originalList = new ArrayList<>();
     private final List<Object> currentList = new ArrayList<>();
     private List<String> selectedChipFilters = new ArrayList<>();
 
-//    ArrayList<FormApprove> listFormApprove = new ArrayList<>();
-//    ArrayList<FormApprove> listfilterFormApprove = new ArrayList<>();
-//    ArrayList<Form> listForms = new ArrayList<>();
-//    ArrayList<Form> filteredForms = new ArrayList<>();
 
     DatabaseHelper DBHelper;
     SQLiteDatabase db;
@@ -89,8 +84,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.formlist_layout);
 
-//        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formList);
-//        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
 
         setListMonth();
         setListStatus();
@@ -119,7 +112,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         listfilterAllForm.addAll(listAllForm);
 
-
         spTrangThai = findViewById(R.id.listStatus_spinner);
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
@@ -127,9 +119,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         spThang = findViewById(R.id.listMonth_spinner);
         msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
         spThang.setAdapter(msAdapter);
-
-
-
 
         afAdapter = new AllFormAdapter(this,listfilterAllForm,this,db);
         lvAllForm.setAdapter(afAdapter);
@@ -185,119 +174,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
             }
         });
     }
-
-
-//    private void loadDataFAFromFirebase() {
-//        DatabaseReference leaveRequestsRef = FirebaseDatabase.getInstance().getReference("leaverequests");
-//        DatabaseReference leaveTypesRef = FirebaseDatabase.getInstance().getReference("leavetypes");
-//        DatabaseReference leaveRequestApprovalsRef = FirebaseDatabase.getInstance().getReference("leaverequestapprovals");
-//        DatabaseReference employeesRef = FirebaseDatabase.getInstance().getReference("employees");
-//
-//        listAllForm.clear();
-//
-//        // Lấy dữ liệu từ tất cả các nhánh và ánh xạ
-//        leaveRequestsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot leaveRequestsSnapshot) {
-//                leaveTypesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot leaveTypesSnapshot) {
-//                        leaveRequestApprovalsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot leaveRequestApprovalsSnapshot) {
-//                                employeesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                                    @Override
-//                                    public void onDataChange(@NonNull DataSnapshot employeesSnapshot) {
-//                                        for (DataSnapshot requestSnapshot : leaveRequestsSnapshot.getChildren()) {
-//                                            String leaveRequestID = requestSnapshot.getKey();
-//                                            String leaveTypeID = requestSnapshot.child("leaveTypeID").getValue(String.class);
-//                                            String employeeID = requestSnapshot.child("employeeID").getValue(String.class);
-//                                            String reason = requestSnapshot.child("reason").getValue(String.class);
-//                                            String startDate = requestSnapshot.child("startDate").getValue(String.class);
-//                                            String endDate = requestSnapshot.child("endDate").getValue(String.class);
-//                                            String createTime = requestSnapshot.child("createTime").getValue(String.class);
-//                                            String statuslr = requestSnapshot.child("status").getValue(String.class);
-//                                            Long countShift = requestSnapshot.child("countShift").getValue(Long.class);
-//
-//                                            // Lấy LeaveTypeName từ leavetypes
-//                                            String leaveTypeName = leaveTypesSnapshot.child(leaveTypeID).child("leaveTypeName").getValue(String.class);
-//
-//                                            // Lấy EmployeeName từ employees
-//                                            String employeeName = employeesSnapshot.child(employeeID).child("employeeName").getValue(String.class);
-//
-//                                            // Lấy Status từ leaverequestapprovals
-//                                            String status = null;
-//                                            for (DataSnapshot approvalSnapshot : leaveRequestApprovalsSnapshot.getChildren()) {
-//                                                if (leaveRequestID.equals(approvalSnapshot.child("leaveRequestID").getValue(String.class))) {
-//                                                    status = approvalSnapshot.child("status").getValue(String.class);
-//                                                    break;
-//                                                }
-//                                            }
-//
-//                                            // Format dữ liệu
-//                                            String formattedCreateTime = FormApproveActivity.formatDate(createTime);
-//                                            String formattedStartDate = FormPersonalActivity.formatDateTime(startDate);
-//                                            String formattedEndDate = FormPersonalActivity.formatDateTime(endDate);
-//                                            String dateOff = formattedStartDate + " - " + formattedEndDate;
-//
-//                                            // Thêm vào danh sách
-//                                            listAllForm.add(new FormApprove(
-//                                                    leaveRequestID,
-//                                                    leaveTypeName,
-//                                                    formattedStartDate,
-//                                                    formattedEndDate,
-//                                                    formattedCreateTime,
-//                                                    reason,
-//                                                    employeeName,
-//                                                    status,
-//                                                    countShift != null ? countShift.intValue() : 0
-//                                            ));
-//                                            listAllForm.add(new Form(
-//                                                    leaveRequestID,
-//                                                    leaveTypeName,
-//                                                    formattedStartDate,
-//                                                    formattedEndDate,
-//                                                    reason,
-//                                                    statuslr,
-//                                                    countShift != null ? countShift.intValue() : 0
-//                                            ));
-//                                        }
-//
-//                                        // Cập nhật giao diện
-//                                        listfilterAllForm.clear();
-//                                        listfilterAllForm.addAll(listAllForm);
-//                                        Log.d("AllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
-////                                    afAdapter.notifyDataSetChanged();
-//                                    }
-//
-//                                    @Override
-//                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//                                        Log.e("FirebaseError", "Lỗi khi lấy dữ liệu employees: " + databaseError.getMessage());
-//                                    }
-//                                });
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                                Log.e("FirebaseError", "Lỗi khi lấy dữ liệu leaveRequestApprovals: " + databaseError.getMessage());
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//                        Log.e("FirebaseError", "Lỗi khi lấy dữ liệu leavetypes: " + databaseError.getMessage());
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Log.e("FirebaseError", "Lỗi khi lấy dữ liệu leaverequests: " + databaseError.getMessage());
-//            }
-//        });
-//    }
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void loadDataFAFromFirebase(DataLoadCallback callback) {

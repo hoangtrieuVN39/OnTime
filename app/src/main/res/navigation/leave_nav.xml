@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/leave_nav.xml"
+    app:startDestination="@id/formPersonalFragment">
+
+    <fragment
+        android:id="@+id/formPersonalFragment"
+        android:name="com.example.checkin.leave.formpersonal.FormPersonalFragment"
+        android:label="fragment_form_personal"
+        tools:layout="@layout/fragment_form_personal" />
+    <fragment
+        android:id="@+id/formApproveFragment"
+        android:name="com.example.checkin.leave.formapprove.FormApproveFragment"
+        android:label="fragment_form_approve"
+        tools:layout="@layout/fragment_form_approve" />
+    <fragment
+        android:id="@+id/formListFragment"
+        android:name="com.example.checkin.leave.formlist.FormListFragment"
+        android:label="fragment_form_list"
+        tools:layout="@layout/fragment_form_list" />
+</navigation>
