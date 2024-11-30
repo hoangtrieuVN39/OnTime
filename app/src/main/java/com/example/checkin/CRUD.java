@@ -40,6 +40,7 @@ public class CRUD {
             database = (DatabaseReference) database.orderByChild(filter);  // Đặt điều kiện lọc theo trường filter
         }
 
+
         // Lắng nghe dữ liệu từ Firebase
         database.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -109,46 +110,46 @@ public class CRUD {
                 });
     }
 
-    public void readFirebaseIntIndex(String tableName, String filter, String filterValue, String[] selectionArgs, DataCallback callback) {
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
-
-        // Nếu có filter, thực hiện truy vấn
-        if (filter != null && filterValue != null) {
-            database = (DatabaseReference) database.orderByChild(filter).equalTo(filterValue);
-        }
-
-        // Đọc dữ liệu từ Firebase
-        database.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<List<String>> results = new ArrayList<>();
-
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    List<String> row = new ArrayList<>();
-
-                    if (selectionArgs != null) {
-                        for (String fieldName : selectionArgs) {
-                            DataSnapshot fieldSnapshot = data.child(fieldName);
-                            row.add(fieldSnapshot.exists() ? fieldSnapshot.getValue(String.class) : null);
-                        }
-                    } else {
-                        for (DataSnapshot field : data.getChildren()) {
-                            row.add(field.getValue(String.class));
-                        }
-                    }
-
-                    results.add(row);
-                }
-
-                callback.onDataLoaded(results);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Error reading data: " + error.getMessage());
-            }
-        });
-    }
+//    public void readFirebaseIntIndex(String tableName, String filter, String filterValue, String[] selectionArgs, DataCallback callback) {
+//        DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
+//
+//        // Nếu có filter, thực hiện truy vấn
+//        if (filter != null && filterValue != null) {
+//            database = (DatabaseReference) database.orderByChild(filter).equalTo(filterValue);
+//        }
+//
+//        // Đọc dữ liệu từ Firebase
+//        database.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                List<List<String>> results = new ArrayList<>();
+//
+//                for (DataSnapshot data : snapshot.getChildren()) {
+//                    List<String> row = new ArrayList<>();
+//
+//                    if (selectionArgs != null) {
+//                        for (String fieldName : selectionArgs) {
+//                            DataSnapshot fieldSnapshot = data.child(fieldName);
+//                            row.add(fieldSnapshot.exists() ? fieldSnapshot.getValue(String.class) : null);
+//                        }
+//                    } else {
+//                        for (DataSnapshot field : data.getChildren()) {
+//                            row.add(field.getValue(String.class));
+//                        }
+//                    }
+//
+//                    results.add(row);
+//                }
+//
+//                callback.onDataLoaded(results);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.e("Firebase", "Error reading data: " + error.getMessage());
+//            }
+//        });
+//    }
 
     public void readFirebaseStringIndex(String tableName, String filter, String filterValue, String[] selectionArgs, DataMapCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
