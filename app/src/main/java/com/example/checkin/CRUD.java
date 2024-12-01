@@ -340,32 +340,32 @@ public class CRUD {
         });
     }
 
-//    public void createFirebase(String tableName, String[] fields, Object[] values, DataCallback callback) {
-//        if (fields == null || values == null || fields.length != values.length) {
-//            Log.e("Firebase", "Fields and values must be non-null and of the same length!");
-//            return;
-//        }
-//
-//        DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
-//
-//        // Tạo Map để lưu trữ các cặp field-value
-//        Map<String, Object> data = new HashMap<>();
-//        for (int i = 0; i < fields.length; i++) {
-//            data.put(fields[i], values[i]);
-//        }
-//
-//        // Tạo một bản ghi mới trong Firebase
-//        database.push().setValue(data)
-//                .addOnSuccessListener(unused -> {
-//                    // Thành công, gọi callback
-//                    callback.onDataLoaded(Collections.singletonList(Collections.singletonList("Success")));
-//                    Log.d("Firebase", "Record added successfully!");
-//                })
-//                .addOnFailureListener(e -> {
-//                    // Thất bại, log lỗi
-//                    Log.e("Firebase", "Failed to add record: " + e.getMessage());
-//                });
-//    }
+    public void createFirebase(String tableName, String[] fields, Object[] values, DataCallback callback) {
+        if (fields == null || values == null || fields.length != values.length) {
+            Log.e("Firebase", "Fields and values must be non-null and of the same length!");
+            return;
+        }
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
+
+        // Tạo Map để lưu trữ các cặp field-value
+        Map<String, Object> data = new HashMap<>();
+        for (int i = 0; i < fields.length; i++) {
+            data.put(fields[i], values[i]);
+        }
+
+        // Tạo một bản ghi mới trong Firebase
+        database.push().setValue(data)
+                .addOnSuccessListener(unused -> {
+                    // Thành công, gọi callback
+                    callback.onDataLoaded(Collections.singletonList(Collections.singletonList("Success")));
+                    Log.d("Firebase", "Record added successfully!");
+                })
+                .addOnFailureListener(e -> {
+                    // Thất bại, log lỗi
+                    Log.e("Firebase", "Failed to add record: " + e.getMessage());
+                });
+    }
 
 
     public interface DataMapCallback {
