@@ -23,16 +23,16 @@ import java.util.Map;
 public class CRUD {
     DatabaseReference database;
 
-    public CRUD(Context context){
-        FirebaseApp.initializeApp(context);
-        database = FirebaseDatabase.getInstance().getReference();
-    }
+//    public CRUD(Context context){
+//        FirebaseApp.initializeApp(context);
+//        database = FirebaseDatabase.getInstance().getReference();
+//    }
 
     public DatabaseReference getDatabase() {
         return database;
     }
 
-    public void ReadFirebase(String tableName, String filter, String[] selectionArgs, DataCallback callback) {
+    public static void ReadFirebase(String tableName, String filter, String[] selectionArgs, DataCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
         Query query = database;
@@ -100,7 +100,7 @@ public class CRUD {
         });
     }
 
-    public void updateFirebase(String tableName, String recordId, String[] fields, Object[] values, DataCallback callback) {
+    public static void updateFirebase(String tableName, String recordId, String[] fields, Object[] values, DataCallback callback) {
         if (fields == null || values == null || fields.length != values.length) {
             Log.e("Firebase", "Fields and values must be non-null and have the same length.");
             return;
@@ -179,7 +179,7 @@ public class CRUD {
 //        });
 //    }
 
-    public void deleteFirebase(String tableName, String[] fields, Object[] values, DataCallback callback) {
+    public static void deleteFirebase(String tableName, String[] fields, Object[] values, DataCallback callback) {
         if (fields == null || values == null || fields.length != values.length) {
             Log.e("Firebase", "Fields and values must be non-null and have the same length.");
             return;
@@ -239,7 +239,7 @@ public class CRUD {
 
 
 
-    public void deleteFirebaseID(String tableName, String recordId, DataCallback callback) {
+    public static void deleteFirebaseID(String tableName, String recordId, DataCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Xóa bản ghi theo recordId
@@ -294,7 +294,7 @@ public class CRUD {
         });
     }
 
-    public void readFirebaseStringIndex(String tableName, String filter, String filterValue, String[] selectionArgs, DataMapCallback callback) {
+    public static void readFirebaseStringIndex(String tableName, String filter, String filterValue, String[] selectionArgs, DataMapCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Thực hiện lọc nếu có filter
@@ -356,6 +356,32 @@ public class CRUD {
 
         // Tạo một bản ghi mới trong Firebase
         database.push().setValue(data)
+                .addOnSuccessListener(unused -> {
+                    // Thành công, gọi callback
+                    callback.onDataLoaded(Collections.singletonList(Collections.singletonList("Success")));
+                    Log.d("Firebase", "Record added successfully!");
+                })
+                .addOnFailureListener(e -> {
+                    // Thất bại, log lỗi
+                    Log.e("Firebase", "Failed to add record: " + e.getMessage());
+                });
+    }
+    public static void createFirebaseID(String tableName,String key, String[] fields, Object[] values, DataCallback callback) {
+        if (fields == null || values == null || fields.length != values.length) {
+            Log.e("Firebase", "Fields and values must be non-null and of the same length!");
+            return;
+        }
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
+
+        // Tạo Map để lưu trữ các cặp field-value
+        Map<String, Object> data = new HashMap<>();
+        for (int i = 0; i < fields.length; i++) {
+            data.put(fields[i], values[i]);
+        }
+
+        // Tạo một bản ghi mới trong Firebase
+        database.child(key).setValue(data)
                 .addOnSuccessListener(unused -> {
                     // Thành công, gọi callback
                     callback.onDataLoaded(Collections.singletonList(Collections.singletonList("Success")));

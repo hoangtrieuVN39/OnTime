@@ -236,9 +236,8 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
     private void loadDataFromFirebase() {
         listForms.clear();
 
-        CRUD crud = new CRUD(getApplicationContext());
 
-        crud.readFirebaseStringIndex("leaverequests", null, null, new String[]{"leaveRequestID", "leaveTypeID", "startDate", "endDate", "reason", "employeeID", "countShift", "status"}, results -> {
+        CRUD.readFirebaseStringIndex("leaverequests", null, null, new String[]{"leaveRequestID", "leaveTypeID", "startDate", "endDate", "reason", "employeeID", "countShift", "status"}, results -> {
             for (Map<String, String> row : results) {
                 String leaveRequestID = row.get("leaveRequestID");
                 String leaveTypeID = row.get("leaveTypeID");
@@ -251,7 +250,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 
                 // Lấy tên loại nghỉ từ leavetypes
                 if (leaveTypeID != null && !leaveTypeID.isEmpty()) {
-                    crud.readFirebaseStringIndex("leavetypes", "id", leaveTypeID, new String[]{"leaveTypeName"}, leaveTypeResults -> {
+                    CRUD.readFirebaseStringIndex("leavetypes", "id", leaveTypeID, new String[]{"leaveTypeName"}, leaveTypeResults -> {
                         String leaveTypeName;  // Mặc định nếu không tìm thấy tên
 
                         if (leaveTypeResults != null && !leaveTypeResults.isEmpty()) {
@@ -263,7 +262,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 
                         // Lấy tên nhân viên từ employees
                         if (employeeID != null && !employeeID.isEmpty()) {
-                            crud.readFirebaseStringIndex("employees", "id", employeeID, new String[]{"employeeName"}, employeeResults -> {
+                            CRUD.readFirebaseStringIndex("employees", "id", employeeID, new String[]{"employeeName"}, employeeResults -> {
                                 String employeeName = "Không xác định";  // Mặc định nếu không tìm thấy tên nhân viên
 
                                 if (employeeResults != null && !employeeResults.isEmpty()) {
