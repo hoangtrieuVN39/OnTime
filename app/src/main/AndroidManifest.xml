@@ -26,8 +26,8 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAG8XlQgVklvP9ij4BtszizRjD1zAdz2Uc" />
 
-        <activity android:name="com.example.checkin.TestingActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        <activity android:name="com.example.checkin.leave.formlist.FormListActivity"
+            android:theme="@style/Theme.On_Time"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,9 +58,9 @@
 <!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
 <!--        </activity>-->
 
-        <activity
-            android:name="com.example.checkin.leave.formlist.FormListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+<!--        <activity-->
+<!--            android:name="com.example.checkin.leave.formlist.FormListActivity"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>-->
 
         <activity
             android:name="com.example.checkin.leave.formapprove.FormApproveActivity"
