@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.example.checkin.ActivityBase;
 import com.example.checkin.DatabaseHelper;
+
 import com.example.checkin.R;
 import com.example.checkin.Utils;
 import com.example.checkin.models.classes.Shift;
@@ -76,6 +77,7 @@ public class CheckinHistoryActivity extends ActivityBase {
                         lvShift.setAdapter(shiftAdapter);
                         shiftAdapter.setOnItemClickListener(position -> {
                             Intent intent = new Intent(CheckinHistoryActivity.this, CheckinHistoryDetail.class);
+                            intent.putExtra("date", shiftAdapter.getDate(position));
                             startActivity(intent);
                             Log.d("Activity", "Received click event for position: " + position);
                         });
