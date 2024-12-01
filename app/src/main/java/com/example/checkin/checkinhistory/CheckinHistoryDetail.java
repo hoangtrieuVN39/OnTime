@@ -47,8 +47,6 @@ public class CheckinHistoryDetail extends AppCompatActivity {
         AfternoonHighlight.setVisibility(View.GONE);
         DinnerHighlight.setVisibility(View.GONE);
 
-
-        // Xử lý khi click vào các ca làm việc
         // Xử lý khi click vào các ca làm việc
         WorkMorning.setOnClickListener(v -> {
             MorningHighlight.setVisibility(View.VISIBLE);
