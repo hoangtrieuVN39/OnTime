@@ -45,33 +45,42 @@ public class TestingActivity extends Activity {
 //            }
 //        });
 
-//
-        CRUD.ReadFirebase("leaverequests","countShift",new String[]{"leaveRequestID","countShift"}, new DataCallback(){
+        CRUD.getTable("employees", "attendances", "employeeID", new DataCallback() {
             @Override
-            public void onDataLoaded(List<List<String>> data1) {
-                List<List<String>> combinedData = new ArrayList<>(data1);
-                for (List<String> i : data1) {
-                    Log.d("test", i.toString());
+            public void onDataLoaded(List<List<String>> data) {
+                for (List<String> i : data){
+                    Log.d("table",i.toString());
                 }
-
-                CRUD.ReadFirebase("leavetypes",null,new String[]{"leaveTypeName"}, new DataCallback() {
-                    @Override
-                    public void onDataLoaded(List<List<String>> data2) {
-                        for (int i = 0; i < combinedData.size(); i++) {
-                            List<String> row = combinedData.get(i);
-                            if (i < data2.size()) {
-                                // Thêm dữ liệu từ data2 vào row tương ứng
-                                row.addAll(data2.get(i));
-                            }
-                        }
-                        for (List<String> row : combinedData) {
-                            Log.d("Combined Data", row.toString());
-                        }
-
-                    }
-                });
             }
         });
+
+//
+//        CRUD.ReadFirebase("leaverequests","countShift",new String[]{"leaveRequestID","countShift"}, new DataCallback(){
+//            @Override
+//            public void onDataLoaded(List<List<String>> data1) {
+//                List<List<String>> combinedData = new ArrayList<>(data1);
+//                for (List<String> i : data1) {
+//                    Log.d("test", i.toString());
+//                }
+//
+//                CRUD.ReadFirebase("leavetypes",null,new String[]{"leaveTypeName"}, new DataCallback() {
+//                    @Override
+//                    public void onDataLoaded(List<List<String>> data2) {
+//                        for (int i = 0; i < combinedData.size(); i++) {
+//                            List<String> row = combinedData.get(i);
+//                            if (i < data2.size()) {
+//                                // Thêm dữ liệu từ data2 vào row tương ứng
+//                                row.addAll(data2.get(i));
+//                            }
+//                        }
+//                        for (List<String> row : combinedData) {
+//                            Log.d("Combined Data", row.toString());
+//                        }
+//
+//                    }
+//                });
+//            }
+//        });
 
 //        CRUD.createFirebaseID("leaverequests","DT013", new String[]{"countShift","createTime","employeeID","endDate","leaveRequestID","leaveTypeID","reason","startDate","status"}, new Object[]{5,"2024-11-28 09:30:28", "Employee125","28/11/2024 12:00","DT013","LDT009","omdau","28/11/2024 12:00","Chưa phê duyệt"}, new DataCallback() {
 //            @Override

@@ -393,6 +393,56 @@ public class CRUD {
                 });
     }
 
+    public static void getTable(String tableName1, String tableName2, String keyjoin ,DataCallback callback){
+        DatabaseReference database1 = FirebaseDatabase.getInstance().getReference(tableName1);
+        DatabaseReference database2 = FirebaseDatabase.getInstance().getReference(tableName2);
+
+        HashMap<String, List<String>> table1Data = new HashMap<>();
+
+        database1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot1) {
+                for (DataSnapshot child1 : snapshot1.getChildren()) {
+                    String key = child1.child(keyjoin).getValue(String.class);
+                    List<String> values = new ArrayList<>();
+                    for (DataSnapshot field : child1.getChildren()) {
+                        values.add(field.getValue(String.class));
+                    }
+                    table1Data.put(key, values);
+                }
+                database2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot2) {
+                        List<List<String>> combinedData = new ArrayList<>();
+                        for (DataSnapshot child2 : snapshot2.getChildren()) {
+                            String key = child2.child(keyjoin).getValue(String.class);
+                            if (table1Data.containsKey(key)) {
+                                // Kết hợp dữ liệu từ cả hai bảng
+                                List<String> combinedRow = new ArrayList<>(table1Data.get(key));
+                                for (DataSnapshot field : child2.getChildren()) {
+                                    combinedRow.add(field.getValue(String.class));
+                                }
+                                combinedData.add(combinedRow);
+                            }
+                        }
+                        callback.onDataLoaded(combinedData);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 
     public interface DataMapCallback {
         void onDataLoaded(List<Map<String, String>> data);

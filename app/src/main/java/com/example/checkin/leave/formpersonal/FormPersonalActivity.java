@@ -81,7 +81,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.formpersonal_layout);
+        setContentView(R.layout.fragment_form_personal);
 
 //        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formPersonal);
 //        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
@@ -250,8 +250,8 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 
                 // Lấy tên loại nghỉ từ leavetypes
                 if (leaveTypeID != null && !leaveTypeID.isEmpty()) {
-                    CRUD.readFirebaseStringIndex("leavetypes", "id", leaveTypeID, new String[]{"leaveTypeName"}, leaveTypeResults -> {
-                        String leaveTypeName;  // Mặc định nếu không tìm thấy tên
+                    CRUD.readFirebaseStringIndex("leavetypes", "leaveTypeID", leaveTypeID, new String[]{"leaveTypeName"}, leaveTypeResults -> {
+                        String leaveTypeName;
 
                         if (leaveTypeResults != null && !leaveTypeResults.isEmpty()) {
                             // Nếu tìm thấy, lấy tên loại nghỉ
@@ -262,8 +262,8 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 
                         // Lấy tên nhân viên từ employees
                         if (employeeID != null && !employeeID.isEmpty()) {
-                            CRUD.readFirebaseStringIndex("employees", "id", employeeID, new String[]{"employeeName"}, employeeResults -> {
-                                String employeeName = "Không xác định";  // Mặc định nếu không tìm thấy tên nhân viên
+                            CRUD.readFirebaseStringIndex("employees", "employeeID", employeeID, new String[]{"employeeName"}, employeeResults -> {
+                                String employeeName = "Không xác định";
 
                                 if (employeeResults != null && !employeeResults.isEmpty()) {
                                     // Nếu tìm thấy, lấy tên nhân viên
