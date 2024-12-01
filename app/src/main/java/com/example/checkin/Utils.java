@@ -222,7 +222,7 @@ public class Utils {
                     context.startActivity(new Intent(context, CheckinHistoryActivity.class));
                     return true;
                 }
-                else if (item.getItemId() == R.id.leave)
+                else if (item.getItemId() == R.id.form)
                 {
                     context.startActivity(new Intent(context, FormPersonalActivity.class));
                     return true;

@@ -9,7 +9,7 @@
         android:icon="@drawable/history"
         android:title="Lịch sử" />
     <item
-        android:id="@+id/leave"
+        android:id="@+id/form"
         android:icon="@drawable/leave"
         android:title="Đơn từ" />
 </menu>
