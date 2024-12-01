@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.checkin.checkinhistory.CheckinHistoryFragment;
 import com.example.checkin.checkinmain.CheckinMainFragment;
 import com.example.checkin.databinding.TestBinding;
+import com.example.checkin.leave.FormFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment checkinMainFragment;
     private Fragment checkinHistoryFragment;
-    private Fragment currentFragment;
+    private Fragment FormFragment;
 
     private TestBinding binding;
     private BottomNavigationView bottomNavigation;
@@ -54,32 +55,44 @@ public class MainActivity extends AppCompatActivity {
         if (checkinHistoryFragment == null) {
             checkinHistoryFragment = new CheckinHistoryFragment(viewModel);
         }
+        if (FormFragment == null) {
+            FormFragment = new FormFragment(viewModel);
+        }
 
 
         // Initial fragment setup
-        currentFragment = checkinMainFragment;
         getSupportFragmentManager().beginTransaction()
-                .add(binding.fragmentContainerView.getId(), currentFragment)
+                .add(binding.fragmentContainerView.getId(), checkinMainFragment)
                 .add(binding.fragmentContainerView.getId(), checkinHistoryFragment)
+                .add(binding.fragmentContainerView.getId(), FormFragment)
+                .hide(checkinMainFragment)
                 .hide(checkinHistoryFragment) // Add only once
                 .commit();
         bottomNavigation = binding.subnavBar;
         bottomNavigation.setOnItemSelectedListener(this::onItemSelectedListener);
+        bottomNavigation.setSelectedItemId(R.id.form);
     }
 
     private boolean onItemSelectedListener(MenuItem item) {
         if (item.getItemId() == R.id.checkinMain) {
             getSupportFragmentManager().beginTransaction()
-                    .hide(currentFragment)
+                    .hide(FormFragment)
+                    .hide(checkinHistoryFragment)
                     .show(checkinMainFragment)
                     .commit();
-            currentFragment = checkinMainFragment;
         } else if (item.getItemId() == R.id.checkinHistory) {
             getSupportFragmentManager().beginTransaction()
+                    .hide(FormFragment)
                     .hide(checkinMainFragment)
-                    .show(currentFragment) // Assuming currentFragment is checkinHistoryFragment
+                    .show(checkinHistoryFragment) // Assuming currentFragment is checkinHistoryFragment
                     .commit();
-            currentFragment = checkinHistoryFragment; // Or the other fragment
+        }
+        else if (item.getItemId() == R.id.form) {
+            getSupportFragmentManager().beginTransaction()
+                    .hide(checkinMainFragment)
+                    .hide(checkinHistoryFragment)
+                    .show(FormFragment)
+                    .commit();
         }
         return true;
     }
