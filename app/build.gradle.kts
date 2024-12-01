@@ -1,12 +1,13 @@
 plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.jetbrains.kotlin.android)
+	id("com.google.gms.google-services")
 }
 
 android {
 	namespace = "com.example.checkin"
-	compileSdk = 34
-	
+	compileSdk = 35
+
 	defaultConfig {
 		applicationId = "com.example.checkin"
 		minSdk = 28
@@ -69,6 +70,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.material.v180)
 	implementation("com.google.firebase:firebase-database:21.0.0")
+	implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+	implementation("com.google.firebase:firebase-analytics")
 
 	implementation(libs.androidx.core.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -99,6 +102,7 @@ dependencies {
 	implementation(libs.androidx.fragment)
 	implementation(libs.androidx.fragment.ktx)
 	implementation(libs.androidx.material)
+	implementation("com.google.android.material:material:1.9.0")
 	implementation(libs.androidx.core.splashscreen)
 	implementation(libs.androidx.lifecycle.viewmodel.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx.v286)

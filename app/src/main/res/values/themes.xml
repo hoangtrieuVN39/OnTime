@@ -11,8 +11,9 @@
         <item name="android:checkable">true</item>
     </style>
 
-    <style name="Theme.Checkin.ChipGroup" parent="Theme.MaterialComponents"></style>
+    <style name="Theme.Checkin.ChipGroup" parent="Theme.MaterialComponents.Light.Bridge"></style>
     <style name="Theme.Checkin" parent="Theme.AppCompat.NoActionBar"></style>
+<!--    <style name="Theme.Checkin" parent="Theme.MaterialComponents.Light.Bridge"></style>-->
 
 <!--    <style name="Theme.On_Time" parent="android:Theme.Material.Light.NoActionBar" >-->
 <!--        <item name="android:fontFamily">sans-serif</item>-->

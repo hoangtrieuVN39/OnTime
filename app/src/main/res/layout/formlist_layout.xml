@@ -4,42 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_height="?attr/actionBarSize"
-            android:layout_width="match_parent"
-            app:layout_scrollFlags="scroll|enterAlways">
-
-        </androidx.appcompat.widget.Toolbar>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:tabMode="scrollable">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Cá nhân" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Phê duyệt" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Danh sách" />
-        </com.google.android.material.tabs.TabLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -84,13 +48,6 @@
                         android:src="@drawable/filter" />
 
                 </FrameLayout>
-
-                <com.google.android.material.bottomnavigation.BottomNavigationView
-                    android:id="@+id/subnav_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    app:menu="@menu/subnavigation_menu"
-                    app:theme="@style/NavBar" />
 
             </LinearLayout>
 
@@ -168,12 +125,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/nav_bar"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                app:menu="@menu/navigation_menu" />
 
             <!--    <LinearLayout-->
             <!--        android:id="@+id/nav_footer"-->

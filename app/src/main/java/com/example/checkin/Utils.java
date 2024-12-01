@@ -450,10 +450,17 @@ public class Utils {
             for (byte b : hashedBytes) {
                 sb.append(String.format("%02x", b));
             }
+
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static boolean checkPassword(String plainPassword, String hashedPassword) {
+        System.out.println(hashedPassword);
+        System.out.println(hashPassword(plainPassword));
+        return hashPassword(plainPassword).equals(hashedPassword);
     }
 }

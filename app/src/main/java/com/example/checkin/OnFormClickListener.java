@@ -1,5 +1,8 @@
 package com.example.checkin;
 
+import com.example.checkin.models.Form;
+
 public interface OnFormClickListener {
-    void onFormClick(String nameForm);
+    public void onFormClick(Form form);
+//    void onFormClick(String nameForm);
 }

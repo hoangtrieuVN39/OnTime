@@ -3,15 +3,20 @@ package com.example.checkin.models;
 public class Form {
     String FormID;
     String nameForm;
-    String dateoff;
+    String dateoffstart;
+    String dateoffend;
     String reason;
     String status;
-    public Form(String FormID, String nameForm, String dateoff, String reason, String status){
+    int CountShift;
+    public Form(String FormID, String nameForm, String dateoffstart,String dateoffend, String reason, String status,int CountShift){
         this.FormID = FormID;
         this.nameForm = nameForm;
-        this.dateoff = dateoff;
+        this.dateoffstart = dateoffstart;
+        this.dateoffend = dateoffend;
         this.reason = reason;
         this.status = status;
+        this.CountShift = CountShift;
+
     }
     public String getFormID(){
         return FormID;
@@ -26,12 +31,18 @@ public class Form {
     public void setNameForm(String nameForm){
         this.nameForm = nameForm;
     }
-    public String getDateoff(){
-        return dateoff;
+
+    public String getDateoffstart() {
+        return dateoffstart;
     }
-    public void setDateoff(String dateoff){
-        this.dateoff = dateoff;
+
+    public void setDateoffstart(String dateoffstart) {
+        this.dateoffstart = dateoffstart;
     }
+    public String getDateoffend() {
+        return dateoffend;
+    }
+
     public String getReason(){
         return reason;
     }
@@ -44,4 +55,11 @@ public class Form {
     public void setStatus(String status) {
         this.status = status;
     }
+    public int getCountShift() {
+        return CountShift;
+    }
+    public void setCountShift(int countShift) {
+        CountShift = countShift;
+    }
+
 }
