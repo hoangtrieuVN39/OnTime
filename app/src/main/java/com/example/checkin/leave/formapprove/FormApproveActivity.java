@@ -28,6 +28,7 @@ import com.example.checkin.Utils;
 import com.example.checkin.leave.FormApproveAdapter;
 import com.example.checkin.leave.MonthSpinnerAdapter;
 import com.example.checkin.leave.StatusSpinnerAdapter;
+import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 import com.example.checkin.models.FilterTypeForm;
 import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
@@ -81,7 +82,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.formapprove_layout);
+        setContentView(R.layout.fragment_form_approve);
 
         setListMonth();
         setListStatus();
@@ -99,7 +100,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         loadDataFAFromFirebase();
 //        loadDataTypeFormFromDatabase();
 //        loadInitialData();
-        listfilterFormApprove.addAll(listFormApprove);
+//        listfilterFormApprove.addAll(listFormApprove);
         Log.d("FormApproverss", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
 
 
@@ -108,7 +109,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         btnFilter = findViewById(R.id.button_filter);
 
         msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
-        msAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        msAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
         spThang.setAdapter(msAdapter);
@@ -466,6 +467,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         listStatus.add(new StatusSpinner("Chọn trạng thái"));
         listStatus.add(new StatusSpinner("Đồng ý"));
         listStatus.add(new StatusSpinner("Chưa phê duyệt"));
+        listStatus.add(new StatusSpinner("Loaị bỏ"));
     }
 
     private void loadDataTypeFormFromDatabase() {
@@ -509,6 +511,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot leaveRequestSnapshot : snapshot.getChildren()) {
+                    Log.d("debug",leaveRequestSnapshot.getKey().toString());
                     String leaveID = leaveRequestSnapshot.getKey();
                     String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
                     String leaveStartTime = leaveRequestSnapshot.child("startDate").getValue(String.class);
@@ -563,7 +566,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                                             listfilterFormApprove.clear();
                                             listfilterFormApprove.addAll(listFormApprove);
 
-//                                            Log.d("listfilterFormApproverr", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
+                                            Log.d("FormApproverr", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
 
                                             // Notify adapter after updating listForms
                                             faAdapter.notifyDataSetChanged();
@@ -601,68 +604,68 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
 
 
 
-//    private void loadDataFAFromDatabase() {
-//        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-//                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-//                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-//                "LeaveRequest.LeaveID AS LeaveID, " +
-//                "LeaveRequestApproval.Status AS Status, " +
-//                "LeaveRequest.Reason AS Reason, " +
-//                "LeaveRequest.CountShift AS CountShift, " +
-//                "LeaveRequest.CreatedTime AS CreatedTime, " +
-//                "Employee.EmployeeName AS EmployeeName " +
-//                "FROM LeaveRequest " +
-//                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
-//                "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
-//                "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
-//
-//
-//        SQLiteDatabase db = DBHelper.getReadableDatabase();
-//        Cursor cursor = db.rawQuery(query, null);
-//
-//        if (cursor != null && cursor.moveToFirst()) {
-//            listFormApprove.clear();
-//            do {
-//                int formIDindex = cursor.getColumnIndex("LeaveID");
-//                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-//                int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
-//                int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
-//                int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-//                int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-//                int reasonIndex = cursor.getColumnIndex("Reason");
-//                int statussIndex = cursor.getColumnIndex("Status");
-//                int CountshiftIndex = cursor.getColumnIndex("CountShift");
-//
-//                if (formIDindex != -1  && nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
-//                    String formID = cursor.getString(formIDindex);
-//                    String nameForm = cursor.getString(nameFormIndex);
-//                    String employeeName = cursor.getString(employeeNameIndex);
-//                    String createdTime = cursor.getString(createdTimeIndex);
-//                    String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-//                    String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-//                    String reason = cursor.getString(reasonIndex);
-//                    String status = cursor.getString(statussIndex);
-//                    int countShift = cursor.getInt(CountshiftIndex);
-//
-//                    String formattedCreatedTime = formatDate(createdTime);
-//                    String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
-//                    String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
-//
-//                    String dateOff = formattedStartTime + " - " + formattedEndTime;
-//
-//                    listFormApprove.add(new FormApprove(formID,nameForm,dateOff,formattedCreatedTime,reason,employeeName,status,countShift));
-//                }
-//            } while (cursor.moveToNext());
-//        }
-//
-//
-//        if (cursor != null) {
-//            cursor.close();
-//        }
-//        listfilterFormApprove.clear();
-//        listfilterFormApprove.addAll(listFormApprove);
-////        fAdapter.notifyDataSetChanged();
-//    }
+    private void loadDataFAFromDatabase() {
+        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
+                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
+                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
+                "LeaveRequest.LeaveID AS LeaveID, " +
+                "LeaveRequestApproval.Status AS Status, " +
+                "LeaveRequest.Reason AS Reason, " +
+                "LeaveRequest.CountShift AS CountShift, " +
+                "LeaveRequest.CreatedTime AS CreatedTime, " +
+                "Employee.EmployeeName AS EmployeeName " +
+                "FROM LeaveRequest " +
+                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
+                "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
+                "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
+
+
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            listFormApprove.clear();
+            do {
+                int formIDindex = cursor.getColumnIndex("LeaveID");
+                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+                int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
+                int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
+                int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
+                int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
+                int reasonIndex = cursor.getColumnIndex("Reason");
+                int statussIndex = cursor.getColumnIndex("Status");
+                int CountshiftIndex = cursor.getColumnIndex("CountShift");
+
+                if (formIDindex != -1  && nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
+                    String formID = cursor.getString(formIDindex);
+                    String nameForm = cursor.getString(nameFormIndex);
+                    String employeeName = cursor.getString(employeeNameIndex);
+                    String createdTime = cursor.getString(createdTimeIndex);
+                    String leaveStartTime = cursor.getString(leaveStartTimeIndex);
+                    String leaveEndTime = cursor.getString(leaveEndTimeIndex);
+                    String reason = cursor.getString(reasonIndex);
+                    String status = cursor.getString(statussIndex);
+                    int countShift = cursor.getInt(CountshiftIndex);
+
+                    String formattedCreatedTime = formatDate(createdTime);
+                    String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
+                    String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
+
+                    String dateOff = formattedStartTime + " - " + formattedEndTime;
+
+                    listFormApprove.add(new FormApprove(formID,nameForm,formattedStartTime,formattedEndTime,formattedCreatedTime,reason,employeeName,status,countShift));
+                }
+            } while (cursor.moveToNext());
+        }
+
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        listfilterFormApprove.clear();
+        listfilterFormApprove.addAll(listFormApprove);
+//        fAdapter.notifyDataSetChanged();
+    }
 
     public static String formatDate(String dateTime) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -681,14 +684,14 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
 
-        List<FormApprove> tempFilteredList = new ArrayList<>(listfilterFormApprove);
+//        List<FormApprove> tempFilteredList = new ArrayList<>(listfilterFormApprove);
         listfilterFormApprove.clear();
         boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
         boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
 
         //    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-        for (FormApprove form : tempFilteredList) {
+        for (FormApprove form : listFormApprove) {
             boolean matchesMonth = true;
             boolean matchesStatus = true;
 
@@ -731,6 +734,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         }
         faAdapter.notifyDataSetChanged();
     }
+
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @RequiresApi(api = Build.VERSION_CODES.O)
