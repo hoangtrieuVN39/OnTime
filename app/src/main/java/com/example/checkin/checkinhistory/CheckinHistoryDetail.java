@@ -10,6 +10,9 @@ import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.Executors;
 
 public class CheckinHistoryDetail extends AppCompatActivity {
@@ -37,9 +40,19 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
+        String datee = getIntent().getStringExtra("date");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+        try {
+            Date date = sdf.parse(datee);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
         setContentView(R.layout.checkinhistorydetail_layout);
         // Gán các phần tử UI với các view từ file XML
         initializeViews();
+
+        workDetailDateTxt.setText(datee);
 
         // Thiết lập hành động cho các thành phần UI
         setupListeners();

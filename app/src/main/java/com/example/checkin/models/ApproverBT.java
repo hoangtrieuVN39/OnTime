@@ -5,6 +5,7 @@ public class ApproverBT {
     public ApproverBT(String nameApproveform){
         this.nameApproveform = nameApproveform;
     }
+    public ApproverBT(){}
 
     public String getNameApproveform() {
         return nameApproveform;

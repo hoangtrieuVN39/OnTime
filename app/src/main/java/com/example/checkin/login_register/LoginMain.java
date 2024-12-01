@@ -1,7 +1,9 @@
 package com.example.checkin.login_register;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.MotionEvent;
@@ -15,6 +17,8 @@ import com.example.checkin.MainActivity;
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.AccountUtils;
+import com.example.checkin.Utils;
+
 import java.io.IOException;
 
 public class LoginMain extends Activity {
@@ -23,7 +27,9 @@ public class LoginMain extends Activity {
     private EditText emailEditText;
     private EditText passwordEditText;
     private boolean isPasswordVisible = false;
+    SharedPreferences sharedPreferences;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,10 +37,19 @@ public class LoginMain extends Activity {
 
         try {
             databaseHelper = new DatabaseHelper(this, null);
-            AccountUtils.setDbHelper(databaseHelper);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        sharedPreferences = getSharedPreferences("account_prefs", MODE_PRIVATE);
+
+        if (sharedPreferences.contains("acc_email") && sharedPreferences.contains("acc_password")) {
+            String email = sharedPreferences.getString("acc_email", "");
+            String password = sharedPreferences.getString("acc_password", "");
+            String user = Utils.getAccount(email, password, databaseHelper);
+            if (user != null) {
+                login(user);
+            }
         }
 
         emailEditText = findViewById(R.id.email_tedit);
@@ -73,8 +88,12 @@ public class LoginMain extends Activity {
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                if (AccountUtils.checkLogin(email, password)) {
+                String user = Utils.getAccount(email, password, databaseHelper);
+
+                if (user != null) {
                     Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                    addAccountPrefs(email, password);
+                    login(user);
                 } else {
                     Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
                 }
@@ -92,5 +111,19 @@ public class LoginMain extends Activity {
         }
         isPasswordVisible = !isPasswordVisible;
         passwordEditText.setSelection(passwordEditText.length());
+    }
+
+    private void addAccountPrefs(String email, String password) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("acc_email", email);
+        editor.putString("acc_password", password);
+        editor.apply();
+    }
+
+    private void login(String user){
+        Intent intent = new Intent(LoginMain.this, MainActivity.class);
+        intent.putExtra("Employee", user);
+        startActivity(intent);
+        finish();
     }
 }

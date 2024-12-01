@@ -55,36 +55,32 @@ public class MainActivity extends AppCompatActivity {
             checkinHistoryFragment = new CheckinHistoryFragment(viewModel);
         }
 
+
         // Initial fragment setup
         currentFragment = checkinMainFragment;
         getSupportFragmentManager().beginTransaction()
-                .replace(binding.fragmentContainerView.getId(), currentFragment)
+                .add(binding.fragmentContainerView.getId(), currentFragment)
+                .add(binding.fragmentContainerView.getId(), checkinHistoryFragment)
+                .hide(checkinHistoryFragment) // Add only once
                 .commit();
-
         bottomNavigation = binding.subnavBar;
         bottomNavigation.setOnItemSelectedListener(this::onItemSelectedListener);
-        bottomNavigation.setSelectedItemId(R.id.checkinHistory);
-
     }
 
-    private boolean onItemSelectedListener(MenuItem item){
-        Fragment fragmentToShow = null;
-
+    private boolean onItemSelectedListener(MenuItem item) {
         if (item.getItemId() == R.id.checkinMain) {
-            fragmentToShow = checkinMainFragment;
-        } else if (item.getItemId() == R.id.checkinHistory) {
-            fragmentToShow = checkinHistoryFragment;
-        }
-
-        // Only replace if it's a different fragment
-        if (fragmentToShow != null && fragmentToShow != currentFragment) {
             getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)  // Optimize transaction
-                    .replace(binding.fragmentContainerView.getId(), fragmentToShow)
+                    .hide(currentFragment)
+                    .show(checkinMainFragment)
                     .commit();
-            currentFragment = fragmentToShow;
+            currentFragment = checkinMainFragment;
+        } else if (item.getItemId() == R.id.checkinHistory) {
+            getSupportFragmentManager().beginTransaction()
+                    .hide(checkinMainFragment)
+                    .show(currentFragment) // Assuming currentFragment is checkinHistoryFragment
+                    .commit();
+            currentFragment = checkinHistoryFragment; // Or the other fragment
         }
-
         return true;
     }
 }

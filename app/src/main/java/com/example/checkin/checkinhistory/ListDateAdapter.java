@@ -42,6 +42,12 @@ public class ListDateAdapter extends BaseAdapter {
         void onItemClick(int position);
     }
 
+    public String getDate(int position){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String date = sdf.format(dates.get(position));
+        return date;
+    }
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
     }

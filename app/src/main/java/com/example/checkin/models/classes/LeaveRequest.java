@@ -9,9 +9,10 @@ public class LeaveRequest {
     private String StartDate;
     private String EndDate;
     private String Reason;
+    private int CountShift;
 
     public LeaveRequest(){}
-    public LeaveRequest(String LeaveRequestID, String CreateTime, String Status, String LeaveTypeID, String EmployeeID, String StartDate, String EndDate, String Reason) {
+    public LeaveRequest(String LeaveRequestID, String CreateTime, String Status, String LeaveTypeID, String EmployeeID, String StartDate, String EndDate, String Reason, int CountShift) {
         this.LeaveRequestID = LeaveRequestID;
         this.CreateTime = CreateTime;
         this.Status = Status;
@@ -20,6 +21,8 @@ public class LeaveRequest {
         this.StartDate = StartDate;
         this.EndDate = EndDate;
         this.Reason = Reason;
+        this.CountShift = CountShift;
+
     }
 
     public String getLeaveRequestID() {
@@ -84,6 +87,12 @@ public class LeaveRequest {
 
     public void setReason(String reason) {
         Reason = reason;
+    }
+    public int getCountShift() {
+        return CountShift;
+    }
+    public void setCountShift(int countShift) {
+        CountShift = countShift;
     }
 
 }
