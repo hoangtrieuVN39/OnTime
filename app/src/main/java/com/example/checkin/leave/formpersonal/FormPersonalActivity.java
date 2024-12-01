@@ -84,7 +84,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         setContentView(R.layout.formpersonal_layout);
 
 //        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formPersonal);
-        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
+//        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
 
         setListMonth();
         setListStatus();
