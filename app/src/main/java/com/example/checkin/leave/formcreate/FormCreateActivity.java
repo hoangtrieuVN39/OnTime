@@ -181,7 +181,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             public void onClick(View v) {
                 // 1. Lấy thông tin từ các trường nhập liệu
                 String leaveTypeName = typeformNameSpinner.getSelectedItem().toString();
-                String employeeID = "Employee123";  // ID của nhân viên đăng nhập (có thể lấy từ session hoặc đối tượng đang đăng nhập)
+                String employeeID = "Employee123";
                 String startDate = startDateEditText.getText().toString();
                 String startTime = startHourEditText.getText().toString();
                 String endDate = endDateEditText.getText().toString();
