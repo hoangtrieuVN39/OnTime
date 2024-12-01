@@ -43,7 +43,7 @@ public class ListDateAdapter extends BaseAdapter {
     }
 
     public String getDate(int position){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String date = sdf.format(dates.get(position));
         return date;
     }

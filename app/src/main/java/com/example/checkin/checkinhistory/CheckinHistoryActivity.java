@@ -77,7 +77,9 @@ public class CheckinHistoryActivity extends ActivityBase {
                         lvShift.setAdapter(shiftAdapter);
                         shiftAdapter.setOnItemClickListener(position -> {
                             Intent intent = new Intent(CheckinHistoryActivity.this, CheckinHistoryDetail.class);
-                            intent.putExtra("date", shiftAdapter.getDate(position));
+                            String date = shiftAdapter.getDate(position);
+                            intent.putExtra("date", date);
+                            System.out.println(date);
                             startActivity(intent);
                             Log.d("Activity", "Received click event for position: " + position);
                         });

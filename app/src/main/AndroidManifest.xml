@@ -74,13 +74,15 @@
         <activity
             android:name=".checkinhistory.CheckinHistoryActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
         </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
+        <activity android:name=".checkinhistory.CheckinHistoryDetail"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
     </application>
 
