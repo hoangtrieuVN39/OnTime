@@ -105,9 +105,11 @@
                     android:textSize="14sp" />
 
                 <View
+                    android:id="@+id/morning_highlight"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="#FBCC08" />
+                    android:background="@android:color/holo_orange_light"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -124,11 +126,12 @@
                     android:text="Ca Chiều"
                     android:textColor="#14161A"
                     android:textSize="14sp" />
-
-                <!--                            <View-->
-                <!--                                android:layout_width="match_parent"-->
-                <!--                                android:layout_height="2dp"-->
-                <!--                                android:background="#FF0000" />-->
+                <View
+                    android:id="@+id/afternoon_highlight"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@android:color/holo_orange_light"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <LinearLayout
@@ -145,11 +148,12 @@
                     android:text="Ca Tối"
                     android:textColor="#14161A"
                     android:textSize="14sp" />
-
-                <!--            <View-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="2dp"-->
-                <!--                android:background="#FF0000" />-->
+                <View
+                    android:id="@+id/dinner_highlight"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@android:color/holo_orange_light"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>

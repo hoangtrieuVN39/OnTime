@@ -1,6 +1,7 @@
 package com.example.checkin.checkinhistory;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.checkin.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListDateShiftAdapter extends BaseAdapter {
@@ -49,13 +51,26 @@ public class ListDateShiftAdapter extends BaseAdapter {
         Checkin_time.setText(shifts.get(position)[1]);
         Checkout_time.setText(shifts.get(position)[2]);
 
-        if (shifts.get(position)[1].equals("Không có")){
+        if (shifts.get(position)[1].equals("Không có")) {
             Checkin_time.setTextColor(Color.parseColor("#BB1B1B"));
+        } else {
+            Checkin_time.setTextColor(Color.BLACK);
         }
-        if (shifts.get(position)[2].equals("Không có")){
+
+        if (shifts.get(position)[2].equals("Không có")) {
             Checkout_time.setTextColor(Color.parseColor("#BB1B1B"));
+        } else {
+            Checkout_time.setTextColor(Color.BLACK);
         }
+
+        // Thêm sự kiện click vào mỗi mục
+        v.setOnClickListener(v1 -> {
+            // Chuyển đến CheckinHistoryDetail và truyền shifts
+            Intent intent = new Intent(context, CheckinHistoryDetail.class);
+            intent.putExtra("shifts", new ArrayList<>(shifts));
+            context.startActivity(intent);
+        });
+
         return v;
     }
-
 }

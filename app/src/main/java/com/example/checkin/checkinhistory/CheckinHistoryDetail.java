@@ -1,23 +1,21 @@
 package com.example.checkin.checkinhistory;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.Executors;
 
 public class CheckinHistoryDetail extends AppCompatActivity {
-
-    // Khai báo các thành phần UI từ XML
     DatabaseHelper dbHelper;
 
     private ConstraintLayout workDetailLayout;
@@ -28,36 +26,74 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             workDetailCheckoutTimeTxt, workDetailCheckoutValidTxt, mainTabbarTimekeepingTxt;
     private ImageView icBack, icLocate, icMoney, icClock;
 
-
+    private ArrayList<String[]> shifts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.checkinhistorydetail_layout);
 
-        try {
-            dbHelper = new DatabaseHelper(this, null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        // Khởi tạo các Views
+        View WorkMorning = findViewById(R.id.work_detail_morning_shift_txt);
+        View WorkAfternoon = findViewById(R.id.work_detail_afternoon_shift_txt);
+        View WorkDinner = findViewById(R.id.work_detail_dinner_shift_txt);
 
+        View MorningHighlight = findViewById(R.id.morning_highlight);
+        View AfternoonHighlight = findViewById(R.id.afternoon_highlight);
+        View DinnerHighlight = findViewById(R.id.dinner_highlight);
+
+        // Mặc định: hiển thị gạch vàng dưới ca sáng
+        MorningHighlight.setVisibility(View.VISIBLE);
+        AfternoonHighlight.setVisibility(View.GONE);
+        DinnerHighlight.setVisibility(View.GONE);
+
+
+        // Xử lý khi click vào các ca làm việc
+        // Xử lý khi click vào các ca làm việc
+        WorkMorning.setOnClickListener(v -> {
+            MorningHighlight.setVisibility(View.VISIBLE);
+            AfternoonHighlight.setVisibility(View.GONE);
+            DinnerHighlight.setVisibility(View.GONE);
+            workDetailShiftTxt.setText("Ca sáng");
+            workDetailShiftTimeTxt.setText("8:30 - 12:00");
+        });
+
+        WorkAfternoon.setOnClickListener(v -> {
+            MorningHighlight.setVisibility(View.GONE);
+            AfternoonHighlight.setVisibility(View.VISIBLE);
+            DinnerHighlight.setVisibility(View.GONE);
+            workDetailShiftTxt.setText("Ca chiều");
+            workDetailShiftTimeTxt.setText("13:00 - 17:00");
+        });
+
+        WorkDinner.setOnClickListener(v -> {
+            MorningHighlight.setVisibility(View.GONE);
+            AfternoonHighlight.setVisibility(View.GONE);
+            DinnerHighlight.setVisibility(View.VISIBLE);
+            workDetailShiftTxt.setText("Ca tối");
+            workDetailShiftTimeTxt.setText("18:00 - 22:00");
+        });
+
+        // Lấy dữ liệu từ Intent (ngày và shifts)
         String datee = getIntent().getStringExtra("date");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+        shifts = (ArrayList<String[]>) getIntent().getSerializableExtra("shifts");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
             Date date = sdf.parse(datee);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
 
-        setContentView(R.layout.checkinhistorydetail_layout);
-        // Gán các phần tử UI với các view từ file XML
+        // Khởi tạo các thành phần UI
         initializeViews();
-
         workDetailDateTxt.setText(datee);
 
-        // Thiết lập hành động cho các thành phần UI
+        // Thiết lập các listeners cho các thành phần UI
         setupListeners();
     }
 
+    // Hàm khởi tạo các views nếu cần
     private void initializeViews() {
         workDetailLayout = findViewById(R.id.work_detail_layout);
         workDetailDateTxt = findViewById(R.id.work_detail_date_txt);
@@ -77,8 +113,8 @@ public class CheckinHistoryDetail extends AppCompatActivity {
         icBack = findViewById(R.id.ic_back);
     }
 
+    // Thiết lập các listeners cho các thành phần UI
     private void setupListeners() {
-        // Thiết lập hành động cho các thành phần UI
         icBack.setOnClickListener(v -> finish()); // Quay lại màn hình trước
         // Bạn có thể thêm các sự kiện cho icLocate, icMoney, icClock ở đây nếu cần
     }
