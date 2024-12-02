@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -196,20 +198,48 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 
                 addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime,countShift, reason, approvers);
 
-                // 4. Thông báo thành công
-                Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
+                // sleep(5)
 
-                intent.putExtra("isSuccess", true);
-                startActivity(intent);
+                // 4. Thông báo thành công
+//                Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
+//
+//                intent.putExtra("isSuccess", true);
+//                startActivity(intent);
+//
+//                clearInputFields();
 //                fAdapter.notifyDataSetChanged();
 
+                // Tạm dừng 5 giây trước khi chuyển Activity
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 4. Thông báo thành công và chuyển Activity
+                        Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
+                        intent.putExtra("isSuccess", true);
+                        startActivity(intent);
 
-                // 5. Xóa hoặc làm trống các trường nhập liệu sau khi lưu
-                clearInputFields();
+                        // Clear input fields
+                        clearInputFields();
+                    }
+                }, 3000); // Thời gian delay 5 giây
             }
         });
 
+    }
+
+    public static String formatDateTimetoFirebase(String dateTime) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        try {
+            Date date = inputFormat.parse(dateTime);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return dateTime;  // Trả về định dạng gốc nếu có lỗi
+        }
     }
 
     private List<String> getSelectedApprovers() {
@@ -797,8 +827,8 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                             @Override
                             public void onIDGenerated(String leaveID) {
                                 // Thêm dữ liệu vào bảng LeaveRequest
-                                LeaveRequest leaveRequest = new LeaveRequest(leaveID, createdTime, "Chưa phê duyệt",
-                                        leaveTypeID, employeeID, leaveStartTime, leaveEndTime, reason, countShift);
+                                LeaveRequest leaveRequest = new LeaveRequest(leaveID, formatDateTimetoFirebase(createdTime), "Chưa phê duyệt",
+                                        leaveTypeID, employeeID, formatDateTimetoFirebase(leaveStartTime), formatDateTimetoFirebase(leaveEndTime), reason, countShift);
                                 leaveRequestRef.child(leaveID).setValue(leaveRequest)
                                         .addOnSuccessListener(aVoid -> {
                                             Log.d("AddLeaveRequest", "Inserted LeaveRequest successfully: " + leaveID);
