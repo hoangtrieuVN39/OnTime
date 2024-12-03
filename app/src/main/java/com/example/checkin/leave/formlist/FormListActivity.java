@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -26,7 +25,6 @@ import androidx.annotation.RequiresApi;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
-import com.example.checkin.Utils;
 import com.example.checkin.leave.formapprove.FormApproveActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 import com.example.checkin.leave.AllFormAdapter;
@@ -36,7 +34,6 @@ import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.models.MonthSpinner;
 import com.example.checkin.models.StatusSpinner;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -54,7 +51,6 @@ import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class FormListActivity extends Activity implements OnFormClickListener {
@@ -88,7 +84,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         setListMonth();
         setListStatus();
 
-        lvAllForm = findViewById(R.id.formList_lv);
+
 
 
         try {
@@ -101,7 +97,10 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         loadDataFAFromFirebase(new DataLoadCallback() {
             @Override
             public void onDataLoaded() {
+
                 Log.d("AllFormrrsd", "Dữ liệu listfilterAllForm: " + listfilterAllForm.size());
+                afAdapter.updateFilteredList(listfilterAllForm);
+                lvAllForm.setAdapter(afAdapter);
             }
         });
 //        loadDataFormFromDatabase();
@@ -110,7 +109,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
 //        Log.d("AllFormrre", "Dữ liệu listfilterAllForm: " + listfilterAllForm.size());
 
-        listfilterAllForm.addAll(listAllForm);
+//        listfilterAllForm.addAll(listAllForm);
 
         spTrangThai = findViewById(R.id.listStatus_spinner);
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
@@ -120,8 +119,10 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         msAdapter = new MonthSpinnerAdapter(this, R.layout.monthcategoty_spiner_layout, listMonth);
         spThang.setAdapter(msAdapter);
 
+        lvAllForm = findViewById(R.id.formList_lv);
         afAdapter = new AllFormAdapter(this,listfilterAllForm,this,db);
         lvAllForm.setAdapter(afAdapter);
+
         btnFilter = findViewById(R.id.buttonlist_filter);
         searchView = findViewById(R.id.nhanvienlist_search);
 
@@ -174,6 +175,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
             }
         });
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void loadDataFAFromFirebase(DataLoadCallback callback) {
@@ -234,6 +236,8 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                                             String formattedStartTime = formatDateTime(leaveStartTime);
                                             String formattedEndTime = formatDateTime(leaveEndTime);
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
+
+
                                             listAllForm.add(new FormApprove(leaveID,leaveTypeName,formattedStartTime,formattedEndTime,formattedCreatedTime,reason,employeeName,status, countShift));
                                             listAllForm.add(new Form(leaveID,leaveTypeName, formattedStartTime,formattedEndTime, reason,statusLR, countShift));
                                             pendingCalls[0]--;
@@ -247,23 +251,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                                                 // Notify that data loading is complete
                                                 callback.onDataLoaded();
                                             }
-
-//                                            if (snapshot.getChildrenCount() == listAllForm.size() / 2) {
-//                                                // Copy all data to listfilterAllForm after fetching is complete
-//                                                listfilterAllForm.addAll(listAllForm);
-//                                                // Notify adapter
-//                                                afAdapter.notifyDataSetChanged();
-//                                                Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
-//
-//                                                loadInitialData();
-//                                                Log.d("ogList", "Dữ liệu listfilterAllForm: " + originalList);
-//                                            }
-//                                            listfilterAllForm.clear();
-//                                            listfilterAllForm.addAll(listAllForm);
-//                                            Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm.size());
-//                                            // Notify adapter after updating listForms
-//                                            afAdapter.notifyDataSetChanged();
-//                                            loadInitialData();
                                         }
 
                                         @Override
@@ -377,6 +364,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         listStatus.add(new StatusSpinner("Chọn trạng thái"));
         listStatus.add(new StatusSpinner("Đồng ý"));
         listStatus.add(new StatusSpinner("Chưa phê duyệt"));
+        listStatus.add(new StatusSpinner("Loại bỏ"));
     }
 
     private void showFilterBottomSheetDialog() {
@@ -401,7 +389,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
 
         // Lấy dữ liệu từ Firebase
-        getLeaveTypeNames(new FormListActivity.OnLeaveTypeNamesLoadedListener() {
+        getLeaveTypeNames(new OnLeaveTypeNamesLoadedListener() {
             @Override
             public void onLoaded(List<String> leaveTypeNames) {
                 for (String leaveTypeName : leaveTypeNames) {
@@ -597,7 +585,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         afAdapter.notifyDataSetChanged();
     }
 
-    public void getLeaveTypeNames(FormListActivity.OnLeaveTypeNamesLoadedListener listener) {
+    public void getLeaveTypeNames(OnLeaveTypeNamesLoadedListener listener) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference leaveTypeRef = database.getReference("leavetypes");
 
@@ -720,14 +708,14 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
 
-        List<Object> tempFilteredList = new ArrayList<>(listfilterAllForm);
+//        List<Object> tempFilteredList = new ArrayList<>(listfilterAllForm);
         listfilterAllForm.clear();
         boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
         boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
 
         //    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-        for (Object form : tempFilteredList) {
+        for (Object form : listAllForm) {
             boolean matchesMonth = true;
             boolean matchesStatus = true;
             String formDate = null;
