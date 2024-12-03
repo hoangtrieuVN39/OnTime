@@ -39,7 +39,7 @@ public class ListDateAdapter extends BaseAdapter {
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int position);
+        void onItemClick(int position, List<String[]> shifts);
     }
 
     public String getDate(int position){
@@ -125,13 +125,14 @@ public class ListDateAdapter extends BaseAdapter {
         view.setOnClickListener(v -> {
             if (listener != null) {
 //                Log.d("dasd", "123" +  shifts.get(position));
-                listener.onItemClick(position);
+                listener.onItemClick(position, shiftchecks);
             }
         });
 
         ListDateShiftAdapter adapter = new ListDateShiftAdapter(
                 context,
-                shiftchecks
+                shiftchecks,
+                dates
         );
 
         shift_lv.setAdapter(adapter);

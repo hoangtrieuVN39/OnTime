@@ -75,13 +75,16 @@ public class CheckinHistoryActivity extends ActivityBase {
 
                     runOnUiThread(()->{
                         lvShift.setAdapter(shiftAdapter);
-                        shiftAdapter.setOnItemClickListener(position -> {
+                        shiftAdapter.setOnItemClickListener((position, shifts) -> {
                             Intent intent = new Intent(CheckinHistoryActivity.this, CheckinHistoryDetail.class);
                             String date = shiftAdapter.getDate(position);
                             intent.putExtra("date", date);
+                            intent.putExtra("shifts",  new ArrayList<>(shifts));
+//                            intent.putExtra("shiftName", shifts.get(position)[0]);
+                            intent.putExtra("shiftName", "Ca sáng");
+
                             System.out.println(date);
                             startActivity(intent);
-                            Log.d("Activity", "Received click event for position: " + position);
                         });
                         loadingIndicator.setVisibility(View.INVISIBLE);
                     });
@@ -137,7 +140,6 @@ public class CheckinHistoryActivity extends ActivityBase {
 
         for (int i = 0; i < table.size(); i++) {
             Shift shift = new Shift(table.get(i).get(0).toString(), table.get(i).get(1).toString(), table.get(i).get(2).toString(), table.get(i).get(3).toString());
-            Log.d("getListShift " , "shift" + table.get(i));
             shiftList.add(shift);
         }
 
