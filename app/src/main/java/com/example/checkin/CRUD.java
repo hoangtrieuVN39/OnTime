@@ -235,10 +235,6 @@ public class CRUD {
 
 
 
-
-
-
-
     public static void deleteFirebaseID(String tableName, String recordId, DataCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
@@ -441,8 +437,63 @@ public class CRUD {
 
             }
         });
+
+
+    }
+    public static void getTable1(String tableName1, String tableName2, String keyjoin, DataCallback1 callback) {
+        DatabaseReference database1 = FirebaseDatabase.getInstance().getReference(tableName1);
+        DatabaseReference database2 = FirebaseDatabase.getInstance().getReference(tableName2);
+
+        Map<String, Map<String, String>> table1Data = new HashMap<>();
+
+        database1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot1) {
+                for (DataSnapshot child1 : snapshot1.getChildren()) {
+                    String key = child1.child(keyjoin).getValue(String.class);
+                    if (key != null) {
+                        Map<String, String> rowData = new HashMap<>();
+                        for (DataSnapshot field : child1.getChildren()) {
+                            rowData.put(field.getKey(), field.getValue(String.class));
+                        }
+                        table1Data.put(key, rowData);
+                    }
+                }
+
+                database2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot2) {
+                        List<Map<String, String>> combinedData = new ArrayList<>();
+                        for (DataSnapshot child2 : snapshot2.getChildren()) {
+                            String key = child2.child(keyjoin).getValue(String.class);
+                            if (key != null && table1Data.containsKey(key)) {
+                                Map<String, String> combinedRow = new HashMap<>(table1Data.get(key));
+                                for (DataSnapshot field : child2.getChildren()) {
+                                    combinedRow.put(field.getKey(), field.getValue(String.class));
+                                }
+                                combinedData.add(combinedRow);
+                            }
+                        }
+                        callback.onDataLoaded(combinedData);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        callback.onDataLoaded(null);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                callback.onDataLoaded(null);
+            }
+        });
     }
 
+    public interface DataCallback1 {
+        void onDataLoaded(List<Map<String, String>> data);
+    }
 
 
 

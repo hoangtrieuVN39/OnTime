@@ -52,8 +52,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class FormApproveActivity extends Activity implements OnFormClickListener {
@@ -95,6 +97,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
 //        loadDataFAFromDatabase();
         loadDataFAFromFirebase();
@@ -504,109 +507,327 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
     private void loadDataFAFromFirebase() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        // Clear the current list
+        // Tạo các Map để lưu trữ dữ liệu tạm thời
+        Map<String, DataSnapshot> employeesMap = new HashMap<>();
+        Map<String, DataSnapshot> leaveRequestsMap = new HashMap<>();
+        Map<String, DataSnapshot> leaveTypesMap = new HashMap<>();
+
+        // Xóa danh sách cũ trước khi tải mới
         listFormApprove.clear();
 
-        databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
+        // Tải dữ liệu từ "employees"
+        databaseReference.child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot leaveRequestSnapshot : snapshot.getChildren()) {
-                    Log.d("debug",leaveRequestSnapshot.getKey().toString());
-                    String leaveID = leaveRequestSnapshot.getKey();
-                    String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
-                    String leaveStartTime = leaveRequestSnapshot.child("startDate").getValue(String.class);
-                    String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
-                    String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
-                    String createdTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
-                    String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
-                    int countShift = leaveRequestSnapshot.child("countShift").getValue(int.class);
-
-
-                    // Fetch LeaveType to get LeaveTypeName
-                    databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
-                            String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
-
-                            // Fetch Employee to get EmployeeName
-                            databaseReference.child("employees").child(employeeID).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
-                                    String employeeName = employeeSnapshot.child("employeeName").getValue(String.class);
-
-                                    // Search in LeaveRequestApproval for matching leaveRequestID
-                                    databaseReference.child("leaverequestapprovals").addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot approvalSnapshot) {
-                                            String status = null;
-
-                                            // Iterate through approvals to find matching leaveRequestID
-                                            for (DataSnapshot approval : approvalSnapshot.getChildren()) {
-                                                String approvalLeaveRequestID = approval.child("leaveRequestID").getValue(String.class);
-                                                if (leaveID.equals(approvalLeaveRequestID)) {
-                                                    status = approval.child("status").getValue(String.class);
-                                                    break;
-                                                }
-                                            }
-
-                                            String formattedCreatedTime = formatDate(createdTime);
-
-                                            // Format data and add to listForms
-                                            String formattedStartTime = formatDateTime(leaveStartTime);
-                                            String formattedEndTime = formatDateTime(leaveEndTime);
-                                            String dateOff = formattedStartTime + " - " + formattedEndTime;
-
-                                            listFormApprove.add(new FormApprove(leaveID, leaveTypeName,
-                                                    formattedStartTime,
-                                                    formattedEndTime,
-                                                    formattedCreatedTime,
-                                                    reason,
-                                                    employeeName,
-                                                    status,countShift));
-                                            listfilterFormApprove.clear();
-                                            listfilterFormApprove.addAll(listFormApprove);
-
-                                            Log.d("FormApproverr", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
-
-                                            // Notify adapter after updating listForms
-                                            faAdapter.notifyDataSetChanged();
-                                            loadInitialData();
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                            Log.e("Firebase", "Failed to fetch LeaveRequestApproval", error.toException());
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                    Log.e("Firebase", "Failed to fetch Employee", error.toException());
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("Firebase", "Failed to fetch LeaveType", error.toException());
-                        }
-                    });
+                for (DataSnapshot employeeSnapshot : snapshot.getChildren()) {
+                    employeesMap.put(employeeSnapshot.getKey(), employeeSnapshot);
                 }
+
+                // Tải dữ liệu từ "leaverequests"
+                databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot leaveRequestSnapshot : snapshot.getChildren()) {
+                            leaveRequestsMap.put(leaveRequestSnapshot.getKey(), leaveRequestSnapshot);
+                        }
+
+                        // Tải dữ liệu từ "leavetypes"
+                        databaseReference.child("leavetypes").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot leaveTypeSnapshot : snapshot.getChildren()) {
+                                    leaveTypesMap.put(leaveTypeSnapshot.getKey(), leaveTypeSnapshot);
+                                }
+
+                                // Tải dữ liệu từ "leaverequestapprovals" và kết hợp tất cả
+                                databaseReference.child("leaverequestapprovals").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot approvalSnapshot : snapshot.getChildren()) {
+                                            String leaveRQApproveID = approvalSnapshot.getKey();
+                                            String leaveID = approvalSnapshot.child("leaveRequestID").getValue(String.class);
+                                            String status = approvalSnapshot.child("status").getValue(String.class);
+                                            String employeeID = approvalSnapshot.child("employeeID").getValue(String.class);
+
+                                            // Lấy thông tin từ leaveRequestsMap
+                                            DataSnapshot leaveRequestSnapshot = leaveRequestsMap.get(leaveID);
+                                            if (leaveRequestSnapshot != null) {
+                                                String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
+                                                String leaveStartTime = leaveRequestSnapshot.child("startDate").getValue(String.class);
+                                                String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
+                                                String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
+                                                String createdTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
+                                                Integer countShift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
+
+                                                // Lấy thông tin từ leaveTypesMap
+                                                DataSnapshot leaveTypeSnapshot = leaveTypesMap.get(leaveTypeID);
+                                                String leaveTypeName = leaveTypeSnapshot != null
+                                                        ? leaveTypeSnapshot.child("leaveTypeName").getValue(String.class)
+                                                        : "Unknown";
+
+                                                // Lấy thông tin từ employeesMap
+                                                DataSnapshot employeeSnapshot = employeesMap.get(employeeID);
+                                                String employeeName = employeeSnapshot != null
+                                                        ? employeeSnapshot.child("employeeName").getValue(String.class)
+                                                        : "Unknown";
+
+                                                // Định dạng dữ liệu
+                                                String formattedStartTime = formatDateTime(leaveStartTime);
+                                                String formattedEndTime = formatDateTime(leaveEndTime);
+                                                String formattedCreatedTime = formatDate(createdTime);
+                                                String dateOff = formattedStartTime + " - " + formattedEndTime;
+
+                                                // Thêm vào danh sách
+                                                listFormApprove.add(new FormApprove(
+                                                        leaveRQApproveID,
+                                                        leaveTypeName,
+                                                        formattedStartTime,
+                                                        formattedEndTime,
+                                                        formattedCreatedTime,
+                                                        reason,
+                                                        leaveID,
+                                                        employeeName,
+                                                        status,
+                                                        countShift != null ? countShift : 0
+                                                ));
+                                            }
+                                        }
+
+                                        // Cập nhật danh sách và adapter
+                                        listfilterFormApprove.clear();
+                                        listfilterFormApprove.addAll(listFormApprove);
+                                        faAdapter.notifyDataSetChanged();
+                                        loadInitialData();
+
+                                        Log.d("FormApproveput", "Dữ liệu được tải thành công: " + listfilterFormApprove.size());
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.e("Firebase", "Failed to fetch LeaveRequestApprovals", error.toException());
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("Firebase", "Failed to fetch LeaveTypes", error.toException());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Failed to fetch LeaveRequests", error.toException());
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Failed to fetch LeaveRequests", error.toException());
+                Log.e("Firebase", "Failed to fetch Employees", error.toException());
             }
         });
     }
+
+
+//    private void loadDataFAFromFirebase() {
+//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+//
+//        // Clear the current list
+//        listFormApprove.clear();
+//
+//        databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for (DataSnapshot leaveRequestSnapshot : snapshot.getChildren()) {
+//                    Log.d("debug",leaveRequestSnapshot.getKey().toString());
+//                    String leaveID = leaveRequestSnapshot.getKey();
+//                    String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
+//                    String leaveStartTime = leaveRequestSnapshot.child("startDate").getValue(String.class);
+//                    String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
+//                    String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
+//                    String createdTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
+//                    String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
+//                    int countShift = leaveRequestSnapshot.child("countShift").getValue(int.class);
+//
+//
+//                    // Fetch LeaveType to get LeaveTypeName
+//                    databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
+//                            String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
+//
+//                            // Fetch Employee to get EmployeeName
+//                            databaseReference.child("employees").child(employeeID).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
+//                                    String employeeName = employeeSnapshot.child("employeeName").getValue(String.class);
+//
+//                                    // Search in LeaveRequestApproval for matching leaveRequestID
+//                                    databaseReference.child("leaverequestapprovals").addListenerForSingleValueEvent(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(@NonNull DataSnapshot approvalSnapshot) {
+//                                            String status = null;
+//
+//                                            // Iterate through approvals to find matching leaveRequestID
+//                                            for (DataSnapshot approval : approvalSnapshot.getChildren()) {
+//                                                String approvalLeaveRequestID = approval.child("leaveRequestID").getValue(String.class);
+//                                                if (leaveID.equals(approvalLeaveRequestID)) {
+//                                                    status = approval.child("status").getValue(String.class);
+//                                                    break;
+//                                                }
+//                                            }
+//
+//                                            String formattedCreatedTime = formatDate(createdTime);
+//
+//                                            // Format data and add to listForms
+//                                            String formattedStartTime = formatDateTime(leaveStartTime);
+//                                            String formattedEndTime = formatDateTime(leaveEndTime);
+//                                            String dateOff = formattedStartTime + " - " + formattedEndTime;
+//
+//                                            listFormApprove.add(new FormApprove(leaveID, leaveTypeName,
+//                                                    formattedStartTime,
+//                                                    formattedEndTime,
+//                                                    formattedCreatedTime,
+//                                                    reason,
+//                                                    employeeName,
+//                                                    status,countShift));
+//                                            listfilterFormApprove.clear();
+//                                            listfilterFormApprove.addAll(listFormApprove);
+//
+//                                            Log.d("FormApproverr", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
+//
+//                                            // Notify adapter after updating listForms
+//                                            faAdapter.notifyDataSetChanged();
+//                                            loadInitialData();
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(@NonNull DatabaseError error) {
+//                                            Log.e("Firebase", "Failed to fetch LeaveRequestApproval", error.toException());
+//                                        }
+//                                    });
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError error) {
+//                                    Log.e("Firebase", "Failed to fetch Employee", error.toException());
+//                                }
+//                            });
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError error) {
+//                            Log.e("Firebase", "Failed to fetch LeaveType", error.toException());
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.e("Firebase", "Failed to fetch LeaveRequests", error.toException());
+//            }
+//        });
+//    }
+
+//    private void loadDataFAFromFirebase() {
+//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+//
+//        // Clear the current list
+//        listFormApprove.clear();
+//
+//        databaseReference.child("leaverequestapprovals").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for (DataSnapshot leaveRequestSnapshot : snapshot.getChildren()) {
+//                    String leaveRQApproveID = leaveRequestSnapshot.getKey();
+//                    String leaveID = leaveRequestSnapshot.child("leaveRequestID").getValue(String.class);
+//                    String status = leaveRequestSnapshot.child("status").getValue(String.class);
+//                    String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
+//                    // Fetch LeaveType to get LeaveTypeName
+//                    databaseReference.child("leaverequests").child(leaveID).addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
+//                            String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
+//                            String leaveStartTime = leaveRequestSnapshot.child("startDate").getValue(String.class);
+//                            String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
+//                            String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
+//                            String createdTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
+//                            Integer countShift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
+//
+//                            // Fetch Employee to get EmployeeName
+//                            databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
+//                                    String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
+//                                    // Search in LeaveRequestApproval for matching leaveRequestID
+//                                    databaseReference.child("employees").child(employeeID).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(@NonNull DataSnapshot approvalSnapshot) {
+//                                            String employeeName = employeeSnapshot.child("employeeName").getValue(String.class);
+//
+//                                            String formattedCreatedTime = formatDate(createdTime);
+//
+//                                            // Format data and add to listForms
+//                                            String formattedStartTime = formatDateTime(leaveStartTime);
+//                                            String formattedEndTime = formatDateTime(leaveEndTime);
+//                                            String dateOff = formattedStartTime + " - " + formattedEndTime;
+//
+//                                            listFormApprove.add(new FormApprove(leaveRQApproveID, leaveTypeName,
+//                                                    formattedStartTime,
+//                                                    formattedEndTime,
+//                                                    formattedCreatedTime,
+//                                                    reason,
+//                                                    employeeName,
+//                                                    status,countShift));
+//                                            listfilterFormApprove.clear();
+//                                            listfilterFormApprove.addAll(listFormApprove);
+//
+//                                            Log.d("FormApproverr", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
+//
+//                                            // Notify adapter after updating listForms
+//                                            faAdapter.notifyDataSetChanged();
+//                                            loadInitialData();
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(@NonNull DatabaseError error) {
+//                                            Log.e("Firebase", "Failed to fetch LeaveRequestApproval", error.toException());
+//                                        }
+//                                    });
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError error) {
+//                                    Log.e("Firebase", "Failed to fetch Employee", error.toException());
+//                                }
+//                            });
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError error) {
+//                            Log.e("Firebase", "Failed to fetch LeaveType", error.toException());
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.e("Firebase", "Failed to fetch LeaveRequests", error.toException());
+//            }
+//        });
+//    }
+
 
 
 
     private void loadDataFAFromDatabase() {
         String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
                 "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
+                "LeaveRequestApproval.LeaveApprovalID AS LeaveApprovalID, " +
                 "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
                 "LeaveRequest.LeaveID AS LeaveID, " +
                 "LeaveRequestApproval.Status AS Status, " +
@@ -630,15 +851,17 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                 int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
                 int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
                 int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
+                int leaveRAIndex = cursor.getColumnIndex("LeaveApprovalID");
                 int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
                 int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
                 int reasonIndex = cursor.getColumnIndex("Reason");
                 int statussIndex = cursor.getColumnIndex("Status");
                 int CountshiftIndex = cursor.getColumnIndex("CountShift");
 
-                if (formIDindex != -1  && nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
+                if (leaveRAIndex != -1 && formIDindex != -1  && nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
                     String formID = cursor.getString(formIDindex);
                     String nameForm = cursor.getString(nameFormIndex);
+                    String leaveRA = cursor.getString(leaveRAIndex);
                     String employeeName = cursor.getString(employeeNameIndex);
                     String createdTime = cursor.getString(createdTimeIndex);
                     String leaveStartTime = cursor.getString(leaveStartTimeIndex);
@@ -653,7 +876,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
 
                     String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                    listFormApprove.add(new FormApprove(formID,nameForm,formattedStartTime,formattedEndTime,formattedCreatedTime,reason,employeeName,status,countShift));
+                    listFormApprove.add(new FormApprove(leaveRA,nameForm,formattedStartTime,formattedEndTime,formattedCreatedTime,reason,formID,employeeName,status,countShift));
                 }
             } while (cursor.moveToNext());
         }

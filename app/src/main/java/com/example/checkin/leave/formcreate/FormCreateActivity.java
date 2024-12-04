@@ -196,9 +196,34 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 
                 // 3. Gọi DatabaseHelper để lưu dữ liệu
 
-                addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime,countShift, reason, approvers);
+//                addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime,countShift, reason, approvers);
+                if (!leaveTypeName.isEmpty() &&
+                        !employeeID.isEmpty() &&
+                        !startDate.isEmpty() &&
+                        !startTime.isEmpty() &&
+                        !endDate.isEmpty() &&
+                        !endTime.isEmpty() &&
+                        !reason.isEmpty() &&
+                        countShift > 0) {
+                    addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime, countShift, reason, approvers);
 
-                // sleep(5)
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 4. Thông báo thành công và chuyển Activity
+                            Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
+                            intent.putExtra("isSuccess", true);
+                            startActivity(intent);
+
+                            // Clear input fields
+                            clearInputFields();
+                        }
+                    }, 3000);
+                } else {
+                    Toast.makeText(FormCreateActivity.this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+                }
+
 
                 // 4. Thông báo thành công
 //                Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
@@ -209,21 +234,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 //
 //                clearInputFields();
 //                fAdapter.notifyDataSetChanged();
-
-                // Tạm dừng 5 giây trước khi chuyển Activity
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // 4. Thông báo thành công và chuyển Activity
-                        Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
-                        intent.putExtra("isSuccess", true);
-                        startActivity(intent);
-
-                        // Clear input fields
-                        clearInputFields();
-                    }
-                }, 3000); // Thời gian delay 5 giây
             }
         });
 
