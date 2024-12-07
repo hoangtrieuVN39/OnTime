@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/recallLineLoading1_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="18dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/radio_yellow"/>
+
+            <TextView
+                android:id="@+id/name1_txt"
+                android:textColor="#2E333D"
+                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Trịnh Trần Phương Tuấn"
+                android:layout_marginLeft="15dp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/loading1_lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="27dp"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="2dp"
+                android:layout_height="30dp"
+                android:background="#C2C7D1"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="3dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/pending_icon"
+                android:layout_marginStart="30dp"/>
+
+            <TextView
+                android:id="@+id/statusLoading1_txt"
+                android:textColor="#575E72"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Chờ phê duyệt"
+                android:layout_marginStart="12dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recallLineLoading2_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="18dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/radio_button_checked"/>
+
+            <TextView
+                android:id="@+id/name2_txt"
+                android:textColor="#2E333D"
+                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Trịnh Trần Phương Tuấn"
+                android:layout_marginLeft="15dp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/loading2_lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="27dp"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="2dp"
+                android:layout_height="30dp"
+                android:background="#C2C7D1"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="3dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/pending_icon"
+                android:layout_marginStart="30dp"/>
+
+            <TextView
+                android:id="@+id/statusLoading2_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Chờ phê duyệt"
+                android:textColor="#575E72"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recallLineApprove_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/lineApprove"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="18dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/checkdone_icon"/>
+
+            <TextView
+                android:id="@+id/nameApprove_txt"
+                android:textColor="#2E333D"
+                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Trịnh Trần Phương Tuấn"
+                android:layout_marginLeft="15dp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/Approve_lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="27dp"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="2dp"
+                android:layout_height="30dp"
+                android:background="#D9AF03"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="3dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/checkdoneoutline_icon"
+                android:layout_marginStart="30dp"/>
+
+            <TextView
+                android:id="@+id/statusApprove_txt"
+                android:textColor="#FBCC08"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Đã phê duyệt"
+                android:layout_marginStart="12dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recallLineReject_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/nameReject_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="18dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/x_icon"/>
+
+            <TextView
+                android:id="@+id/nameReject_txt"
+                android:textColor="#2E333D"
+                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Trịnh Trần Phương Tuấn"
+                android:layout_marginLeft="15dp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/reject_lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="27dp"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="2dp"
+                android:layout_height="30dp"
+                android:background="#BB1B1B"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="3dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/x_outline_icon"
+                android:layout_marginStart="30dp"/>
+
+            <TextView
+                android:id="@+id/statusReject_txt"
+                android:textColor="#BB1B1B"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Chờ phê duyệt"
+                android:layout_marginStart="12dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recallReject2_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/lineReject2_lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="18dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/radio_red"/>
+
+            <TextView
+                android:id="@+id/nameReject2_txt"
+                android:textColor="#2E333D"
+                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="Trịnh Trần Phương Tuấn"
+                android:layout_marginLeft="15dp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        <View
+            android:layout_width="2dp"
+            android:layout_height="18dp"
+            android:background="#BB1B1B"
+            android:layout_marginStart="29dp"
+            android:layout_marginTop="3dp"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/endReject_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginHorizontal="18dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/x_icon"/>
+
+        <TextView
+            android:id="@+id/nameEndReject_txt"
+            android:textColor="#BB1B1B"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Đã từ chối"
+            android:layout_marginLeft="15dp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Pending_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginHorizontal="18dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/radio_button_checked"/>
+
+        <TextView
+            android:id="@+id/namePending_txt"
+            android:textColor="#2E333D"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Hoàn tất phê duyệt"
+            android:layout_marginLeft="15dp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lineDone_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginHorizontal="18dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/checkdone_icon"/>
+
+        <TextView
+            android:id="@+id/nameDone_txt"
+            android:textColor="#D9AF03"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Đã phê duyệt"
+            android:layout_marginLeft="15dp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+
+</LinearLayout>

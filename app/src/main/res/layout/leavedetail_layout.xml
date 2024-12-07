@@ -224,120 +224,108 @@
                 android:textStyle="bold"
                 />
             <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/rtzntofjkrw"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginHorizontal="18dp"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/nameCf_txt"
-                    android:textColor="#2E333D"
-                    android:textSize="16sp"
-                    android:layout_height="wrap_content"
+                <ListView
+                    android:id="@+id/flowApproverdt_lv"
                     android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:text="Trịnh Trần Phương Tuấn"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/rduje1xflyio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginHorizontal="27dp"
-                android:orientation="horizontal">
+                    android:layout_height="200dp"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="8dp">
+                </ListView>
+
                 <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/rpnv7x32ynir"
-                    android:layout_width="2dp"
-                    android:layout_height="32dp"
-                    android:background="#C2C7D1"
-                    android:layout_marginEnd="61dp"
-                    android:orientation="vertical">
+                    android:id="@+id/footer_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="vertical"
+                    android:layout_marginTop="11dp"
+                    android:visibility="visible">
+
+                    <LinearLayout
+                        android:id="@+id/Pending_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginHorizontal="18dp"
+                        android:orientation="horizontal"
+                        android:visibility="visible">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/radio_button_checked"/>
+
+                        <TextView
+                            android:id="@+id/namePending_txt"
+                            android:textColor="#2E333D"
+                            android:textSize="16sp"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:text="Đang phê duyệt"
+                            android:layout_marginLeft="15dp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <!-- Reject Layout -->
+                    <LinearLayout
+                        android:id="@+id/endReject_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginHorizontal="18dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/x_icon"/>
+
+                        <TextView
+                            android:id="@+id/nameEndReject_txt"
+                            android:textColor="#BB1B1B"
+                            android:textSize="16sp"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:text="Đã từ chối"
+                            android:layout_marginLeft="15dp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <!-- Done Layout -->
+                    <LinearLayout
+                        android:id="@+id/lineDone_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginHorizontal="18dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/checkdone_icon"/>
+
+                        <TextView
+                            android:id="@+id/nameDone_txt"
+                            android:textColor="#D9AF03"
+                            android:textSize="16sp"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:text="Đã phê duyệt"
+                            android:layout_marginLeft="15dp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/statusCf_txt"
-                    android:textColor="#575E72"
-                    android:textSize="14sp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:text="Chờ phê duyệt"
-                    />
             </LinearLayout>
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/r32u5fgfzjux"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginHorizontal="18dp"
-                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/nameCfn_txt"
-                    android:textColor="#2E333D"
-                    android:textSize="16sp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:text="Trịnh Trần Phương Tuấn"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/r7hftpureiml"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="2dp"
-                android:layout_marginHorizontal="27dp"
-                android:orientation="horizontal">
-                <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/rx0s5husutfl"
-                    android:layout_width="2dp"
-                    android:layout_height="32dp"
-                    android:background="#C2C7D1"
-                    android:layout_marginEnd="61dp"
-                    android:orientation="vertical">
-                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/statusCfn_txt"
-                    android:textColor="#575E72"
-                    android:textSize="14sp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:text="Chờ phê duyệt"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/rdwl8v7i5sll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="119dp"
-                android:layout_marginHorizontal="18dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/result_txt"
-                    android:textColor="#2E333D"
-                    android:textSize="16sp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:text="Hoàn tất phê duyệt"
-                    />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
     <LinearLayout
