@@ -8,16 +8,16 @@
     <fragment
         android:id="@+id/formPersonalFragment"
         android:name="com.example.checkin.leave.formpersonal.FormPersonalFragment"
-        android:label="fragment_form_personal"
+        android:label="Cá nhân"
         tools:layout="@layout/fragment_form_personal" />
     <fragment
         android:id="@+id/formApproveFragment"
         android:name="com.example.checkin.leave.formapprove.FormApproveFragment"
-        android:label="fragment_form_approve"
+        android:label="Phê duyệt"
         tools:layout="@layout/fragment_form_approve" />
     <fragment
         android:id="@+id/formListFragment"
         android:name="com.example.checkin.leave.formlist.FormListFragment"
-        android:label="fragment_form_list"
+        android:label="Danh sách"
         tools:layout="@layout/fragment_form_list" />
 </navigation>

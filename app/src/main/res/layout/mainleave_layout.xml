@@ -7,19 +7,34 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        style="@style/Theme.Checkin.TopBar"
+        >
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"/>
+                android:layout_height="48dp"
+                style="@style/Theme.Checkin.Toolbar">
+                <ImageButton
+                    android:id="@+id/buttonlist_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="Back"
+                    android:src="@drawable/filter" />
+            </androidx.appcompat.widget.Toolbar>
+
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:tabIndicatorFullWidth="true"
+                app:tabIndicatorColor="#FBCC08"
+                app:tabBackground="@drawable/tabbackground">
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Cá nhân"/>
+                    android:text="Cá nhân" />
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

@@ -16,5 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         app:menu="@menu/navigation_menu"
-        app:theme="@style/NavBar" />
+        app:theme="@style/NavBar"
+        app:itemBackground="@drawable/navbackground"
+        app:itemTextColor="@color/navtext"
+        app:itemIconTint="@color/navicon"/>
 </LinearLayout>

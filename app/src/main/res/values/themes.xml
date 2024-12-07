@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Theme.Checkin.Chip" parent="Theme.MaterialComponents">
         <item name="chipIconTint">#FEF1B9</item>
@@ -9,6 +9,20 @@
         <item name="chipStrokeColor">@color/choice_chip_stroke_color</item>
         <item name="checkedIconVisible">false</item>
         <item name="android:checkable">true</item>
+    </style>
+
+    <style name="Theme.Checkin.Toolbar" parent="Theme.MaterialComponents">
+        <item name="android:background">#FFFFFF</item>
+    </style>
+    <style name="Theme.Checkin.TopBar" parent="Theme.MaterialComponents">
+        <item name="android:background">#FFFFFF</item>
+    </style>
+    <style name="Theme.Checkin.TabBar" parent="Widget.AppCompat.Light.ActionBar.TabBar">
+        <item name="android:background">@drawable/navitem</item>
+        <item name="android:text">#00FFFFFF</item>
+    </style>
+    <style name="Theme.Checkin.TabItem" parent="Widget.AppCompat.Light.ActionBar.TabBar">
+        <item name="android:background">@drawable/navitem</item>
     </style>
 
     <style name="Theme.Checkin.ChipGroup" parent="Theme.MaterialComponents.Light.Bridge"></style>
@@ -52,7 +66,7 @@
     </style>
 
     <style name="NavBar" parent="Theme.MaterialComponents.Light">
-<!--        <item name="a"></item>-->
+        <item name="android:drawable">@drawable/navitem</item>
     </style>
 
 

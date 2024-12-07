@@ -68,7 +68,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     Spinner spTrangThai, spThang;
     MonthSpinnerAdapter msAdapter;
     StatusSpinnerAdapter ssAdapter;
-    ImageButton btnFilter;
+//    ImageButton btnFilter;
     SearchView searchView;
 
     private final List<Object> originalList = new ArrayList<>();
@@ -122,7 +122,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
         afAdapter = new AllFormAdapter(this,listfilterAllForm,this,db);
         lvAllForm.setAdapter(afAdapter);
-        btnFilter = findViewById(R.id.buttonlist_filter);
+//        btnFilter = findViewById(R.id.buttonlist_filter);
         searchView = findViewById(R.id.nhanvienlist_search);
 
 
@@ -153,13 +153,13 @@ public class FormListActivity extends Activity implements OnFormClickListener {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        btnFilter.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                showFilterBottomSheetDialog();
-            }
-        });
+//        btnFilter.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View view) {
+//                showFilterBottomSheetDialog();
+//            }
+//        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
