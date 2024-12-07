@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.example.checkin.DatabaseHelper;
+import com.example.checkin.OnFormApproverClickListener;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
@@ -58,7 +59,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class FormApproveActivity extends Activity implements OnFormClickListener {
+public class FormApproveActivity extends Activity implements OnFormApproverClickListener {
     ListView lvFormApprove;
     FormApproveAdapter faAdapter;
     ArrayList<MonthSpinner> listMonth = new ArrayList<>();
@@ -1177,8 +1178,13 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
 //        Toast.makeText(this, "Đơn từ cần phê duyệt: " + formName, Toast.LENGTH_SHORT).show();
 //    }
 
+//    @Override
+//    public void onFormClick(Form form) {
+//
+//    }
+
     @Override
-    public void onFormClick(Form form) {
+    public void onFormApprover(FormApprove formApprove) {
 
     }
 

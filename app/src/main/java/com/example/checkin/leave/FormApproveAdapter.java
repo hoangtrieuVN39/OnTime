@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.checkin.OnFormApproverClickListener;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
 import com.example.checkin.models.FormApprove;
@@ -28,11 +29,11 @@ public class FormApproveAdapter extends BaseAdapter {
 
     Context faContext;
     ArrayList<FormApprove> faForm;
-    OnFormClickListener faListener;
+    OnFormApproverClickListener faListener;
     private final SQLiteDatabase database;
     DatabaseReference firebaseReference;
 
-    public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormClickListener falistener, SQLiteDatabase db) {
+    public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormApproverClickListener falistener, SQLiteDatabase db) {
         this.faContext = listFormApproveContext;
         this.faForm = faForm;
         this.faListener = falistener;

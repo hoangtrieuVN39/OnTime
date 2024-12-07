@@ -13,10 +13,12 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.example.checkin.OnFormClickListener;
+import com.example.checkin.OnFormListClickListener;
 import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.R;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.ArrayList;
@@ -29,14 +31,14 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     //    Context afContext;
     LayoutInflater inflater;
     ArrayList<Object> afForm;
-    OnFormClickListener afListener;
+    OnFormListClickListener afListener;
     private Filter allFormFilter;
     private SQLiteDatabase database;
-    private final List<Object> originalList; // Danh sách gốc
+    private final List<Object> originalList;
     private List<Object> filteredList;
     DatabaseReference firebaseReference;
 
-    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormClickListener aflistener, SQLiteDatabase db) {
+    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormListClickListener aflistener, SQLiteDatabase db) {
         this.inflater = LayoutInflater.from(listAllFormContext);
         this.afForm = afForm;
         this.afListener = aflistener;
@@ -44,7 +46,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
         this.filteredList = new ArrayList<>(afForm);
         this.database = db;
         initFilter();
-        this.firebaseReference = firebaseReference;
+        this.firebaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override

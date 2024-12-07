@@ -24,6 +24,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
+import com.example.checkin.OnFormListClickListener;
 import com.example.checkin.R;
 import com.example.checkin.leave.formapprove.FormApproveActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
@@ -55,7 +56,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class FormListActivity extends Activity implements OnFormClickListener {
+public class FormListActivity extends Activity implements OnFormListClickListener {
     ListView lvAllForm;
     AllFormAdapter afAdapter;
     OnFormClickListener afListener;
@@ -110,14 +111,36 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 //                lvAllForm.setAdapter(afAdapter);
 //            }
 //        });
-//        loadDataAllFormFromFirebase(new DataLoadCallback() {
+
+
+        loadDataAllFormFromFirebase(new DataLoadCallback() {
+            @Override
+            public void onDataLoaded() {
+
+            }
+        });
+
+        loadDataAllApproverFromFirebase(new DataLoadCallback() {
+            @Override
+            public void onDataLoaded() {
+                Log.d("AllFormrre", "Dữ liệu listfilterAllForm: " + listAllForm.size());
+                listfilterAllForm.addAll(listAllForm);
+                Log.d("AllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm.size());
+                afAdapter.updateFilteredList(listfilterAllForm);
+                lvAllForm.setAdapter(afAdapter);
+//                loadInitialData();
+            }
+        });
+
+
+
+//        loadDataFApproverFromFirebase("NV004",new DataLoadCallback() {
 //            @Override
 //            public void onDataLoaded() {
 //
 //            }
 //        });
-//
-//        loadDataAllApproverFromFirebase(new DataLoadCallback() {
+//        loadDataFormFromFirebase("NV004", new DataLoadCallback() {
 //            @Override
 //            public void onDataLoaded() {
 //                Log.d("AllFormrre", "Dữ liệu listfilterAllForm: " + listAllForm.size());
@@ -127,25 +150,6 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 //                lvAllForm.setAdapter(afAdapter);
 //            }
 //        });
-
-
-
-        loadDataFApproverFromFirebase("NV004",new DataLoadCallback() {
-            @Override
-            public void onDataLoaded() {
-
-            }
-        });
-        loadDataFormFromFirebase("NV004", new DataLoadCallback() {
-            @Override
-            public void onDataLoaded() {
-                Log.d("AllFormrre", "Dữ liệu listfilterAllForm: " + listAllForm.size());
-                listfilterAllForm.addAll(listAllForm);
-                Log.d("AllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm.size());
-                afAdapter.updateFilteredList(listfilterAllForm);
-                lvAllForm.setAdapter(afAdapter);
-            }
-        });
 
 //        loadDataFormFromDatabase();
 //        loadDataFAFromDatabase();
@@ -536,7 +540,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                                         // Cập nhật danh sách và adapter
 //                                        listfilterAllForm.clear();
                                         listAllForm.addAll(listFormApprove);
-//                                        loadInitialData();
+                                        loadInitialData();
                                         callback.onDataLoaded();
 
                                         Log.d("OnlyFormApprove", "Dữ liệu được tải thành công: " + listAllForm.size());
@@ -635,7 +639,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
                                             listAllForm.addAll(listForms);
 //                                            listAllForm.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,countshift));
-                                            loadInitialData();
+//                                            loadInitialData();
                                             callback.onDataLoaded();
                                             Log.d("OnlyForm", "Dữ liệu được tải thành công: " + listAllForm.size());
                                         }
@@ -922,7 +926,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                 onChipAllSelected(); // Cập nhật filter
                 afAdapter.updateFilteredList(listfilterAllForm);
             } else {
-                filterFormList(selectedChipFilters);// Lọc lại danh sách theo các filter
+                filterFormList(selectedChipFilters);
                 afAdapter.updateFilteredList(listfilterAllForm);
             }
             bottomSheetDialog.dismiss();
@@ -947,10 +951,10 @@ public class FormListActivity extends Activity implements OnFormClickListener {
     }
 
     private void showAllItems() {
-//        listfilterAllForm.clear();
-//        listfilterAllForm.addAll(originalList);
-        listAllForm.clear();
-        listAllForm.addAll(originalList);
+        listfilterAllForm.clear();
+        listfilterAllForm.addAll(originalList);
+//        listAllForm.clear();
+//        listAllForm.addAll(originalList);
         currentList.clear();
         currentList.addAll(originalList);
         afAdapter.notifyDataSetChanged();
@@ -1244,20 +1248,21 @@ public class FormListActivity extends Activity implements OnFormClickListener {
         return String.format("%02d", month);
     }
 
-//    @Override
-//    public void onFormClick(String nameForm) {
-//
-//    }
+    @Override
+    public void onFormList(Object formlist) {
+
+    }
+
 
     public interface OnLeaveTypeNamesLoadedListener {
         void onLoaded(List<String> leaveTypeNames);
         void onError(Exception e);
     }
 
-    @Override
-    public void onFormClick(Form form) {
-
-    }
+//    @Override
+//    public void onFormClick(Form form) {
+//
+//    }
     public interface DataLoadCallback {
         void onDataLoaded();
     }
