@@ -4,6 +4,7 @@ appcompatV7 = "24.2.1"
 coreSplashscreen = "1.0.1"
 fragment = "1.5.4"
 fragmentKtx = "1.8.4"
+googleMaterial = "1.9.0"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
 junit = "4.13.2"
@@ -14,6 +15,8 @@ activityCompose = "1.8.0"
 composeBom = "2024.04.01"
 lifecycleRuntimeKtxVersion = "2.8.6"
 material = "1.7.4"
+navigationFragmentKtx = "1.0.0"
+navigationUiKtx = "2.8.4"
 playServicesMaps = "18.2.0"
 appcompat = "1.7.0"
 playServicesLocation = "21.3.0"
@@ -28,6 +31,8 @@ androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref
 androidx-lifecycle-runtime-ktx-v286 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationUiKtx" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
 appcompat-v7 = { module = "com.android.support:appcompat-v7", version.ref = "appcompatV7" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -42,6 +47,8 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+material-v190 = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
+navigation-fragment-ktx = { module = "android.arch.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
