@@ -405,12 +405,10 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
     }
 
     private void selectShift(Button newButton, String shiftType) {
-        // Kiểm tra nếu button mới được chọn là button đã được chọn trước đó
         if (selectedButton != null && selectedButton == newButton) {
-            // Nếu button đã được chọn, thì hủy chọn
             resetButtons();
             clearShiftInfo();
-            selectedButton = null; // Đặt lại selectedButton
+            selectedButton = null;
         } else {
             resetButtons();
             newButton.setBackgroundResource(R.drawable.rc_button_chosen);

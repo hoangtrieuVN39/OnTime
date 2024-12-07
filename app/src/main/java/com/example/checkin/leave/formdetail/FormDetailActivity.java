@@ -1,12 +1,17 @@
 package com.example.checkin.leave.formdetail;
 
+import static com.example.checkin.leave.formpersonal.FormPersonalActivity.formatDateTime;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,9 +19,13 @@ import androidx.annotation.Nullable;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
+import com.example.checkin.leave.FlowApproverAdapter;
+import com.example.checkin.leave.formlist.FormListActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 
+import com.example.checkin.models.FlowApprover;
 import com.example.checkin.models.Form;
+import com.example.checkin.models.FormApprove;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,13 +33,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class FormDetailActivity extends Activity {
     TextView tvLeaveTypeName, tvLeaveStartTime, tvLeaveEndTime, tvReason, tvCountShift;
     ImageButton btnBack;
     DatabaseHelper DBHelper;
+    ListView flowApperoverlv;
     SQLiteDatabase db;
+    FlowApproverAdapter flowAdapter;
+
+    ArrayList<FlowApprover> flowApproverList = new ArrayList<>();
+    ArrayList<FlowApprover> filterflowApproverList = new ArrayList<>();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +60,11 @@ public class FormDetailActivity extends Activity {
         tvReason = findViewById(R.id.dtld_txt);
         btnBack = findViewById(R.id.backDt_btn);
         tvCountShift = findViewById(R.id.dtcdk_txt);
+
+        LinearLayout footerLayout = findViewById(R.id.footer_layout);
+        LinearLayout pendingLayout = findViewById(R.id.Pending_ll);
+        LinearLayout rejectLayout = findViewById(R.id.endReject_ll);
+        LinearLayout doneLayout = findViewById(R.id.lineDone_ll);
         try {
             DBHelper = new DatabaseHelper(this, null);
             db = DBHelper.getWritableDatabase();
@@ -51,7 +74,49 @@ public class FormDetailActivity extends Activity {
 
 
         String formid = getIntent().getStringExtra("formid");
-        getLeaveDetails(formid);
+//        getLeaveDetails(formid);
+
+        loadDataDetail("DT013", new DataLoadCallbackFormDT() {
+            @Override
+            public void onDataLoaded() {
+                Log.d("ApproverList", "Dữ liệu được tải thành công: " + filterflowApproverList.size());
+
+                // Kiểm tra trạng thái danh sách
+                boolean anyRejected = false;
+                boolean allApproved = true;
+
+                for (FlowApprover approver : filterflowApproverList) {
+                    String status = approver.getStatusApprover();
+                    if ("Loại bỏ".equals(status)) {
+                        anyRejected = true;
+                        break;
+                    }
+                    if (!"Đồng ý".equals(status)) {
+                        allApproved = false;
+                    }
+                }
+
+                footerLayout.setVisibility(View.VISIBLE);
+                pendingLayout.setVisibility(View.GONE);
+                rejectLayout.setVisibility(View.GONE);
+                doneLayout.setVisibility(View.GONE);
+
+                if (anyRejected) {
+                    rejectLayout.setVisibility(View.VISIBLE);
+                } else if (allApproved) {
+                    doneLayout.setVisibility(View.VISIBLE);
+                } else {
+                    pendingLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
+        flowApperoverlv = findViewById(R.id.flowApproverdt_lv);
+        flowAdapter = new FlowApproverAdapter(this, filterflowApproverList);
+        flowApperoverlv.setAdapter(flowAdapter);
+
+
 
         btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(this, FormPersonalActivity.class);
@@ -150,6 +215,106 @@ public class FormDetailActivity extends Activity {
                 Log.e("Firebase", "Failed to fetch LeaveRequest", error.toException());
             }
         });
+    }
+
+    private void loadDataDetail(String leaveID, DataLoadCallbackFormDT callback) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        // Tạo các Map để lưu trữ dữ liệu tạm thời
+        Map<String, DataSnapshot> employeesMap = new HashMap<>();
+        Map<String, DataSnapshot> leaveRequestsMap = new HashMap<>();
+        Map<String, DataSnapshot> leaveTypesMap = new HashMap<>();
+
+        // Xóa danh sách cũ trước khi tải mới
+        flowApproverList.clear();
+
+        // Tải dữ liệu từ "employees"
+        databaseReference.child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot employeeSnapshot : snapshot.getChildren()) {
+                    employeesMap.put(employeeSnapshot.getKey(), employeeSnapshot);
+                }
+
+                // Tải dữ liệu từ "leaverequests"
+                databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot leaveRequestSnapshot : snapshot.getChildren()) {
+                            leaveRequestsMap.put(leaveRequestSnapshot.getKey(), leaveRequestSnapshot);
+                        }
+
+                        // Tải dữ liệu từ "leavetypes"
+                        databaseReference.child("leavetypes").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot leaveTypeSnapshot : snapshot.getChildren()) {
+                                    leaveTypesMap.put(leaveTypeSnapshot.getKey(), leaveTypeSnapshot);
+                                }
+
+                                // Tải dữ liệu từ "leaverequestapprovals" và lọc theo leaveID
+                                databaseReference.child("leaverequestapprovals")
+                                        .orderByChild("leaveRequestID").equalTo(leaveID)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                for (DataSnapshot approvalSnapshot : snapshot.getChildren()) {
+                                                    String status = approvalSnapshot.child("status").getValue(String.class);
+                                                    String employeeID = approvalSnapshot.child("employeeID").getValue(String.class);
+
+                                                    // Lấy thông tin từ leaveRequestsMap
+                                                    DataSnapshot leaveRequestSnapshot = leaveRequestsMap.get(leaveID);
+                                                    if (leaveRequestSnapshot != null) {
+
+                                                        // Lấy thông tin từ employeesMap
+                                                        DataSnapshot employeeSnapshot = employeesMap.get(employeeID);
+                                                        String employeeName = employeeSnapshot != null
+                                                                ? employeeSnapshot.child("employeeName").getValue(String.class)
+                                                                : "Unknown";
+                                                        // Thêm vào danh sách
+                                                        flowApproverList.add(new FlowApprover(employeeName,status));
+                                                    }
+                                                }
+
+                                                // Cập nhật danh sách và adapter
+                                                filterflowApproverList.clear();
+                                                filterflowApproverList.addAll(flowApproverList);
+                                                callback.onDataLoaded();
+                                                flowAdapter.notifyDataSetChanged();
+                                                Log.d("flowApproverList", "Dữ liệu được tải thành công: " + filterflowApproverList.size());
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                Log.e("Firebase", "Failed to fetch LeaveRequestApprovals", error.toException());
+                                            }
+                                        });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("Firebase", "Failed to fetch LeaveTypes", error.toException());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Failed to fetch LeaveRequests", error.toException());
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Failed to fetch Employees", error.toException());
+            }
+        });
+    }
+
+
+    public interface DataLoadCallbackFormDT {
+        void onDataLoaded();
     }
 
 
