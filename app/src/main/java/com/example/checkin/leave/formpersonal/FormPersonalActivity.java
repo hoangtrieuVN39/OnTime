@@ -98,7 +98,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             e.printStackTrace();
         }
 
-//        DBHelper.syncDataToFirebase();
 
 //        loadDataFromDatabase();
         loadDataAllFromFirebase(new DataLoadCallbackForm() {
@@ -120,7 +119,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 //            }
 //        });
         loadDataTypeFormFromDatabase();
-//        DBHelper.syncDataToFirebase();
 
         lvForm = findViewById(R.id.form_lv);
         btn_addForm = findViewById(R.id.addForm_btn);
@@ -172,6 +170,13 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                 showBottomSheetDialog();
             }
         });
+
+        Intent intent = getIntent();
+        boolean isDeleted = intent.getBooleanExtra("isDeleted", false);
+
+        if (isDeleted) {
+            Toast.makeText(this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -182,7 +187,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 
         if (isSuccess) {
             Toast.makeText(this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
-
         }
     }
 

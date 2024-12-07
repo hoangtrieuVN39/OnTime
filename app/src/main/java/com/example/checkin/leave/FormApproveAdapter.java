@@ -200,6 +200,90 @@ public class FormApproveAdapter extends BaseAdapter {
                 });
     }
 
+    private void updateStatus(FormApprove formApprove, String newStatus, int position) {
+        firebaseReference.child("leaverequestapprovals")
+                .orderByChild("leaveRequestID")
+                .equalTo(formApprove.getFormID())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean anyRejected = false;
+                        boolean allApproved = true;
+                        boolean canApprove = true;
+                        String previousApprovalID = null;
+
+                        // Kiểm tra thứ tự phê duyệt
+                        for (DataSnapshot approvalSnapshot : snapshot.getChildren()) {
+                            String approvalID = approvalSnapshot.getKey();
+                            String currentStatus = approvalSnapshot.child("status").getValue(String.class);
+
+                            // Nếu là người hiện tại, kiểm tra người trước đó
+                            if (approvalID.equals(formApprove.getFormApproveID())) {
+                                if (previousApprovalID != null) {
+                                    String previousStatus = snapshot.child(previousApprovalID).child("status").getValue(String.class);
+                                    if (!"Đồng ý".equals(previousStatus)) {
+                                        canApprove = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            previousApprovalID = approvalID;
+                        }
+
+                        // Nếu không được phép duyệt, thoát và thông báo lỗi
+                        if (!canApprove) {
+                            Log.e("ApprovalOrder", "Cannot approve. Previous approver has not completed.");
+                            return;
+                        }
+
+                        // Tiếp tục cập nhật trạng thái nếu được phép duyệt
+                        for (DataSnapshot approvalSnapshot : snapshot.getChildren()) {
+                            String approvalID = approvalSnapshot.getKey();
+                            String currentStatus = approvalSnapshot.child("status").getValue(String.class);
+
+                            // Cập nhật trạng thái cho người hiện tại
+                            if (approvalID.equals(formApprove.getFormApproveID())) {
+                                approvalSnapshot.getRef().child("status").setValue(newStatus);
+                                currentStatus = newStatus;
+                            }
+
+                            // Kiểm tra trạng thái tổng thể
+                            if ("Loại bỏ".equals(currentStatus)) {
+                                anyRejected = true;
+                            }
+                            if (!"Đồng ý".equals(currentStatus)) {
+                                allApproved = false;
+                            }
+                        }
+
+                        // Xác định trạng thái tổng thể của đơn từ
+                        String finalStatus = "Chưa phê duyệt";
+                        if (anyRejected) {
+                            finalStatus = "Loại bỏ";
+                        } else if (allApproved) {
+                            finalStatus = "Đồng ý";
+                        }
+
+                        // Cập nhật trạng thái tổng thể
+                        firebaseReference.child("leaverequests")
+                                .child(formApprove.getFormID())
+                                .child("status")
+                                .setValue(finalStatus);
+
+                        // Cập nhật trạng thái trong adapter và làm mới danh sách
+                        formApprove.setStatusApprover(newStatus);
+                        faForm.set(position, formApprove);
+                        notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("FirebaseUpdate", "Failed to update status", error.toException());
+                    }
+                });
+    }
+
+
 
 //    private void updateStatusInFirebase(FormApprove formApprove, String newStatus, int position) {
 //        firebaseReference.child("leaverequestapprovals")

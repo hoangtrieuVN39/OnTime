@@ -329,11 +329,13 @@
         </LinearLayout>
     </ScrollView>
     <LinearLayout
+        android:id="@+id/recall_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/round_corner_red"
         android:gravity="center"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        android:layout_margin="5dp">
 
         <ImageView
             android:id="@+id/icon_recall"
@@ -344,12 +346,56 @@
             android:layout_gravity="center"/>
 
         <Button
-            android:id="@+id/recall_btn"
+            android:id="@+id/reCall_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Thu hồi"
             android:textAllCaps="false"
             android:textColor="#BB1B1B"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:background="@null"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/Rejected_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gray_background"
+        android:gravity="center"
+        android:layout_gravity="bottom"
+        android:layout_margin="5dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/Rejected_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loại bỏ"
+            android:textAllCaps="false"
+            android:textColor="#575E72"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:background="@null"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Approved_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/yellow_background"
+        android:gravity="center"
+        android:layout_gravity="bottom"
+        android:layout_margin="5dp"
+        android:visibility="gone">
+
+
+        <Button
+            android:id="@+id/Approved_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đồng ý"
+            android:textAllCaps="false"
+            android:textColor="#D9AF03"
             android:textSize="18dp"
             android:textStyle="bold"
             android:background="@null"/>

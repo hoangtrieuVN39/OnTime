@@ -7,12 +7,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +24,8 @@ import androidx.annotation.Nullable;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.leave.FlowApproverAdapter;
+import com.example.checkin.leave.FormAdapter;
+import com.example.checkin.leave.formcreate.FormCreateActivity;
 import com.example.checkin.leave.formlist.FormListActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 
@@ -46,6 +52,11 @@ public class FormDetailActivity extends Activity {
     ListView flowApperoverlv;
     SQLiteDatabase db;
     FlowApproverAdapter flowAdapter;
+    FormAdapter formAdapter;
+    LinearLayout ViewGroupRecall;
+    LinearLayout ViewGroupReject;
+    LinearLayout ViewGroupApproved;
+    Button recallBtn;
 
     ArrayList<FlowApprover> flowApproverList = new ArrayList<>();
     ArrayList<FlowApprover> filterflowApproverList = new ArrayList<>();
@@ -60,11 +71,16 @@ public class FormDetailActivity extends Activity {
         tvReason = findViewById(R.id.dtld_txt);
         btnBack = findViewById(R.id.backDt_btn);
         tvCountShift = findViewById(R.id.dtcdk_txt);
+        recallBtn = findViewById(R.id.reCall_btn);
 
         LinearLayout footerLayout = findViewById(R.id.footer_layout);
         LinearLayout pendingLayout = findViewById(R.id.Pending_ll);
         LinearLayout rejectLayout = findViewById(R.id.endReject_ll);
         LinearLayout doneLayout = findViewById(R.id.lineDone_ll);
+         ViewGroupRecall = findViewById(R.id.recall_ll);
+         ViewGroupReject = findViewById(R.id.Rejected_ll);
+         ViewGroupApproved = findViewById(R.id.Approved_ll);
+
         try {
             DBHelper = new DatabaseHelper(this, null);
             db = DBHelper.getWritableDatabase();
@@ -74,9 +90,9 @@ public class FormDetailActivity extends Activity {
 
 
         String formid = getIntent().getStringExtra("formid");
-//        getLeaveDetails(formid);
+        getLeaveDetails(formid);
 
-        loadDataDetail("DT013", new DataLoadCallbackFormDT() {
+        loadDataDetail(formid, new DataLoadCallbackFormDT() {
             @Override
             public void onDataLoaded() {
                 Log.d("ApproverList", "Dữ liệu được tải thành công: " + filterflowApproverList.size());
@@ -116,6 +132,10 @@ public class FormDetailActivity extends Activity {
         flowAdapter = new FlowApproverAdapter(this, filterflowApproverList);
         flowApperoverlv.setAdapter(flowAdapter);
 
+        ViewGroupApproved.setVisibility(View.GONE);
+        ViewGroupRecall.setVisibility(View.VISIBLE);
+        ViewGroupReject.setVisibility(View.GONE);
+
 
 
         btnBack.setOnClickListener(view -> {
@@ -124,6 +144,21 @@ public class FormDetailActivity extends Activity {
             finish();
         });
 
+        recallBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteLeaveRequest(formid);
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(FormDetailActivity.this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(FormDetailActivity.this, FormPersonalActivity.class);
+                        intent.putExtra("isDeleted", true);
+                        startActivity(intent);
+                    }
+                }, 4000);
+            }
+        });
     }
 //    private void getLeaveDetails(String leaveID) {
 //        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
@@ -166,6 +201,7 @@ public class FormDetailActivity extends Activity {
 //            cursor.close();
 //        }
 //    }
+
     private void getLeaveDetails(String leaveID) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -179,6 +215,7 @@ public class FormDetailActivity extends Activity {
                     String leaveEndTime = snapshot.child("endDate").getValue(String.class);
                     String reason = snapshot.child("reason").getValue(String.class);
                     int countShift = snapshot.child("countShift").getValue(int.class);
+                    String status = snapshot.child("status").getValue(String.class);
 
                     // Fetch LeaveType to get LeaveTypeName
                     databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -197,6 +234,20 @@ public class FormDetailActivity extends Activity {
                                 tvLeaveEndTime.setText(formattedEndTime);
                                 tvReason.setText(reason);
                                 tvCountShift.setText(String.valueOf(countShift));
+                                if("Đồng ý".equals(status)) {
+                                    ViewGroupApproved.setVisibility(View.VISIBLE);
+                                    ViewGroupRecall.setVisibility(View.GONE);
+                                    ViewGroupReject.setVisibility(View.GONE);
+                                } else if("Loại bỏ".equals(status)) {
+                                    ViewGroupApproved.setVisibility(View.GONE);
+                                    ViewGroupRecall.setVisibility(View.GONE);
+                                    ViewGroupReject.setVisibility(View.VISIBLE);
+                                } else{
+                                    ViewGroupApproved.setVisibility(View.GONE);
+                                    ViewGroupRecall.setVisibility(View.VISIBLE);
+                                    ViewGroupReject.setVisibility(View.GONE);
+
+                                }
                             }
                         }
 
@@ -310,6 +361,38 @@ public class FormDetailActivity extends Activity {
                 Log.e("Firebase", "Failed to fetch Employees", error.toException());
             }
         });
+    }
+
+
+
+    private void deleteLeaveRequest(String leaveRequestID) {
+        DatabaseReference leaveRequestRef = FirebaseDatabase.getInstance().getReference().child("leaverequests").child(leaveRequestID);
+        DatabaseReference approvalsRef = FirebaseDatabase.getInstance().getReference().child("leaverequestapprovals");
+
+        // Bước 1: Lấy danh sách các leaveRequestApprovals liên quan
+        approvalsRef.orderByChild("leaveRequestID").equalTo(leaveRequestID).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        // Bước 2: Xóa từng leaveRequestApproval liên quan
+                        for (DataSnapshot approvalSnapshot : task.getResult().getChildren()) {
+                            approvalSnapshot.getRef().removeValue()
+                                    .addOnSuccessListener(aVoid -> {
+
+                                    })
+                                    .addOnFailureListener(e -> {
+
+                                    });
+                        }
+                    }
+                    // Bước 3: Sau khi xóa các approval, xóa leaveRequest
+                    leaveRequestRef.removeValue()
+                            .addOnSuccessListener(aVoid -> {
+
+                            })
+                            .addOnFailureListener(e -> {
+
+                            });
+                });
     }
 
 
