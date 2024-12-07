@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
+import com.example.checkin.models.AllForm;
 import com.example.checkin.models.Form;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FormAdapter extends BaseAdapter {
 
@@ -30,6 +32,7 @@ public class FormAdapter extends BaseAdapter {
     private SQLiteDatabase database;
     DatabaseHelper dbHelper;
     DatabaseReference firebaseReference;
+    private List<Form> Listform;
 
 
     public FormAdapter (Context context, ArrayList<Form> forms, OnFormClickListener listener, DatabaseHelper dbHelper) {
@@ -38,6 +41,7 @@ public class FormAdapter extends BaseAdapter {
         fListener = listener;
         this.dbHelper = dbHelper;
         this.database = dbHelper.getWritableDatabase();
+        this.Listform = new ArrayList<>(forms);
         firebaseReference = FirebaseDatabase.getInstance().getReference();
 
 
@@ -134,6 +138,13 @@ public class FormAdapter extends BaseAdapter {
             }
         });
         return view;
+    }
+
+    // Phương thức cập nhật filteredList và hiển thị danh sách đã lọc
+    public void updateListForm(List<Form> newFilteredList) {
+        Listform.clear();
+        Listform.addAll(newFilteredList);
+        notifyDataSetChanged();
     }
 //    private void deleteLeaveRequestFromFirebase(String leaveId) {
 //        firebaseReference.child("leaverequests").child(leaveId).removeValue()
@@ -254,13 +265,13 @@ public class FormAdapter extends BaseAdapter {
 
     private void deleteLeaveRequest(String leaveId) throws IOException {
         if (dbHelper == null) {
-            dbHelper = new DatabaseHelper(fContext,null);
+            dbHelper = new DatabaseHelper(fContext, null);
         }
         if (database == null || !database.isOpen()) {
             database = dbHelper.getWritableDatabase();
         }
         String whereClause = "LeaveID=?";
-        String[] whereArgs = { leaveId };
+        String[] whereArgs = {leaveId};
         database.delete("LeaveRequest", whereClause, whereArgs);
     }
 }

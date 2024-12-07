@@ -23,16 +23,16 @@ import java.util.Map;
 public class CRUD {
     DatabaseReference database;
 
-    public CRUD(Context context){
-        FirebaseApp.initializeApp(context);
-        database = FirebaseDatabase.getInstance().getReference();
-    }
+//    public CRUD(Context context){
+//        FirebaseApp.initializeApp(context);
+//        database = FirebaseDatabase.getInstance().getReference();
+//    }
 
     public DatabaseReference getDatabase() {
         return database;
     }
 
-    public void ReadFirebase(String tableName, String filter, String[] selectionArgs, DataCallback callback) {
+    public static void ReadFirebase(String tableName, String filter, String[] selectionArgs, DataCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
         Query query = database;
@@ -100,7 +100,7 @@ public class CRUD {
         });
     }
 
-    public void updateFirebase(String tableName, String recordId, String[] fields, Object[] values, DataCallback callback) {
+    public static void updateFirebase(String tableName, String recordId, String[] fields, Object[] values, DataCallback callback) {
         if (fields == null || values == null || fields.length != values.length) {
             Log.e("Firebase", "Fields and values must be non-null and have the same length.");
             return;
@@ -179,7 +179,7 @@ public class CRUD {
 //        });
 //    }
 
-    public void deleteFirebase(String tableName, String[] fields, Object[] values, DataCallback callback) {
+    public static void deleteFirebase(String tableName, String[] fields, Object[] values, DataCallback callback) {
         if (fields == null || values == null || fields.length != values.length) {
             Log.e("Firebase", "Fields and values must be non-null and have the same length.");
             return;
@@ -235,11 +235,7 @@ public class CRUD {
 
 
 
-
-
-
-
-    public void deleteFirebaseID(String tableName, String recordId, DataCallback callback) {
+    public static void deleteFirebaseID(String tableName, String recordId, DataCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Xóa bản ghi theo recordId
@@ -294,7 +290,7 @@ public class CRUD {
         });
     }
 
-    public void readFirebaseStringIndex(String tableName, String filter, String filterValue, String[] selectionArgs, DataMapCallback callback) {
+    public static void readFirebaseStringIndex(String tableName, String filter, String filterValue, String[] selectionArgs, DataMapCallback callback) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Thực hiện lọc nếu có filter
@@ -340,32 +336,165 @@ public class CRUD {
         });
     }
 
-//    public void createFirebase(String tableName, String[] fields, Object[] values, DataCallback callback) {
-//        if (fields == null || values == null || fields.length != values.length) {
-//            Log.e("Firebase", "Fields and values must be non-null and of the same length!");
-//            return;
-//        }
-//
-//        DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
-//
-//        // Tạo Map để lưu trữ các cặp field-value
-//        Map<String, Object> data = new HashMap<>();
-//        for (int i = 0; i < fields.length; i++) {
-//            data.put(fields[i], values[i]);
-//        }
-//
-//        // Tạo một bản ghi mới trong Firebase
-//        database.push().setValue(data)
-//                .addOnSuccessListener(unused -> {
-//                    // Thành công, gọi callback
-//                    callback.onDataLoaded(Collections.singletonList(Collections.singletonList("Success")));
-//                    Log.d("Firebase", "Record added successfully!");
-//                })
-//                .addOnFailureListener(e -> {
-//                    // Thất bại, log lỗi
-//                    Log.e("Firebase", "Failed to add record: " + e.getMessage());
-//                });
-//    }
+    public void createFirebase(String tableName, String[] fields, Object[] values, DataCallback callback) {
+        if (fields == null || values == null || fields.length != values.length) {
+            Log.e("Firebase", "Fields and values must be non-null and of the same length!");
+            return;
+        }
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
+
+        // Tạo Map để lưu trữ các cặp field-value
+        Map<String, Object> data = new HashMap<>();
+        for (int i = 0; i < fields.length; i++) {
+            data.put(fields[i], values[i]);
+        }
+
+        // Tạo một bản ghi mới trong Firebase
+        database.push().setValue(data)
+                .addOnSuccessListener(unused -> {
+                    // Thành công, gọi callback
+                    callback.onDataLoaded(Collections.singletonList(Collections.singletonList("Success")));
+                    Log.d("Firebase", "Record added successfully!");
+                })
+                .addOnFailureListener(e -> {
+                    // Thất bại, log lỗi
+                    Log.e("Firebase", "Failed to add record: " + e.getMessage());
+                });
+    }
+    public static void createFirebaseID(String tableName,String key, String[] fields, Object[] values, DataCallback callback) {
+        if (fields == null || values == null || fields.length != values.length) {
+            Log.e("Firebase", "Fields and values must be non-null and of the same length!");
+            return;
+        }
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
+
+        // Tạo Map để lưu trữ các cặp field-value
+        Map<String, Object> data = new HashMap<>();
+        for (int i = 0; i < fields.length; i++) {
+            data.put(fields[i], values[i]);
+        }
+
+        // Tạo một bản ghi mới trong Firebase
+        database.child(key).setValue(data)
+                .addOnSuccessListener(unused -> {
+                    // Thành công, gọi callback
+                    callback.onDataLoaded(Collections.singletonList(Collections.singletonList("Success")));
+                    Log.d("Firebase", "Record added successfully!");
+                })
+                .addOnFailureListener(e -> {
+                    // Thất bại, log lỗi
+                    Log.e("Firebase", "Failed to add record: " + e.getMessage());
+                });
+    }
+
+    public static void getTable(String tableName1, String tableName2, String keyjoin ,DataCallback callback){
+        DatabaseReference database1 = FirebaseDatabase.getInstance().getReference(tableName1);
+        DatabaseReference database2 = FirebaseDatabase.getInstance().getReference(tableName2);
+
+        HashMap<String, List<String>> table1Data = new HashMap<>();
+
+        database1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot1) {
+                for (DataSnapshot child1 : snapshot1.getChildren()) {
+                    String key = child1.child(keyjoin).getValue(String.class);
+                    List<String> values = new ArrayList<>();
+                    for (DataSnapshot field : child1.getChildren()) {
+                        values.add(field.getValue(String.class));
+                    }
+                    table1Data.put(key, values);
+                }
+                database2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot2) {
+                        List<List<String>> combinedData = new ArrayList<>();
+                        for (DataSnapshot child2 : snapshot2.getChildren()) {
+                            String key = child2.child(keyjoin).getValue(String.class);
+                            if (table1Data.containsKey(key)) {
+                                // Kết hợp dữ liệu từ cả hai bảng
+                                List<String> combinedRow = new ArrayList<>(table1Data.get(key));
+                                for (DataSnapshot field : child2.getChildren()) {
+                                    combinedRow.add(field.getValue(String.class));
+                                }
+                                combinedData.add(combinedRow);
+                            }
+                        }
+                        callback.onDataLoaded(combinedData);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+    }
+    public static void getTable1(String tableName1, String tableName2, String keyjoin, DataCallback1 callback) {
+        DatabaseReference database1 = FirebaseDatabase.getInstance().getReference(tableName1);
+        DatabaseReference database2 = FirebaseDatabase.getInstance().getReference(tableName2);
+
+        Map<String, Map<String, String>> table1Data = new HashMap<>();
+
+        database1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot1) {
+                for (DataSnapshot child1 : snapshot1.getChildren()) {
+                    String key = child1.child(keyjoin).getValue(String.class);
+                    if (key != null) {
+                        Map<String, String> rowData = new HashMap<>();
+                        for (DataSnapshot field : child1.getChildren()) {
+                            rowData.put(field.getKey(), field.getValue(String.class));
+                        }
+                        table1Data.put(key, rowData);
+                    }
+                }
+
+                database2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot2) {
+                        List<Map<String, String>> combinedData = new ArrayList<>();
+                        for (DataSnapshot child2 : snapshot2.getChildren()) {
+                            String key = child2.child(keyjoin).getValue(String.class);
+                            if (key != null && table1Data.containsKey(key)) {
+                                Map<String, String> combinedRow = new HashMap<>(table1Data.get(key));
+                                for (DataSnapshot field : child2.getChildren()) {
+                                    combinedRow.put(field.getKey(), field.getValue(String.class));
+                                }
+                                combinedData.add(combinedRow);
+                            }
+                        }
+                        callback.onDataLoaded(combinedData);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        callback.onDataLoaded(null);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                callback.onDataLoaded(null);
+            }
+        });
+    }
+
+    public interface DataCallback1 {
+        void onDataLoaded(List<Map<String, String>> data);
+    }
+
 
 
     public interface DataMapCallback {
