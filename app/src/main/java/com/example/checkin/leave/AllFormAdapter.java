@@ -3,6 +3,7 @@ package com.example.checkin.leave;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,6 @@ import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.R;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     private static final int TYPE_FORM = 0;
     private static final int TYPE_FORM_APPROVE = 1;
 
-//    Context afContext;
+    //    Context afContext;
     LayoutInflater inflater;
     ArrayList<Object> afForm;
     OnFormClickListener afListener;
@@ -82,6 +82,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         int viewType = getItemViewType(i);
+        Log.d("viewType", "Test viewType: " + viewType);
 
         if(view ==null){
             if(viewType == TYPE_FORM){
@@ -239,7 +240,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
 
     private void initFilter() {
         allFormFilter = new Filter() {
-//            @Override
+//             @Override
 //            protected FilterResults performFiltering(CharSequence constraint) {
 //                FilterResults results = new FilterResults();
 //
@@ -269,6 +270,8 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
 //                }
 //                return results;
 //            }
+
+
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
@@ -301,7 +304,6 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                 }
                 return results;
             }
-
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {

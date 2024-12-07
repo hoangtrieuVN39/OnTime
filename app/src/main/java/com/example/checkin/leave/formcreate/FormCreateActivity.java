@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -181,7 +183,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             public void onClick(View v) {
                 // 1. Lấy thông tin từ các trường nhập liệu
                 String leaveTypeName = typeformNameSpinner.getSelectedItem().toString();
-                String employeeID = "Employee123";  // ID của nhân viên đăng nhập (có thể lấy từ session hoặc đối tượng đang đăng nhập)
+                String employeeID = "Employee123";
                 String startDate = startDateEditText.getText().toString();
                 String startTime = startHourEditText.getText().toString();
                 String endDate = endDateEditText.getText().toString();
@@ -194,22 +196,60 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 
                 // 3. Gọi DatabaseHelper để lưu dữ liệu
 
-                addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime,countShift, reason, approvers);
+//                addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime,countShift, reason, approvers);
+                if (!leaveTypeName.isEmpty() &&
+                        !employeeID.isEmpty() &&
+                        !startDate.isEmpty() &&
+                        !startTime.isEmpty() &&
+                        !endDate.isEmpty() &&
+                        !endTime.isEmpty() &&
+                        !reason.isEmpty() &&
+                        countShift > 0) {
+                    addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime, countShift, reason, approvers);
+
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 4. Thông báo thành công và chuyển Activity
+                            Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
+                            intent.putExtra("isSuccess", true);
+                            startActivity(intent);
+
+                            // Clear input fields
+                            clearInputFields();
+                        }
+                    }, 3000);
+                } else {
+                    Toast.makeText(FormCreateActivity.this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+                }
+
 
                 // 4. Thông báo thành công
-                Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
-
-                intent.putExtra("isSuccess", true);
-                startActivity(intent);
+//                Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
+//
+//                intent.putExtra("isSuccess", true);
+//                startActivity(intent);
+//
+//                clearInputFields();
 //                fAdapter.notifyDataSetChanged();
-
-
-                // 5. Xóa hoặc làm trống các trường nhập liệu sau khi lưu
-                clearInputFields();
             }
         });
 
+    }
+
+    public static String formatDateTimetoFirebase(String dateTime) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        try {
+            Date date = inputFormat.parse(dateTime);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return dateTime;  // Trả về định dạng gốc nếu có lỗi
+        }
     }
 
     private List<String> getSelectedApprovers() {
@@ -797,8 +837,8 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                             @Override
                             public void onIDGenerated(String leaveID) {
                                 // Thêm dữ liệu vào bảng LeaveRequest
-                                LeaveRequest leaveRequest = new LeaveRequest(leaveID, createdTime, "Chưa phê duyệt",
-                                        leaveTypeID, employeeID, leaveStartTime, leaveEndTime, reason, countShift);
+                                LeaveRequest leaveRequest = new LeaveRequest(leaveID, formatDateTimetoFirebase(createdTime), "Chưa phê duyệt",
+                                        leaveTypeID, employeeID, formatDateTimetoFirebase(leaveStartTime), formatDateTimetoFirebase(leaveEndTime), reason, countShift);
                                 leaveRequestRef.child(leaveID).setValue(leaveRequest)
                                         .addOnSuccessListener(aVoid -> {
                                             Log.d("AddLeaveRequest", "Inserted LeaveRequest successfully: " + leaveID);

@@ -7,17 +7,19 @@ public class FormApprove {
     String dateoffendApprover;
     String CreateTimeApprover;
     String reasonApprover;
+    String FormID;
     String nameApprover;
     String statusApprover;
     int CountShift;
 
-    public FormApprove(String FormApproveID, String nameFormApprover,String dateoffstartApprover,String dateoffendApprover,String CreateTimeApprover, String reasonApprover, String nameApprover, String statusApprover, int CountShift){
+    public FormApprove(String FormApproveID, String nameFormApprover,String dateoffstartApprover,String dateoffendApprover,String CreateTimeApprover, String reasonApprover,String FormID, String nameApprover, String statusApprover, int CountShift){
         this.FormApproveID = FormApproveID;
         this.nameFormApprover = nameFormApprover;
         this.dateoffstartApprover = dateoffstartApprover;
         this.dateoffendApprover = dateoffendApprover;
         this.CreateTimeApprover = CreateTimeApprover;
         this.reasonApprover = reasonApprover;
+        this.FormID = FormID;
         this.nameApprover = nameApprover;
         this.statusApprover = statusApprover;
         this.CountShift = CountShift;
@@ -84,5 +86,11 @@ public class FormApprove {
     }
     public void setCountShift(int countShift) {
         CountShift = countShift;
+    }
+    public String getFormID() {
+        return FormID;
+    }
+    public void setFormID(String formID) {
+        FormID = formID;
     }
 }
