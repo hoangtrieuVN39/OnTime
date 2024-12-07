@@ -101,7 +101,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
 
 //        loadDataFAFromDatabase();
 //        loadDataFAFromFirebase();
-        loadDataFAFromFirebase("NV003");
+        loadDataFAFromFirebase("NV004");
 //        loadDataTypeFormFromDatabase();
 //        loadInitialData();
 
@@ -561,6 +561,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                                                         String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
                                                         String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
                                                         String createdTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
+                                                        String employeelrID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                                                         Integer countShift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
 
                                                         // Lấy thông tin từ leaveTypesMap
@@ -570,7 +571,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
                                                                 : "Unknown";
 
                                                         // Lấy thông tin từ employeesMap
-                                                        DataSnapshot employeeSnapshot = employeesMap.get(filterEmployeeID);
+                                                        DataSnapshot employeeSnapshot = employeesMap.get(employeelrID);
                                                         String employeeName = employeeSnapshot != null
                                                                 ? employeeSnapshot.child("employeeName").getValue(String.class)
                                                                 : "Unknown";

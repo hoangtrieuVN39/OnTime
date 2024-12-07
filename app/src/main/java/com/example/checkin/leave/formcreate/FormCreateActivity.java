@@ -183,7 +183,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             public void onClick(View v) {
                 // 1. Lấy thông tin từ các trường nhập liệu
                 String leaveTypeName = typeformNameSpinner.getSelectedItem().toString();
-                String employeeID = "Employee123";
+                String employeeID = "NV002";
                 String startDate = startDateEditText.getText().toString();
                 String startTime = startHourEditText.getText().toString();
                 String endDate = endDateEditText.getText().toString();
@@ -219,7 +219,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                             // Clear input fields
                             clearInputFields();
                         }
-                    }, 3000);
+                    }, 4000);
                 } else {
                     Toast.makeText(FormCreateActivity.this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
                 }

@@ -43,8 +43,6 @@ public class FormAdapter extends BaseAdapter {
         this.database = dbHelper.getWritableDatabase();
         this.Listform = new ArrayList<>(forms);
         firebaseReference = FirebaseDatabase.getInstance().getReference();
-
-
     }
     @Override
     public int getCount() {

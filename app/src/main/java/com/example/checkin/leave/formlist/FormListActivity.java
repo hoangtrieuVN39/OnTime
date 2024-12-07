@@ -130,13 +130,13 @@ public class FormListActivity extends Activity implements OnFormClickListener {
 
 
 
-        loadDataFApproverFromFirebase("NV005",new DataLoadCallback() {
+        loadDataFApproverFromFirebase("NV004",new DataLoadCallback() {
             @Override
             public void onDataLoaded() {
 
             }
         });
-        loadDataFormFromFirebase("NV005", new DataLoadCallback() {
+        loadDataFormFromFirebase("NV004", new DataLoadCallback() {
             @Override
             public void onDataLoaded() {
                 Log.d("AllFormrre", "Dữ liệu listfilterAllForm: " + listAllForm.size());
@@ -271,6 +271,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                                                 String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
                                                 String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
                                                 String createdTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
+                                                String employeelrID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                                                 Integer countShift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
 
                                                 // Lấy thông tin từ leaveTypesMap
@@ -280,7 +281,7 @@ public class FormListActivity extends Activity implements OnFormClickListener {
                                                         : "Unknown";
 
                                                 // Lấy thông tin từ employeesMap
-                                                DataSnapshot employeeSnapshot = employeesMap.get(employeeID);
+                                                DataSnapshot employeeSnapshot = employeesMap.get(employeelrID);
                                                 String employeeName = employeeSnapshot != null
                                                         ? employeeSnapshot.child("employeeName").getValue(String.class)
                                                         : "Unknown";
