@@ -172,15 +172,10 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         Intent intent = getIntent();
         boolean isSuccess = intent.getBooleanExtra("isSuccess", false);
 
-        // Nếu là thông báo thành công, hiển thị Toast
         if (isSuccess) {
             Toast.makeText(this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
-//            filteredForms.clear();
-//            listForms.clear();
-//            loadDataFromFirebase();
+
         }
-//        fAdapter.updateListForm(filteredForms);
-//        fAdapter.notifyDataSetChanged();
     }
 
 

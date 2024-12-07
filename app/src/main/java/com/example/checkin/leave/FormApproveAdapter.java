@@ -41,6 +41,7 @@ public class FormApproveAdapter extends BaseAdapter {
         this.firebaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
+
     @Override
     public int getCount() {
         return faForm.size();
@@ -55,6 +56,7 @@ public class FormApproveAdapter extends BaseAdapter {
     public long getItemId(int i) {
         return 0;
     }
+
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
