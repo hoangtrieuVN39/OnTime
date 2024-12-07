@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_bar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        app:theme="@style/NavBar"
-        app:menu="@menu/navigation_menu" />
 
 <!--    <com.google.android.material.appbar.AppBarLayout-->
 <!--        android:id="@+id/appbar"-->
@@ -56,14 +47,6 @@
 <!--        </com.google.android.material.tabs.TabLayout>-->
 <!--    </com.google.android.material.appbar.AppBarLayout>-->
 
-    <com.example.checkin.leave.CustomAppBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -158,14 +141,13 @@
                         <ListView
                             android:id="@+id/form_lv"
                             android:layout_width="match_parent"
-                            android:layout_height="613dp"
+                            android:layout_height="match_parent"
                             android:divider="@android:color/transparent"
                             android:dividerHeight="8dp" />
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
 
     <ImageButton
         android:id="@+id/addForm_btn"
@@ -178,6 +160,5 @@
         android:layout_marginBottom="0dp"
         android:background="@android:color/transparent"
         android:src="@drawable/add_circle" />
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
