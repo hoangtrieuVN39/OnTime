@@ -91,7 +91,7 @@
                 <LinearLayout
                     android:id="@+id/list_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_below="@id/nav_header"
                     android:orientation="vertical">
 
@@ -132,19 +132,21 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <LinearLayout
+                    <!--                    <LinearLayout-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="match_parent"-->
+                    <!--                        android:background="@drawable/rc_color"-->
+                    <!--                        android:layout_weight="7"-->
+                    <!--                        android:padding="10dp">-->
+
+                    <ListView
+                        android:id="@+id/form_lv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/rc_color"
-                        android:padding="10dp">
-
-                        <ListView
-                            android:id="@+id/form_lv"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:divider="@android:color/transparent"
-                            android:dividerHeight="8dp" />
-                    </LinearLayout>
+                        android:divider="@android:color/transparent"
+                        android:dividerHeight="8dp" />
+                    <!--                    </LinearLayout>-->
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>

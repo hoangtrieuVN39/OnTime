@@ -84,7 +84,7 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_form_approve);
+        setContentView(R.layout.formapprove_layout);
 
         setListMonth();
         setListStatus();
@@ -100,8 +100,8 @@ public class FormApproveActivity extends Activity implements OnFormClickListener
 
 
 //        loadDataFAFromDatabase();
-        loadDataFAFromFirebase();
-//        loadDataFAFromFirebase("NV003");
+//        loadDataFAFromFirebase();
+        loadDataFAFromFirebase("NV003");
 //        loadDataTypeFormFromDatabase();
 //        loadInitialData();
 
