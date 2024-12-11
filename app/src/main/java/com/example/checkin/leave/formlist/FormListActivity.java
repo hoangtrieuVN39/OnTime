@@ -230,7 +230,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
 
         listFormApprove.clear();
 
-        // Tải dữ liệu từ "employees"
         databaseReference.child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -238,7 +237,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                     employeesMap.put(employeeSnapshot.getKey(), employeeSnapshot);
                 }
 
-                // Tải dữ liệu từ "leaverequests"
                 databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -246,7 +244,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                             leaveRequestsMap.put(leaveRequestSnapshot.getKey(), leaveRequestSnapshot);
                         }
 
-                        // Tải dữ liệu từ "leavetypes"
                         databaseReference.child("leavetypes").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -265,7 +262,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                             String status = approvalSnapshot.child("status").getValue(String.class);
                                             String employeeID = approvalSnapshot.child("employeeID").getValue(String.class);
 
-                                            // Lấy thông tin từ leaveRequestsMap
                                             DataSnapshot leaveRequestSnapshot = leaveRequestsMap.get(leaveID);
                                             if (leaveRequestSnapshot != null) {
                                                 String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
@@ -276,25 +272,21 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                                 String employeelrID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                                                 Integer countShift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
 
-                                                // Lấy thông tin từ leaveTypesMap
                                                 DataSnapshot leaveTypeSnapshot = leaveTypesMap.get(leaveTypeID);
                                                 String leaveTypeName = leaveTypeSnapshot != null
                                                         ? leaveTypeSnapshot.child("leaveTypeName").getValue(String.class)
                                                         : "Unknown";
 
-                                                // Lấy thông tin từ employeesMap
                                                 DataSnapshot employeeSnapshot = employeesMap.get(employeelrID);
                                                 String employeeName = employeeSnapshot != null
                                                         ? employeeSnapshot.child("employeeName").getValue(String.class)
                                                         : "Unknown";
 
-                                                // Định dạng dữ liệu
                                                 String formattedStartTime = formatDateTime(leaveStartTime);
                                                 String formattedEndTime = formatDateTime(leaveEndTime);
                                                 String formattedCreatedTime = formatDate(createdTime);
                                                 String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                                                // Thêm vào danh sách
                                                 listFormApprove.add(new FormApprove(
                                                         leaveRQApproveID,
                                                         leaveTypeName,
@@ -310,7 +302,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                             }
                                         }
 
-                                        // Cập nhật danh sách và adapter
 //                                        listfilterAllForm.clear();
                                         listAllForm.addAll(listFormApprove);
 //                                        loadInitialData();
@@ -346,7 +337,7 @@ public class FormListActivity extends Activity implements OnFormListClickListene
             }
         });
     }
-//
+
     private void loadDataFormFromFirebase(String targetEmployee, DataLoadCallback callback) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         listForms.clear();
@@ -369,19 +360,16 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                     String statusLR = leaveRequestSnapshot.child("status").getValue(String.class);
                     Integer countshift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
 
-                    // Fetch LeaveType to get LeaveTypeName
                     databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
                             String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
 
-                            // Fetch Employee to get EmployeeName
                             databaseReference.child("employees").child(targetEmployee).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
                                     String employeeName = employeeSnapshot.child("employeeName").getValue(String.class);
 
-                                    // Search in LeaveRequestApproval for matching leaveRequestID
                                     databaseReference.child("leaverequestapprovals").addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot approvalSnapshot) {
@@ -396,7 +384,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                                 }
                                             }
 
-                                            // Format data and add to listForms
                                             String formattedStartTime = formatDateTime(leaveStartTime);
                                             String formattedEndTime = formatDateTime(leaveEndTime);
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
@@ -447,7 +434,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
         listFormApprove.clear();
 
 
-        // Tải dữ liệu từ "employees"
         databaseReference.child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -455,7 +441,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                     employeesMap.put(employeeSnapshot.getKey(), employeeSnapshot);
                 }
 
-                // Tải dữ liệu từ "leaverequests"
                 databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -463,7 +448,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                             leaveRequestsMap.put(leaveRequestSnapshot.getKey(), leaveRequestSnapshot);
                         }
 
-                        // Tải dữ liệu từ "leavetypes"
                         databaseReference.child("leavetypes").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -481,7 +465,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                             String status = approvalSnapshot.child("status").getValue(String.class);
                                             String employeeID = approvalSnapshot.child("employeeID").getValue(String.class);
 
-                                            // Lấy thông tin từ leaveRequestsMap
                                             DataSnapshot leaveRequestSnapshot = leaveRequestsMap.get(leaveID);
                                             if (leaveRequestSnapshot != null) {
                                                 String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
@@ -491,25 +474,21 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                                 String createdTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
                                                 Integer countShift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
 
-                                                // Lấy thông tin từ leaveTypesMap
                                                 DataSnapshot leaveTypeSnapshot = leaveTypesMap.get(leaveTypeID);
                                                 String leaveTypeName = leaveTypeSnapshot != null
                                                         ? leaveTypeSnapshot.child("leaveTypeName").getValue(String.class)
                                                         : "Unknown";
 
-                                                // Lấy thông tin từ employeesMap
                                                 DataSnapshot employeeSnapshot = employeesMap.get(employeeID);
                                                 String employeeName = employeeSnapshot != null
                                                         ? employeeSnapshot.child("employeeName").getValue(String.class)
                                                         : "Unknown";
 
-                                                // Định dạng dữ liệu
                                                 String formattedStartTime = formatDateTime(leaveStartTime);
                                                 String formattedEndTime = formatDateTime(leaveEndTime);
                                                 String formattedCreatedTime = formatDate(createdTime);
                                                 String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                                                // Thêm vào danh sách
                                                 listFormApprove.add(new FormApprove(
                                                         leaveRQApproveID,
                                                         leaveTypeName,
@@ -525,7 +504,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                             }
                                         }
 
-                                        // Cập nhật danh sách và adapter
 //                                        listfilterAllForm.clear();
                                         listAllForm.addAll(listFormApprove);
                                         loadInitialData();
@@ -566,7 +544,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
     private void loadDataAllFormFromFirebase(DataLoadCallback callback) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        // Clear the current list
         listForms.clear();
         listAllForm.clear();
         long[] pendingCalls = {0};
@@ -587,13 +564,11 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                     String statusLR = leaveRequestSnapshot.child("status").getValue(String.class);
                     Integer countshift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
 
-                    // Fetch LeaveType to get LeaveTypeName
                     databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
                             String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
 
-                            // Fetch Employee to get EmployeeName
                             databaseReference.child("employees").child(employeeID).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
@@ -614,14 +589,11 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                                 }
                                             }
 
-                                            // Format data and add to listForms
                                             String formattedStartTime = formatDateTime(leaveStartTime);
                                             String formattedEndTime = formatDateTime(leaveEndTime);
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
                                             listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,countshift));
 
-
-                                                // Copy all data to listfilterAllForm after fetching is complete
                                             listAllForm.clear();
 //                                                filteredForms.addAll(listForms);
 
@@ -917,7 +889,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
 
 
 
-
     private List<String> getSelectedFilters(ChipGroup chipGroup) {
         List<String> selectedFilters = new ArrayList<>();
         for (int i = 0; i < chipGroup.getChildCount(); i++) {
@@ -994,7 +965,7 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                         leaveTypeNames.add(leaveTypeName);
                     }
                 }
-                listener.onLoaded(leaveTypeNames); // Trả về danh sách qua listener
+                listener.onLoaded(leaveTypeNames);
             }
 
             @Override

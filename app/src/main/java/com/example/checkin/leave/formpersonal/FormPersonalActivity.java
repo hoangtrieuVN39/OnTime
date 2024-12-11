@@ -100,16 +100,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 
 
 
-        loadDataAllFromFirebase(new DataLoadCallbackForm() {
-            @Override
-            public void onDataLoaded() {
-                fAdapter.notifyDataSetChanged();
-                fAdapter.updateListForm(filteredForms);
-                lvForm.setAdapter(fAdapter);
-                Log.d("filteredForms", "Dữ liệu listfilterAllForm: " + filteredForms.size());
-            }
-        });
-//        loadDataFromFirebase("NV002",new DataLoadCallbackForm() {
+//        loadDataAllFromFirebase(new DataLoadCallbackForm() {
 //            @Override
 //            public void onDataLoaded() {
 //                fAdapter.notifyDataSetChanged();
@@ -118,6 +109,15 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 //                Log.d("filteredForms", "Dữ liệu listfilterAllForm: " + filteredForms.size());
 //            }
 //        });
+        loadDataFromFirebase("NV002",new DataLoadCallbackForm() {
+            @Override
+            public void onDataLoaded() {
+                fAdapter.notifyDataSetChanged();
+                fAdapter.updateListForm(filteredForms);
+                lvForm.setAdapter(fAdapter);
+                Log.d("filteredForms", "Dữ liệu listfilterAllForm: " + filteredForms.size());
+            }
+        });
 
         loadDataTypeFormFromDatabase();
         //        loadDataFromDatabase();

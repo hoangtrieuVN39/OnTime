@@ -12,6 +12,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.example.checkin.OnFormApproverClickListener;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.OnFormListClickListener;
 import com.example.checkin.models.Form;
@@ -32,6 +33,8 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     LayoutInflater inflater;
     ArrayList<Object> afForm;
     OnFormListClickListener afListener;
+    OnFormClickListener fListener;
+    OnFormApproverClickListener faListener;
     private Filter allFormFilter;
     private SQLiteDatabase database;
     private final List<Object> originalList;
@@ -126,12 +129,12 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                 recallLayoutContainer.setVisibility(View.GONE);
             }
 
-//            view.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick (View view){
-//                    afListener.onFormClick(form.getNameForm());
-//                }
-//            });
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    afListener.onFormList(afForm.get(i));
+                }
+            });
         }
         else if(viewType == TYPE_FORM_APPROVE){
             FormApprove formApprove = (FormApprove) filteredList.get(i);
@@ -173,12 +176,12 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                 recallLayoutContainer.setVisibility(View.GONE);
             }
 
-//            view.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick (View view){
-//                    afListener.onFormClick(formApprove.getNameFormApprove());
-//                }
-//            });
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    afListener.onFormList(afForm.get(i));
+                }
+            });
         }
         return view;
     }
@@ -242,38 +245,6 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
 
     private void initFilter() {
         allFormFilter = new Filter() {
-//             @Override
-//            protected FilterResults performFiltering(CharSequence constraint) {
-//                FilterResults results = new FilterResults();
-//
-//                if (constraint == null || constraint.length() == 0) {
-//                    // Nếu không có điều kiện lọc, trả về danh sách gốc
-//                    results.values = new ArrayList<>(originalList);
-//                    results.count = originalList.size();
-//                } else {
-//                    String filterPattern = constraint.toString().toLowerCase().trim();
-//                    List<Object> filtered = new ArrayList<>();
-//
-//                    // Lọc qua danh sách gốc
-//                    for (Object item : originalList) {
-//                        if (item instanceof FormApprove) {
-//                            FormApprove formApprove = (FormApprove) item;
-//                            if (formApprove.getNameApprover() != null && formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
-//                                filtered.add(formApprove);
-//                            }
-//                        } else {
-//                            // Thêm các kiểm tra khác nếu cần cho các loại đối tượng khác
-//                            filtered.add(item);
-//                        }
-//                    }
-//
-//                    results.values = filtered;
-//                    results.count = filtered.size();
-//                }
-//                return results;
-//            }
-
-
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
@@ -286,7 +257,6 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                     String filterPattern = constraint.toString().toLowerCase().trim();
                     List<Object> filtered = new ArrayList<>();
 
-                    // Lọc qua danh sách gốc
                     for (Object item : originalList) {
                         if (item instanceof Form) {
                             Form form = (Form) item;
