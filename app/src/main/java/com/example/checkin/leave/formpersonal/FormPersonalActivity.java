@@ -173,12 +173,12 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             }
         });
 
-        Intent intent = getIntent();
-        boolean isDeleted = intent.getBooleanExtra("isDeleted", false);
-
-        if (isDeleted) {
-            Toast.makeText(this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
-        }
+//        Intent intent = getIntent();
+//        boolean isDeleted = intent.getBooleanExtra("isDeleted", false);
+//
+//        if (isDeleted) {
+//            Toast.makeText(this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override

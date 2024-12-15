@@ -58,7 +58,7 @@ public class FormDetailActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.leavedetail_layout);
 
-        btnRecall = findViewById(R.id.recall_btn);
+        btnRecall = findViewById(R.id.reCall_btn);
         tvLeaveTypeName = findViewById(R.id.nkl_txt);
         tvLeaveStartTime = findViewById(R.id.timeStart_txt);
         tvLeaveEndTime = findViewById(R.id.timeEnd_txt);
@@ -84,7 +84,6 @@ public class FormDetailActivity extends Activity {
             @Override
             public void onClick(View v) {
                 deleteLeaveRequestFromFirebase_Detail(formid);
-                flowAdapter.notifyDataSetChanged();
             }
         });
 
@@ -131,7 +130,12 @@ public class FormDetailActivity extends Activity {
 
 
         btnBack.setOnClickListener(view -> {
-            Intent intent = new Intent(this, FormPersonalActivity.class);
+            String caller = getIntent().getStringExtra("caller");
+            Intent intent = null;
+            if ("FormPersonalActivity".equals(caller)) {
+                intent = new Intent(this, FormPersonalActivity.class);
+            } else {intent = new Intent(this, FormListActivity.class);
+            }
             startActivity(intent);
             finish();
         });
