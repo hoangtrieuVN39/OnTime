@@ -139,7 +139,13 @@ public class FormDetailActivity extends Activity {
 
 
         btnBack.setOnClickListener(view -> {
-            Intent intent = new Intent(this, FormPersonalActivity.class);
+            String caller = getIntent().getStringExtra("caller");
+            Intent intent = null;
+            if ("FormPersonalActivity".equals(caller)) {
+                intent = new Intent(this, FormPersonalActivity.class);
+            } else {
+                intent = new Intent(this, FormListActivity.class);
+            }
             startActivity(intent);
             finish();
         });
@@ -160,52 +166,11 @@ public class FormDetailActivity extends Activity {
             }
         });
     }
-//    private void getLeaveDetails(String leaveID) {
-//        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-//                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-//                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-//                "LeaveRequest.CountShift AS CountShift, " +
-//                "LeaveRequest.Reason AS Reason " +
-//                "FROM LeaveRequest " +
-//                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
-//                "WHERE LeaveRequest.LeaveID = ?";
-//
-//        Cursor cursor = db.rawQuery(query, new String[]{leaveID});
-//        Log.d("getLeaveDetails", "leaveID: " + leaveID);
-//
-//        if (cursor != null && cursor.moveToFirst()) {
-//            int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-//            int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-//            int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-//            int reasonIndex = cursor.getColumnIndex("Reason");
-//            int countShiftIndex = cursor.getColumnIndex("CountShift");
-//
-//            if (nameFormIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 &&
-//                    reasonIndex != -1 && countShiftIndex != -1) {
-//                String nameForm = cursor.getString(nameFormIndex);
-//                String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-//                String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-//                String reason = cursor.getString(reasonIndex);
-//                int countShift = cursor.getInt(countShiftIndex);
-//
-//                String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
-//                String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
-//
-//                tvLeaveTypeName.setText(nameForm);
-//                tvLeaveStartTime.setText(formattedStartTime);
-//                tvLeaveEndTime.setText(formattedEndTime);
-//                tvReason.setText(reason);
-//                tvCountShift.setText(String.valueOf(countShift));
-//
-//            }
-//            cursor.close();
-//        }
-//    }
+
 
     private void getLeaveDetails(String leaveID) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        // Truy xuất dữ liệu từ node leaverequests
         databaseReference.child("leaverequests").child(leaveID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -224,11 +189,9 @@ public class FormDetailActivity extends Activity {
                             if (leaveTypeSnapshot.exists()) {
                                 String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
 
-                                // Format start and end time
-                                String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
-                                String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
+                                String formattedStartTime = formatDateTime(leaveStartTime);
+                                String formattedEndTime = formatDateTime(leaveEndTime);
 
-                                // Set data to UI elements
                                 tvLeaveTypeName.setText(leaveTypeName);
                                 tvLeaveStartTime.setText(formattedStartTime);
                                 tvLeaveEndTime.setText(formattedEndTime);
@@ -271,15 +234,12 @@ public class FormDetailActivity extends Activity {
     private void loadDataDetail(String leaveID, DataLoadCallbackFormDT callback) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        // Tạo các Map để lưu trữ dữ liệu tạm thời
         Map<String, DataSnapshot> employeesMap = new HashMap<>();
         Map<String, DataSnapshot> leaveRequestsMap = new HashMap<>();
         Map<String, DataSnapshot> leaveTypesMap = new HashMap<>();
 
-        // Xóa danh sách cũ trước khi tải mới
         flowApproverList.clear();
 
-        // Tải dữ liệu từ "employees"
         databaseReference.child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -287,7 +247,6 @@ public class FormDetailActivity extends Activity {
                     employeesMap.put(employeeSnapshot.getKey(), employeeSnapshot);
                 }
 
-                // Tải dữ liệu từ "leaverequests"
                 databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -295,7 +254,6 @@ public class FormDetailActivity extends Activity {
                             leaveRequestsMap.put(leaveRequestSnapshot.getKey(), leaveRequestSnapshot);
                         }
 
-                        // Tải dữ liệu từ "leavetypes"
                         databaseReference.child("leavetypes").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -313,11 +271,9 @@ public class FormDetailActivity extends Activity {
                                                     String status = approvalSnapshot.child("status").getValue(String.class);
                                                     String employeeID = approvalSnapshot.child("employeeID").getValue(String.class);
 
-                                                    // Lấy thông tin từ leaveRequestsMap
                                                     DataSnapshot leaveRequestSnapshot = leaveRequestsMap.get(leaveID);
                                                     if (leaveRequestSnapshot != null) {
 
-                                                        // Lấy thông tin từ employeesMap
                                                         DataSnapshot employeeSnapshot = employeesMap.get(employeeID);
                                                         String employeeName = employeeSnapshot != null
                                                                 ? employeeSnapshot.child("employeeName").getValue(String.class)
@@ -327,7 +283,6 @@ public class FormDetailActivity extends Activity {
                                                     }
                                                 }
 
-                                                // Cập nhật danh sách và adapter
                                                 filterflowApproverList.clear();
                                                 filterflowApproverList.addAll(flowApproverList);
                                                 callback.onDataLoaded();

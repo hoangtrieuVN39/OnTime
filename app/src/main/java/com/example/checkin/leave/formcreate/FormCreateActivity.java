@@ -198,13 +198,11 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            // 4. Thông báo thành công và chuyển Activity
                             Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
                             intent.putExtra("isSuccess", true);
                             startActivity(intent);
 
-                            // Clear input fields
                             clearInputFields();
                         }
                     }, 4000);
@@ -212,16 +210,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                     Toast.makeText(FormCreateActivity.this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
                 }
 
-
-                // 4. Thông báo thành công
-//                Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
-//
-//                intent.putExtra("isSuccess", true);
-//                startActivity(intent);
-//
-//                clearInputFields();
-//                fAdapter.notifyDataSetChanged();
             }
         });
 
