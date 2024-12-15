@@ -186,62 +186,12 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
         return view;
     }
 
-    // Phương thức cập nhật filteredList và hiển thị danh sách đã lọc
     public void updateFilteredList(List<Object> newFilteredList) {
         this.filteredList.clear();
         this.filteredList.addAll(newFilteredList);
         notifyDataSetChanged();
     }
 
-//    private void initFilter() {
-//         allFormFilter = new Filter() {
-//            @Override
-//            protected FilterResults performFiltering(CharSequence constraint) {
-//                FilterResults results = new FilterResults();
-//
-//                if (constraint == null || constraint.length() == 0) {
-//                    // Nếu không có điều kiện lọc, trả về toàn bộ danh sách gốc
-//                    results.values = new ArrayList<>(originalList);
-//                    results.count = originalList.size();
-//                } else {
-//                    String filterPattern = constraint.toString().toLowerCase().trim();
-//                    List<FormApprove> filtered = new ArrayList<>();
-//
-//                    // Lọc qua originalList để tìm các đối tượng FormApprove có tên nhân viên phù hợp
-//                    for (Object approver : originalList) {
-//                        if (approver instanceof FormApprove) {
-//                            FormApprove formApprove = (FormApprove) approver;
-//                            if (formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
-//                                filtered.add(formApprove);
-//                            }
-//                        }
-//                    }
-////                    for (Object item : originalList) {
-////                        if (item instanceof FormApprove) {
-////                            FormApprove formApprove = (FormApprove) item;
-////                            if (formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
-////                                filtered.add(formApprove);
-////                            }
-////                        } else {
-////                            filtered.add((FormApprove) item);
-////                        }
-////                    }
-//
-//                    results.values = filtered;
-//                    results.count = filtered.size();
-//                }
-//                return results;
-//            }
-//
-//
-//            @Override
-//            protected void publishResults(CharSequence constraint, FilterResults results) {
-//                filteredList = (List<Object>) results.values;
-//                notifyDataSetChanged(); // Cập nhật lại ListView
-//            }
-//        };
-//
-//    }
 
     private void initFilter() {
         allFormFilter = new Filter() {

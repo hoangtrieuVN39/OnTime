@@ -101,8 +101,8 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
 
 
 
-        loadDataFAFromFirebase();
-//        loadDataFAFromFirebase("NV001");
+//        loadDataFAFromFirebase();
+        loadDataFAFromFirebase("NV001");
 //        loadDataTypeFormFromDatabase();
 //        loadDataFAFromDatabase();
         Log.d("FormApproverss", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
@@ -602,9 +602,6 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         });
     }
 
-
-
-
     private void loadDataFAFromDatabase() {
         String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
                 "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
@@ -810,8 +807,8 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         Intent intent = new Intent(this, FormApproveDetailActivity.class);
         intent.putExtra("formidOfApprove", formApprove.getFormID());
         intent.putExtra("formApproveid",formApprove.getFormApproveID());
+        intent.putExtra("caller", "FormApproveDetailActivity");
         startActivity(intent);
-        Log.d("FormApprove", "onFormApprover");
         finish();
     }
 

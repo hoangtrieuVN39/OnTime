@@ -464,7 +464,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             Date start = dateTimeFormat.parse(startDateStr + " " + startTimeStr);
             Date end = dateTimeFormat.parse(endDateStr + " " + endTimeStr);
 
-            // Lấy danh sách các ca làm
             List<WorkShift> shifts = getWorkShifts();
             int totalShiftCount = 0;
 
@@ -713,7 +712,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         DatabaseReference leaveTypeRef = database.child("leavetypes");
         DatabaseReference employeeRef = database.child("employees");
 
-        // Kiểm tra LeaveTypeID từ tên
         leaveTypeRef.orderByChild("leaveTypeName").equalTo(leaveTypeName)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -762,7 +760,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             return;
         }
 
-        // Lấy người phê duyệt đầu tiên
         String approverName = approvers.remove(0);
 
         // Tìm kiếm EmployeeID của người phê duyệt
@@ -827,12 +824,10 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                             if (lastLeaveID != null && lastLeaveID.startsWith(prefix)) {
                                 // Lấy số cuối trong ID (ví dụ DT010 -> 10)
                                 int lastNumber = Integer.parseInt(lastLeaveID.substring(2));
-                                String newID = prefix + String.format("%03d", lastNumber + 1);  // Tăng số cuối lên và định dạng lại thành 3 chữ số
-
+                                String newID = prefix + String.format("%03d", lastNumber + 1);
                                 // Gọi listener trả về ID mới
                                 listener.onIDGenerated(newID);
                             } else {
-                                // Nếu không có ID hợp lệ, gán ID mặc định
                                 listener.onIDGenerated(prefix + "001");
                             }
                         } else {
@@ -854,7 +849,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Lấy tất cả các giá trị trong bảng, sắp xếp theo ID và lấy giá trị cuối cùng
-        ref.orderByChild("leaveRequestApprovalID")  // Thay "leaveRequestID" thành "leaveRequestApprovalID"
+        ref.orderByChild("leaveRequestApprovalID")
                 .limitToLast(1)  // Chỉ lấy bản ghi cuối cùng
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

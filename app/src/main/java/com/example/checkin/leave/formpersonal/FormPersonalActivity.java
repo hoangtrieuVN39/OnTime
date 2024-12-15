@@ -109,7 +109,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
 //                Log.d("filteredForms", "Dữ liệu listfilterAllForm: " + filteredForms.size());
 //            }
 //        });
-        loadDataFromFirebase("NV002",new DataLoadCallbackForm() {
+        loadDataFromFirebase("NV001",new DataLoadCallbackForm() {
             @Override
             public void onDataLoaded() {
                 fAdapter.notifyDataSetChanged();
@@ -679,6 +679,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
     public void onFormClick(Form form) {
         Intent intent = new Intent(this, FormDetailActivity.class);
         intent.putExtra("formid", form.getFormID());
+        intent.putExtra("caller", "FormPersonalActivity");
         startActivity(intent);
         finish();
     }

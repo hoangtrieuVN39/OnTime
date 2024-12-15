@@ -60,8 +60,6 @@ public class FlowApproverAdapter extends BaseAdapter {
         }
         FlowApprover flowApprover = flowApprovers.get(i);
 
-
-
         TextView txtName2 = view.findViewById(R.id.name2_txt);
         TextView txtStatus2 = view.findViewById(R.id.statusLoading2_txt);
         TextView txtNameAp = view.findViewById(R.id.nameApprove_txt);
@@ -96,38 +94,16 @@ public class FlowApproverAdapter extends BaseAdapter {
         if ("Đồng ý".equals(flowApprover.getStatusApprover())) {
             recallLineLoading2_ll.setVisibility(View.GONE);
             recallLineApprove_ll.setVisibility(View.VISIBLE);
+            recallLineReject_ll.setVisibility(View.GONE);
         } else if("Loại bỏ".equals(flowApprover.getStatusApprover())){
             recallLineLoading2_ll.setVisibility(View.GONE);
+            recallLineApprove_ll.setVisibility(View.GONE);
             recallLineReject_ll.setVisibility(View.VISIBLE);
         }else if("Chưa phê duyệt".equals(flowApprover.getStatusApprover())){
             recallLineLoading2_ll.setVisibility(View.VISIBLE);
-//            recallLineApprove_ll.setVisibility(View.VISIBLE);
+            recallLineApprove_ll.setVisibility(View.GONE);
+            recallLineReject_ll.setVisibility(View.GONE);
         }
-
-//        boolean allPending = true;
-//        boolean anyRejected = false;
-//        boolean allApproved = true;
-//
-//        for (FlowApprover approver : flowApprovers) {
-//            String status = approver.getStatusApprover();
-//            if (!"Chờ phê duyệt".equals(status)) {
-//                allPending = false;
-//            }
-//            if ("Loại bỏ".equals(status)) {
-//                anyRejected = true;
-//            }
-//            if (!"Đồng ý".equals(status)) {
-//                allApproved = false;
-//            }
-//        }
-//
-//        if (allPending) {
-//            recallPending_ll.setVisibility(View.VISIBLE);
-//        } else if (anyRejected) {
-//            endReject_ll.setVisibility(View.VISIBLE);
-//        } else {
-//            lineDone_ll.setVisibility(View.VISIBLE);
-//        }
 
         return view;
     }

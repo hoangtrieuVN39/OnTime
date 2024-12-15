@@ -31,13 +31,10 @@ public class CRUD {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
         Query query = database;
-        // Nếu có filter, chúng ta sẽ sử dụng phương thức orderByChild để lọc dữ liệu
         if (filter != null && !filter.isEmpty()) {
 //            database = (DatabaseReference) database.orderByChild(filter);  // Đặt điều kiện lọc theo trường filter
             query = database.orderByChild(filter);
         }
-
-        // Lắng nghe dữ liệu từ Firebase
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -80,11 +77,9 @@ public class CRUD {
                         }
                     }
 
-                    // Thêm dòng vào kết quả
                     results.add(row);
                 }
 
-                // Gọi callback trả về kết quả
                 callback.onDataLoaded(results);
             }
 
@@ -333,21 +328,17 @@ public class CRUD {
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
-        // Tạo Map để lưu trữ các cặp field-value
         Map<String, Object> data = new HashMap<>();
         for (int i = 0; i < fields.length; i++) {
             data.put(fields[i], values[i]);
         }
 
-        // Tạo một bản ghi mới trong Firebase
         database.push().setValue(data)
                 .addOnSuccessListener(unused -> {
-                    // Thành công, gọi callback
                     callback.onDataLoaded(Collections.singletonList(Collections.singletonList("Success")));
                     Log.d("Firebase", "Record added successfully!");
                 })
                 .addOnFailureListener(e -> {
-                    // Thất bại, log lỗi
                     Log.e("Firebase", "Failed to add record: " + e.getMessage());
                 });
     }
@@ -359,21 +350,17 @@ public class CRUD {
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference(tableName);
 
-        // Tạo Map để lưu trữ các cặp field-value
         Map<String, Object> data = new HashMap<>();
         for (int i = 0; i < fields.length; i++) {
             data.put(fields[i], values[i]);
         }
 
-        // Tạo một bản ghi mới trong Firebase
         database.child(key).setValue(data)
                 .addOnSuccessListener(unused -> {
-                    // Thành công, gọi callback
                     callback.onDataLoaded(Collections.singletonList(Collections.singletonList("Success")));
                     Log.d("Firebase", "Record added successfully!");
                 })
                 .addOnFailureListener(e -> {
-                    // Thất bại, log lỗi
                     Log.e("Firebase", "Failed to add record: " + e.getMessage());
                 });
     }
