@@ -12,11 +12,14 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.example.checkin.OnFormApproverClickListener;
 import com.example.checkin.OnFormClickListener;
+import com.example.checkin.OnFormListClickListener;
 import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.R;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.ArrayList;
@@ -29,14 +32,16 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     //    Context afContext;
     LayoutInflater inflater;
     ArrayList<Object> afForm;
-    OnFormClickListener afListener;
+    OnFormListClickListener afListener;
+    OnFormClickListener fListener;
+    OnFormApproverClickListener faListener;
     private Filter allFormFilter;
     private SQLiteDatabase database;
-    private final List<Object> originalList; // Danh sách gốc
+    private final List<Object> originalList;
     private List<Object> filteredList;
     DatabaseReference firebaseReference;
 
-    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormClickListener aflistener, SQLiteDatabase db) {
+    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormListClickListener aflistener, SQLiteDatabase db) {
         this.inflater = LayoutInflater.from(listAllFormContext);
         this.afForm = afForm;
         this.afListener = aflistener;
@@ -44,7 +49,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
         this.filteredList = new ArrayList<>(afForm);
         this.database = db;
         initFilter();
-        this.firebaseReference = firebaseReference;
+        this.firebaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -124,12 +129,12 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                 recallLayoutContainer.setVisibility(View.GONE);
             }
 
-//            view.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick (View view){
-//                    afListener.onFormClick(form.getNameForm());
-//                }
-//            });
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    afListener.onFormList(afForm.get(i));
+                }
+            });
         }
         else if(viewType == TYPE_FORM_APPROVE){
             FormApprove formApprove = (FormApprove) filteredList.get(i);
@@ -171,107 +176,25 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                 recallLayoutContainer.setVisibility(View.GONE);
             }
 
-//            view.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick (View view){
-//                    afListener.onFormClick(formApprove.getNameFormApprove());
-//                }
-//            });
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    afListener.onFormList(afForm.get(i));
+                }
+            });
         }
         return view;
     }
 
-    // Phương thức cập nhật filteredList và hiển thị danh sách đã lọc
     public void updateFilteredList(List<Object> newFilteredList) {
         this.filteredList.clear();
         this.filteredList.addAll(newFilteredList);
         notifyDataSetChanged();
     }
 
-//    private void initFilter() {
-//         allFormFilter = new Filter() {
-//            @Override
-//            protected FilterResults performFiltering(CharSequence constraint) {
-//                FilterResults results = new FilterResults();
-//
-//                if (constraint == null || constraint.length() == 0) {
-//                    // Nếu không có điều kiện lọc, trả về toàn bộ danh sách gốc
-//                    results.values = new ArrayList<>(originalList);
-//                    results.count = originalList.size();
-//                } else {
-//                    String filterPattern = constraint.toString().toLowerCase().trim();
-//                    List<FormApprove> filtered = new ArrayList<>();
-//
-//                    // Lọc qua originalList để tìm các đối tượng FormApprove có tên nhân viên phù hợp
-//                    for (Object approver : originalList) {
-//                        if (approver instanceof FormApprove) {
-//                            FormApprove formApprove = (FormApprove) approver;
-//                            if (formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
-//                                filtered.add(formApprove);
-//                            }
-//                        }
-//                    }
-////                    for (Object item : originalList) {
-////                        if (item instanceof FormApprove) {
-////                            FormApprove formApprove = (FormApprove) item;
-////                            if (formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
-////                                filtered.add(formApprove);
-////                            }
-////                        } else {
-////                            filtered.add((FormApprove) item);
-////                        }
-////                    }
-//
-//                    results.values = filtered;
-//                    results.count = filtered.size();
-//                }
-//                return results;
-//            }
-//
-//
-//            @Override
-//            protected void publishResults(CharSequence constraint, FilterResults results) {
-//                filteredList = (List<Object>) results.values;
-//                notifyDataSetChanged(); // Cập nhật lại ListView
-//            }
-//        };
-//
-//    }
 
     private void initFilter() {
         allFormFilter = new Filter() {
-//             @Override
-//            protected FilterResults performFiltering(CharSequence constraint) {
-//                FilterResults results = new FilterResults();
-//
-//                if (constraint == null || constraint.length() == 0) {
-//                    // Nếu không có điều kiện lọc, trả về danh sách gốc
-//                    results.values = new ArrayList<>(originalList);
-//                    results.count = originalList.size();
-//                } else {
-//                    String filterPattern = constraint.toString().toLowerCase().trim();
-//                    List<Object> filtered = new ArrayList<>();
-//
-//                    // Lọc qua danh sách gốc
-//                    for (Object item : originalList) {
-//                        if (item instanceof FormApprove) {
-//                            FormApprove formApprove = (FormApprove) item;
-//                            if (formApprove.getNameApprover() != null && formApprove.getNameApprover().toLowerCase().contains(filterPattern)) {
-//                                filtered.add(formApprove);
-//                            }
-//                        } else {
-//                            // Thêm các kiểm tra khác nếu cần cho các loại đối tượng khác
-//                            filtered.add(item);
-//                        }
-//                    }
-//
-//                    results.values = filtered;
-//                    results.count = filtered.size();
-//                }
-//                return results;
-//            }
-
-
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
@@ -284,7 +207,6 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
                     String filterPattern = constraint.toString().toLowerCase().trim();
                     List<Object> filtered = new ArrayList<>();
 
-                    // Lọc qua danh sách gốc
                     for (Object item : originalList) {
                         if (item instanceof Form) {
                             Form form = (Form) item;
