@@ -9,13 +9,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
@@ -46,6 +49,7 @@ public class FormDetailActivity extends Activity {
     ListView flowApperoverlv;
     SQLiteDatabase db;
     FlowApproverAdapter flowAdapter;
+    Button btnRecall;
 
     ArrayList<FlowApprover> flowApproverList = new ArrayList<>();
     ArrayList<FlowApprover> filterflowApproverList = new ArrayList<>();
@@ -54,6 +58,7 @@ public class FormDetailActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.leavedetail_layout);
 
+        btnRecall = findViewById(R.id.recall_btn);
         tvLeaveTypeName = findViewById(R.id.nkl_txt);
         tvLeaveStartTime = findViewById(R.id.timeStart_txt);
         tvLeaveEndTime = findViewById(R.id.timeEnd_txt);
@@ -74,9 +79,16 @@ public class FormDetailActivity extends Activity {
 
 
         String formid = getIntent().getStringExtra("formid");
-//        getLeaveDetails(formid);
+        getLeaveDetails(formid);
+        btnRecall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteLeaveRequestFromFirebase_Detail(formid);
+                flowAdapter.notifyDataSetChanged();
+            }
+        });
 
-        loadDataDetail("DT013", new DataLoadCallbackFormDT() {
+        loadDataDetail(formid, new DataLoadCallbackFormDT() {
             @Override
             public void onDataLoaded() {
                 Log.d("ApproverList", "Dữ liệu được tải thành công: " + filterflowApproverList.size());
@@ -125,51 +137,9 @@ public class FormDetailActivity extends Activity {
         });
 
     }
-//    private void getLeaveDetails(String leaveID) {
-//        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-//                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-//                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-//                "LeaveRequest.CountShift AS CountShift, " +
-//                "LeaveRequest.Reason AS Reason " +
-//                "FROM LeaveRequest " +
-//                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
-//                "WHERE LeaveRequest.LeaveID = ?";
-//
-//        Cursor cursor = db.rawQuery(query, new String[]{leaveID});
-//        Log.d("getLeaveDetails", "leaveID: " + leaveID);
-//
-//        if (cursor != null && cursor.moveToFirst()) {
-//            int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-//            int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-//            int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-//            int reasonIndex = cursor.getColumnIndex("Reason");
-//            int countShiftIndex = cursor.getColumnIndex("CountShift");
-//
-//            if (nameFormIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 &&
-//                    reasonIndex != -1 && countShiftIndex != -1) {
-//                String nameForm = cursor.getString(nameFormIndex);
-//                String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-//                String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-//                String reason = cursor.getString(reasonIndex);
-//                int countShift = cursor.getInt(countShiftIndex);
-//
-//                String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
-//                String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
-//
-//                tvLeaveTypeName.setText(nameForm);
-//                tvLeaveStartTime.setText(formattedStartTime);
-//                tvLeaveEndTime.setText(formattedEndTime);
-//                tvReason.setText(reason);
-//                tvCountShift.setText(String.valueOf(countShift));
-//
-//            }
-//            cursor.close();
-//        }
-//    }
     private void getLeaveDetails(String leaveID) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        // Truy xuất dữ liệu từ node leaverequests
         databaseReference.child("leaverequests").child(leaveID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -180,7 +150,6 @@ public class FormDetailActivity extends Activity {
                     String reason = snapshot.child("reason").getValue(String.class);
                     int countShift = snapshot.child("countShift").getValue(int.class);
 
-                    // Fetch LeaveType to get LeaveTypeName
                     databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
@@ -220,15 +189,12 @@ public class FormDetailActivity extends Activity {
     private void loadDataDetail(String leaveID, DataLoadCallbackFormDT callback) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        // Tạo các Map để lưu trữ dữ liệu tạm thời
         Map<String, DataSnapshot> employeesMap = new HashMap<>();
         Map<String, DataSnapshot> leaveRequestsMap = new HashMap<>();
         Map<String, DataSnapshot> leaveTypesMap = new HashMap<>();
 
-        // Xóa danh sách cũ trước khi tải mới
         flowApproverList.clear();
 
-        // Tải dữ liệu từ "employees"
         databaseReference.child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -236,7 +202,6 @@ public class FormDetailActivity extends Activity {
                     employeesMap.put(employeeSnapshot.getKey(), employeeSnapshot);
                 }
 
-                // Tải dữ liệu từ "leaverequests"
                 databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -244,7 +209,6 @@ public class FormDetailActivity extends Activity {
                             leaveRequestsMap.put(leaveRequestSnapshot.getKey(), leaveRequestSnapshot);
                         }
 
-                        // Tải dữ liệu từ "leavetypes"
                         databaseReference.child("leavetypes").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -252,7 +216,6 @@ public class FormDetailActivity extends Activity {
                                     leaveTypesMap.put(leaveTypeSnapshot.getKey(), leaveTypeSnapshot);
                                 }
 
-                                // Tải dữ liệu từ "leaverequestapprovals" và lọc theo leaveID
                                 databaseReference.child("leaverequestapprovals")
                                         .orderByChild("leaveRequestID").equalTo(leaveID)
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -262,21 +225,17 @@ public class FormDetailActivity extends Activity {
                                                     String status = approvalSnapshot.child("status").getValue(String.class);
                                                     String employeeID = approvalSnapshot.child("employeeID").getValue(String.class);
 
-                                                    // Lấy thông tin từ leaveRequestsMap
                                                     DataSnapshot leaveRequestSnapshot = leaveRequestsMap.get(leaveID);
                                                     if (leaveRequestSnapshot != null) {
 
-                                                        // Lấy thông tin từ employeesMap
                                                         DataSnapshot employeeSnapshot = employeesMap.get(employeeID);
                                                         String employeeName = employeeSnapshot != null
                                                                 ? employeeSnapshot.child("employeeName").getValue(String.class)
                                                                 : "Unknown";
-                                                        // Thêm vào danh sách
                                                         flowApproverList.add(new FlowApprover(employeeName,status));
                                                     }
                                                 }
 
-                                                // Cập nhật danh sách và adapter
                                                 filterflowApproverList.clear();
                                                 filterflowApproverList.addAll(flowApproverList);
                                                 callback.onDataLoaded();
@@ -316,6 +275,34 @@ public class FormDetailActivity extends Activity {
     public interface DataLoadCallbackFormDT {
         void onDataLoaded();
     }
+    
+    private void deleteLeaveRequestFromFirebase_Detail(String formid) {
+        DatabaseReference leaveRequestRef = FirebaseDatabase.getInstance().getReference().child("leaverequests").child(formid);
+        DatabaseReference approvalsRef = FirebaseDatabase.getInstance().getReference().child("leaverequestapprovals");
 
+        approvalsRef.orderByChild("leaveRequestID").equalTo(formid).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        // Bước 2: Xóa từng leaveRequestApproval liên quan
+                        for (DataSnapshot approvalSnapshot : task.getResult().getChildren()) {
+                            approvalSnapshot.getRef().removeValue()
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Log thành công nếu cần
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Xử lý lỗi nếu cần
+                                    });
+                        }
+                    }
+                    leaveRequestRef.removeValue()
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(FormDetailActivity.this, "Xóa thành công", Toast.LENGTH_SHORT).show();
 
+                                Intent intent = new Intent(FormDetailActivity.this, FormPersonalActivity.class);
+                                startActivity(intent);
+                            })
+                            .addOnFailureListener(e -> {
+                            });
+                });
+    }
 }
