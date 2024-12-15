@@ -143,8 +143,7 @@ public class FormDetailActivity extends Activity {
             Intent intent = null;
             if ("FormPersonalActivity".equals(caller)) {
                 intent = new Intent(this, FormPersonalActivity.class);
-            } else {
-                intent = new Intent(this, FormListActivity.class);
+            } else {intent = new Intent(this, FormListActivity.class);
             }
             startActivity(intent);
             finish();
