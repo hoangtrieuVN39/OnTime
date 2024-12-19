@@ -9,15 +9,13 @@
         android:id="@+id/fragmentContainerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/subnav_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         app:menu="@menu/navigation_menu"
-        app:theme="@style/NavBar"
-        app:itemBackground="@drawable/navbackground"
-        app:itemTextColor="@color/navtext"
-        app:itemIconTint="@color/navicon"/>
+        app:theme="@style/NavBar"/>
+
 </LinearLayout>

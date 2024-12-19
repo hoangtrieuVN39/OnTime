@@ -11,5 +11,5 @@
     <!-- Màu viền đen -->
 
     <!-- Độ bo tròn của các góc -->
-    <corners android:radius="30dp"/>
+    <corners android:radius="16dp"/>
 </shape>

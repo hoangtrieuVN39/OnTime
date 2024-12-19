@@ -1,69 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_bar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        app:theme="@style/NavBar"
-        app:menu="@menu/navigation_menu" />
 
-<!--    <com.google.android.material.appbar.AppBarLayout-->
-<!--        android:id="@+id/appbar"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_width="match_parent">-->
-
-<!--        <androidx.appcompat.widget.Toolbar-->
-<!--            android:layout_height="?attr/actionBarSize"-->
-<!--            android:layout_width="match_parent"-->
-<!--            app:layout_scrollFlags="scroll|enterAlways">-->
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:text="@string/canhan"/>-->
-<!--            <ImageButton-->
-<!--                android:layout_width="48dp"-->
-<!--                android:layout_height="48dp"-->
-<!--                android:contentDescription="TODO"-->
-<!--                android:src="@drawable/ic_logo"/>-->
-<!--        </androidx.appcompat.widget.Toolbar>-->
-
-<!--        <com.google.android.material.tabs.TabLayout-->
-<!--            android:id="@+id/tabs"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_scrollFlags="scroll|enterAlways">-->
-
-<!--            <com.google.android.material.tabs.TabItem-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:text="Cá nhân" />-->
-
-<!--            <com.google.android.material.tabs.TabItem-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:text="Phê duyệt" />-->
-
-<!--            <com.google.android.material.tabs.TabItem-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:text="Danh sách" />-->
-<!--        </com.google.android.material.tabs.TabLayout>-->
-<!--    </com.google.android.material.appbar.AppBarLayout>-->
-
-    <com.example.checkin.leave.CustomAppBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -108,7 +49,7 @@
                 <LinearLayout
                     android:id="@+id/list_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_below="@id/nav_header"
                     android:orientation="vertical">
 
@@ -149,23 +90,24 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <LinearLayout
+                    <!--                    <LinearLayout-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="match_parent"-->
+                    <!--                        android:background="@drawable/rc_color"-->
+                    <!--                        android:layout_weight="7"-->
+                    <!--                        android:padding="10dp">-->
+
+                    <ListView
+                        android:id="@+id/form_lv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/rc_color"
-                        android:padding="10dp">
-
-                        <ListView
-                            android:id="@+id/form_lv"
-                            android:layout_width="match_parent"
-                            android:layout_height="613dp"
-                            android:divider="@android:color/transparent"
-                            android:dividerHeight="8dp" />
-                    </LinearLayout>
+                        android:divider="@android:color/transparent"
+                        android:dividerHeight="8dp" />
+                    <!--                    </LinearLayout>-->
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
 
     <ImageButton
         android:id="@+id/addForm_btn"
@@ -178,6 +120,5 @@
         android:layout_marginBottom="0dp"
         android:background="@android:color/transparent"
         android:src="@drawable/add_circle" />
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

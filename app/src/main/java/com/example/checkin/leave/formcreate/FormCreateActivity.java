@@ -91,7 +91,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
     Set<String> listselectedApprovers = new HashSet<>();
     private ApproverBTAdapter ABTadapter;
     private ArrayList<ApproverBT> approverList;
-    //    String selectedApprover;
     FormAdapter fAdapter;
 
     @Override
@@ -116,7 +115,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         reasonEditText = findViewById(R.id.reason_tedit);
         approverNameText = findViewById(R.id.approver_name_text);
         createBtn = findViewById(R.id.createForm_btn);
-//        ListApproverForm = new ArrayList<>();
 
 
         try {
@@ -126,7 +124,8 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             throw new RuntimeException(e);
         }
 
-        loadDataNameApproveFromDatabase();
+//        loadDataNameApproveFromDatabase();
+        loadDataNameApproveFromFirebase();
         List<String> leaveTypes = getLeaveTypes();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, leaveTypes);
@@ -145,17 +144,10 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 
         approverList = getApprovers();
         ABTadapter = new ApproverBTAdapter(this, approverList, approverName -> {
-            // Thêm người phê duyệt vào danh sách đã chọn
             selectedApprovers.add(approverName);
-            // Cập nhật giao diện hoặc xử lý sự kiện sau khi chọn người phê duyệt
             updateApproversFlow();
         });
 
-//        shiftMorningBtn.setOnClickListener(v -> selectShift(shiftMorningBtn));
-//
-//        shiftAfternoonBtn.setOnClickListener(v -> selectShift(shiftAfternoonBtn));
-//
-//        shiftNightBtn.setOnClickListener(v -> selectShift(shiftNightBtn));
         setupShiftButtons();
         startDateEditText.setOnClickListener(v -> showDatePicker(startDateEditText));
         endDateEditText.setOnClickListener(v -> showDatePicker(endDateEditText));
@@ -181,9 +173,8 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 1. Lấy thông tin từ các trường nhập liệu
                 String leaveTypeName = typeformNameSpinner.getSelectedItem().toString();
-                String employeeID = "Employee123";
+                String employeeID = "NV002";
                 String startDate = startDateEditText.getText().toString();
                 String startTime = startHourEditText.getText().toString();
                 String endDate = endDateEditText.getText().toString();
@@ -191,12 +182,9 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                 String reason = reasonEditText.getText().toString();
                 int countShift = Integer.parseInt(numberShiftSubmitText.getText().toString());
 
-                // 2. Lấy danh sách những người phê duyệt đã chọn từ flowApprover_lnl
-                List<String> approvers = getSelectedApprovers();// Implement phương thức này để lấy danh sách EmployeeID của những người phê duyệt
+                List<String> approvers = getSelectedApprovers();
 
-                // 3. Gọi DatabaseHelper để lưu dữ liệu
 
-//                addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime,countShift, reason, approvers);
                 if (!leaveTypeName.isEmpty() &&
                         !employeeID.isEmpty() &&
                         !startDate.isEmpty() &&
@@ -219,7 +207,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                             // Clear input fields
                             clearInputFields();
                         }
-                    }, 3000);
+                    }, 4000);
                 } else {
                     Toast.makeText(FormCreateActivity.this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
                 }
@@ -268,7 +256,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                 }
             }
         }
-        return approvers;  // Trả về danh sách tên người phê duyệt đã chọn
+        return approvers;
     }
 
 //    private List<String> getSelectedApprovers() {
@@ -405,12 +393,10 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
     }
 
     private void selectShift(Button newButton, String shiftType) {
-        // Kiểm tra nếu button mới được chọn là button đã được chọn trước đó
         if (selectedButton != null && selectedButton == newButton) {
-            // Nếu button đã được chọn, thì hủy chọn
             resetButtons();
             clearShiftInfo();
-            selectedButton = null; // Đặt lại selectedButton
+            selectedButton = null;
         } else {
             resetButtons();
             newButton.setBackgroundResource(R.drawable.rc_button_chosen);
@@ -453,16 +439,13 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 
     private void calculateTotalWorkShifts() {
 
-        // Định dạng ngày giờ
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
-        // Kiểm tra xem có nút ca nào được chọn không
         if (selectedButton != null) {
             numberShiftSubmitText.setText("1");
             return;
         }
 
-        // Lấy giá trị từ các trường EditText
         String startDateStr = startDateEditText.getText().toString().trim();
         String startTimeStr = startHourEditText.getText().toString().trim();
         String endDateStr = endDateEditText.getText().toString().trim();
@@ -481,7 +464,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             Date start = dateTimeFormat.parse(startDateStr + " " + startTimeStr);
             Date end = dateTimeFormat.parse(endDateStr + " " + endTimeStr);
 
-            // Lấy danh sách các ca làm
             List<WorkShift> shifts = getWorkShifts();
             int totalShiftCount = 0;
 
@@ -554,10 +536,8 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 //            }
 //        });
         confirmBtn.setOnClickListener(v -> {
-            // Lấy đối tượng ApproverBT đã được chọn
             ApproverBT selectedApprover = approverBTAdapter.getSelectedApproverName();
 
-            // Kiểm tra xem selectedApprover có null không trước khi truy cập phương thức getNameApproveform()
             if (selectedApprover != null && selectedApprover.getNameApproveform() != null) {
                 ABTadapter.addApprover(selectedApprover.getNameApproveform());
                 Log.d("approvers", "Danh sách hiện tại: " + selectedApprovers);
@@ -565,7 +545,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                 bottomSheetDialog.dismiss(); // Đóng BottomSheet sau khi thêm người phê duyệt
             }
             else {
-                // Thông báo nếu không có người phê duyệt được chọn hoặc tên người phê duyệt là null
                 Toast.makeText(FormCreateActivity.this, "Chưa chọn người phê duyệt", Toast.LENGTH_SHORT).show();
             }
         });
@@ -648,24 +627,19 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         EditText endTime = findViewById(R.id.EndHour_tedit);
         TextView totalWork = findViewById(R.id.numberShiftSubmit_txt);
 
-        // Định dạng giờ từ "HH:mm:ss" thành "HH:mm"
         String formattedStartTime = formatTime(shift.getStartTime());
         String formattedEndTime = formatTime(shift.getEndTime());
 
-        // Set the start and end time of the selected shift
         startTime.setText(formattedStartTime);
         endTime.setText(formattedEndTime);
 
-        // Set start and end dates to today's date
         String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
         startDate.setText(today);
         endDate.setText(today);
 
-        // Set the total work shift count to 1
         totalWork.setText("1");
     }
 
-    // Hàm để định dạng thời gian từ "HH:mm:ss" thành "HH:mm"
     private String formatTime(String time) {
         try {
             SimpleDateFormat originalFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
@@ -674,17 +648,10 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             return targetFormat.format(date);
         } catch (Exception e) {
             e.printStackTrace();
-            return time; // Trả về thời gian gốc nếu có lỗi
+            return time;
         }
     }
 
-    //    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        if (db != null && db.isOpen()) {
-//            db.close();
-//        }
-//    }
     private void loadDataNameApproveFromDatabase() {
         List<List> employees = DBHelper.loadDataHandler("Employee", null, null);
         ListApproverForm.clear();
@@ -692,8 +659,29 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             String nameApprover = row.get(1);
             ListApproverForm.add(new ApproverBT(nameApprover));
         }
-//        fAdapter.notifyDataSetChanged();
     }
+
+    private void loadDataNameApproveFromFirebase() {
+        FirebaseDatabase.getInstance().getReference().child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ListApproverForm.clear();
+                for (DataSnapshot employeeSnapshot : snapshot.getChildren()) {
+                    String nameApprover = employeeSnapshot.child("employeeName").getValue(String.class);
+
+                    if (nameApprover != null) {
+                        ListApproverForm.add(new ApproverBT(nameApprover));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseError", "Failed to load employees", error.toException());
+            }
+        });
+    }
+
 
     public List<WorkShift> getWorkShifts() {
         List<WorkShift> shifts = new ArrayList<>();
@@ -712,95 +700,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         return shifts;
     }
 
-//    public void addLeaveRequest(String leaveTypeName, String employeeID,
-//                                String startDate, String startTime,
-//                                String endDate, String endTime, int countShift,
-//                                String reason, List<String> approvers) {
-//
-//        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-//        DatabaseReference leaveRequestRef = database.child("leaverequests");
-//        DatabaseReference leaveApprovalRef = database.child("leaverequestapprovals");
-//        DatabaseReference leaveTypeRef = database.child("leavetypes");
-//        DatabaseReference employeeRef = database.child("employees"); // Thêm tham chiếu đến bảng employees
-//
-//        // Kiểm tra LeaveTypeID từ tên
-//        leaveTypeRef.orderByChild("leaveTypeName").equalTo(leaveTypeName)
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        if (!snapshot.exists()) {
-//                            Log.e("AddLeaveRequest", "Loại nghỉ phép không tồn tại: " + leaveTypeName);
-//                            return;
-//                        }
-//
-//                        // Lấy LeaveTypeID
-//                        String leaveTypeID = snapshot.getChildren().iterator().next().getKey();
-//                        if (leaveTypeID == null) return;
-//
-//                        // Tạo LeaveID và các giá trị cần thiết
-//                        String createdTime = getCurrentDateTime();
-//                        String leaveStartTime = startDate + " " + startTime;
-//                        String leaveEndTime = endDate + " " + endTime;
-////                        int countshift = countShift;
-//
-//                        // Gọi generateNewFirebaseID để tạo ID mới cho LeaveRequest
-//                        generateNewFirebaseID("DT", "leaverequests", new OnIDGeneratedListener() {
-//                            @Override
-//                            public void onIDGenerated(String leaveID) {
-//                                // Thêm dữ liệu vào bảng LeaveRequest
-//                                LeaveRequest leaveRequest = new LeaveRequest(leaveID, createdTime, "Chưa phê duyệt",
-//                                        leaveTypeID, employeeID, leaveStartTime, leaveEndTime, reason,countShift);
-//                                leaveRequestRef.child(leaveID).setValue(leaveRequest)
-//                                        .addOnSuccessListener(aVoid -> {
-//                                            Log.d("AddLeaveRequest", "Inserted LeaveRequest successfully: " + leaveID);
-//
-//                                            // Thêm người phê duyệt vào LeaveRequestApproval
-//                                            for (String approverName : approvers) {
-//                                                // Tìm kiếm employeeID từ tên nhân viên
-//                                                employeeRef.orderByChild("employeeName").equalTo(approverName)
-//                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-//                                                            @Override
-//                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                                                if (!snapshot.exists()) {
-//                                                                    Log.e("AddLeaveRequest", "Không tìm thấy nhân viên: " + approverName);
-//                                                                    return;
-//                                                                }
-//
-//                                                                // Lấy employeeID từ tên nhân viên
-//                                                                String approverID = snapshot.getChildren().iterator().next().getKey();
-//                                                                Log.d("AddLeaveRequest", "Found approverID: " + approverID);
-//                                                                if (approverID == null) return;
-//
-//                                                                // Tiến hành thêm vào bảng leaveRequestApprovals
-//                                                                generateNewFirebaseLAPID("LAP", "leaverequestapprovals", new OnIDGeneratedListener() {
-//                                                                    @Override
-//                                                                    public void onIDGenerated(String leaveApprovalID) {
-//                                                                        LeaveRequestApproval leaveApproval = new LeaveRequestApproval(leaveApprovalID, leaveID, approverID, "Chưa phê duyệt");
-//                                                                        leaveApprovalRef.child(leaveApprovalID).setValue(leaveApproval)
-//                                                                                .addOnSuccessListener(aVoid1 -> Log.d("AddLeaveRequest", "Inserted approver successfully: " + approverID))
-//                                                                                .addOnFailureListener(e -> Log.e("AddLeaveRequest", "Error adding approver: " + approverID, e));
-//                                                                    }
-//                                                                });
-//                                                            }
-//
-//                                                            @Override
-//                                                            public void onCancelled(@NonNull DatabaseError error) {
-//                                                                Log.e("AddLeaveRequest", "Error fetching employee data: " + error.getMessage());
-//                                                            }
-//                                                        });
-//                                            }
-//                                        })
-//                                        .addOnFailureListener(e -> Log.e("AddLeaveRequest", "Error adding LeaveRequest", e));
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Log.e("AddLeaveRequest", "Database error: " + error.getMessage());
-//                    }
-//                });
-//    }
 
     public void addLeaveRequest(String leaveTypeName, String employeeID,
                                 String startDate, String startTime,
@@ -813,7 +712,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         DatabaseReference leaveTypeRef = database.child("leavetypes");
         DatabaseReference employeeRef = database.child("employees");
 
-        // Kiểm tra LeaveTypeID từ tên
         leaveTypeRef.orderByChild("leaveTypeName").equalTo(leaveTypeName)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -823,11 +721,9 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                             return;
                         }
 
-                        // Lấy LeaveTypeID
                         String leaveTypeID = snapshot.getChildren().iterator().next().getKey();
                         if (leaveTypeID == null) return;
 
-                        // Tạo LeaveID và các giá trị cần thiết
                         String createdTime = getCurrentDateTime();
                         String leaveStartTime = startDate + " " + startTime;
                         String leaveEndTime = endDate + " " + endTime;
@@ -861,10 +757,9 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
     private void addApproversRecursively(List<String> approvers, String leaveID, DatabaseReference leaveApprovalRef, DatabaseReference employeeRef) {
         if (approvers.isEmpty()) {
             Log.d("AddLeaveRequest", "All approvers have been added.");
-            return; // Kết thúc khi danh sách trống
+            return;
         }
 
-        // Lấy người phê duyệt đầu tiên
         String approverName = approvers.remove(0);
 
         // Tìm kiếm EmployeeID của người phê duyệt
@@ -912,13 +807,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                 });
     }
 
-
-
-    //    private String generateNewFirebaseID(String prefix, String tableName) {
-//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(tableName);
-//        String uniqueKey = ref.push().getKey();
-//        return uniqueKey != null ? prefix + uniqueKey.substring(0, 5).toUpperCase() : prefix + "XXXX";
-//    }
     private void generateNewFirebaseID(String prefix, String tableName, OnIDGeneratedListener listener) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(tableName);
 
@@ -936,12 +824,10 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                             if (lastLeaveID != null && lastLeaveID.startsWith(prefix)) {
                                 // Lấy số cuối trong ID (ví dụ DT010 -> 10)
                                 int lastNumber = Integer.parseInt(lastLeaveID.substring(2));
-                                String newID = prefix + String.format("%03d", lastNumber + 1);  // Tăng số cuối lên và định dạng lại thành 3 chữ số
-
+                                String newID = prefix + String.format("%03d", lastNumber + 1);
                                 // Gọi listener trả về ID mới
                                 listener.onIDGenerated(newID);
                             } else {
-                                // Nếu không có ID hợp lệ, gán ID mặc định
                                 listener.onIDGenerated(prefix + "001");
                             }
                         } else {
@@ -963,7 +849,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Lấy tất cả các giá trị trong bảng, sắp xếp theo ID và lấy giá trị cuối cùng
-        ref.orderByChild("leaveRequestApprovalID")  // Thay "leaveRequestID" thành "leaveRequestApprovalID"
+        ref.orderByChild("leaveRequestApprovalID")
                 .limitToLast(1)  // Chỉ lấy bản ghi cuối cùng
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -1016,18 +902,4 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
     }
 
 
-//    @Override
-//    public void onFormNameClick(Set<String> updatedApprovers) {
-//        selectedApprovers = updatedApprovers;
-//    }
-
-//    @Override
-//    public void onFormClick(String nameForm) {
-//
-//    }
-//
-//    @Override
-//    public void onFormClick(Form form) {
-//
-//    }
 }

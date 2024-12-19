@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.checkin.OnFormApproverClickListener;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
 import com.example.checkin.models.FormApprove;
@@ -23,16 +25,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FormApproveAdapter extends BaseAdapter {
 
     Context faContext;
     ArrayList<FormApprove> faForm;
-    OnFormClickListener faListener;
+    OnFormApproverClickListener faListener;
     private final SQLiteDatabase database;
     DatabaseReference firebaseReference;
 
-    public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormClickListener falistener, SQLiteDatabase db) {
+    public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormApproverClickListener falistener, SQLiteDatabase db) {
         this.faContext = listFormApproveContext;
         this.faForm = faForm;
         this.faListener = falistener;
@@ -96,14 +102,12 @@ public class FormApproveAdapter extends BaseAdapter {
 
         if ("Đồng ý".equals(formApprove.getStatusApprover())) {
             txtStatusApprove.setText("Đồng ý");
-//            txtStatusApprove.setText(formApprove.getStatusApprover());
             txtStatusApprove.setTextColor(Color.parseColor("#D9AF03"));
             txtStatusApprove.setVisibility(View.VISIBLE);
             recallLayoutContainer.setVisibility(View.GONE);
         }
         else if ("Loại bỏ".equals(formApprove.getStatusApprover())) {
             txtStatusApprove.setText("Loại bỏ");
-//                txtStatusApprove.setText(formApprove.getStatusApprover());
                 txtStatusApprove.setTextColor(Color.parseColor("#575E72"));
                 txtStatusApprove.setVisibility(View.VISIBLE);
                 recallLayoutContainer.setVisibility(View.GONE);
@@ -113,67 +117,108 @@ public class FormApproveAdapter extends BaseAdapter {
             txtStatusApprove.setVisibility(View.VISIBLE);
             recallLayoutContainer.setVisibility(View.GONE);
 
-            btnApprove.setOnClickListener(v -> updateStatusInFirebase(formApprove, "Đồng ý", i));
-            btnReject.setOnClickListener(v -> updateStatusInFirebase(formApprove, "Loại bỏ", i));
+            btnApprove.setOnClickListener(v -> updateStatusForm(formApprove, "Đồng ý", i));
+            btnReject.setOnClickListener(v -> updateStatusForm(formApprove, "Loại bỏ", i));
 
-//            txtStatusApprove.setOnClickListener(v -> {
-//                if (recallLayoutContainer.getVisibility() == View.GONE) {
-//                    txtStatusApprove.setVisibility(View.GONE); // Ẩn status
-//                    recallLayoutContainer.setVisibility(View.VISIBLE); // Hiển thị recallLayout
-//                } else {
-//                    txtStatusApprove.setVisibility(View.VISIBLE); // Hiển thị lại status
-//                    recallLayoutContainer.setVisibility(View.GONE); // Ẩn recallLayout
-//                }
-//            });
         }
-
         txtStatusApprove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if ("Chưa phê duyệt".equals(formApprove.getStatusApprover())) {
-                    txtStatusApprove.setVisibility(View.GONE); // Ẩn status
-                    recallLayoutContainer.setVisibility(View.VISIBLE); // Hiển thị recallLayout
+                    txtStatusApprove.setVisibility(View.GONE);
+                    recallLayoutContainer.setVisibility(View.VISIBLE);
                 } else {
-                    txtStatusApprove.setVisibility(View.VISIBLE); // Hiển thị lại status
-                    recallLayoutContainer.setVisibility(View.GONE); // Ẩn recallLayout
+                    txtStatusApprove.setVisibility(View.VISIBLE);
+                    recallLayoutContainer.setVisibility(View.GONE);
                 }
             }
         });
 
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                faListener.onFormApprover(faForm.get(i));
+            }
+        });
         return view;
     }
 
-    private void updateStatusInFirebase(FormApprove formApprove, String newStatus, int position) {
-        // Cập nhật trạng thái của người phê duyệt hiện tại
+
+
+    private void updateStatusForm(FormApprove formApprove, String newStatus, int position) {
         firebaseReference.child("leaverequestapprovals")
                 .orderByChild("leaveRequestID")
                 .equalTo(formApprove.getFormID())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        boolean anyRejected = false;
-                        boolean allApproved = true;
+                        List<DataSnapshot> approvalSnapshots = new ArrayList<>();
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            approvalSnapshots.add(ds);
+                        }
 
-                        // Duyệt qua tất cả các phê duyệt liên quan đến đơn từ
-                        for (DataSnapshot approvalSnapshot : snapshot.getChildren()) {
-                            String currentStatus = approvalSnapshot.child("status").getValue(String.class);
+                        Collections.sort(approvalSnapshots, (a, b) ->
+                                a.getKey().compareTo(b.getKey())
+                        );
 
-                            // Cập nhật trạng thái phê duyệt nếu là người hiện tại
-                            if (approvalSnapshot.getKey().equals(formApprove.getFormApproveID())) {
-                                approvalSnapshot.getRef().child("status").setValue(newStatus);
-                                currentStatus = newStatus;
-                            }
+                        boolean canUpdate = true;
+                        int currentIndex = -1;
+                        String prevStatus = "Chưa phê duyệt";
 
-                            // Kiểm tra các điều kiện
-                            if ("Loại bỏ".equals(currentStatus)) {
-                                anyRejected = true;
-                            }
-                            if (!"Đồng ý".equals(currentStatus)) {
-                                allApproved = false;
+                        for (int i = 0; i < approvalSnapshots.size(); i++) {
+                            if (approvalSnapshots.get(i).getKey().equals(formApprove.getFormApproveID())) {
+                                currentIndex = i;
+                                break;
                             }
                         }
 
-                        // Xác định trạng thái tổng thể của đơn từ
+                        for (int i = 0; i < currentIndex; i++) {
+                            prevStatus = approvalSnapshots.get(i)
+                                    .child("status")
+                                    .getValue(String.class);
+
+                            if (!"Đồng ý".equals(prevStatus) || "Loại bỏ".equals(prevStatus)) {
+                                canUpdate = false;
+                                break;
+                            }
+                        }
+
+                        if (!canUpdate) {
+                            if (prevStatus.equals("Chưa phê duyệt")){
+                                Toast.makeText(faContext, "Không được phép phê duyệt. Vui lòng chờ người phê duyệt trước.", Toast.LENGTH_SHORT).show();
+                            }
+                            else if(prevStatus.equals("Loại bỏ")) {
+                                Toast.makeText(faContext, "Không thể phê duyệt vì có người khác đã từ chối.", Toast.LENGTH_SHORT).show();
+                            }
+                            return;
+                        }
+
+                        boolean anyRejected = false;
+                        boolean allApproved = true;
+
+                        if ("Loại bỏ".equals(newStatus)) {
+                            for (DataSnapshot approvalSnapshot : snapshot.getChildren()) {
+                                approvalSnapshot.getRef().child("status").setValue("Loại bỏ");
+                            }
+                            anyRejected = true;
+                        } else {
+                            for (DataSnapshot approvalSnapshot : snapshot.getChildren()) {
+                                String currentStatus = approvalSnapshot.child("status").getValue(String.class);
+
+                                if (approvalSnapshot.getKey().equals(formApprove.getFormApproveID())) {
+                                    approvalSnapshot.getRef().child("status").setValue(newStatus);
+                                    currentStatus = newStatus;
+                                }
+
+                                if ("Loại bỏ".equals(currentStatus)) {
+                                    anyRejected = true;
+                                }
+                                if (!"Đồng ý".equals(currentStatus)) {
+                                    allApproved = false;
+                                }
+                            }
+                        }
+
                         String finalStatus = "Chưa phê duyệt";
                         if (anyRejected) {
                             finalStatus = "Loại bỏ";
@@ -181,13 +226,11 @@ public class FormApproveAdapter extends BaseAdapter {
                             finalStatus = "Đồng ý";
                         }
 
-                        // Cập nhật trạng thái của leaverequest
                         firebaseReference.child("leaverequests")
                                 .child(formApprove.getFormID())
                                 .child("status")
                                 .setValue(finalStatus);
 
-                        // Cập nhật trạng thái trong adapter và làm mới danh sách hiển thị
                         formApprove.setStatusApprover(newStatus);
                         faForm.set(position, formApprove);
                         notifyDataSetChanged();
@@ -195,34 +238,10 @@ public class FormApproveAdapter extends BaseAdapter {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("FirebaseUpdate", "Failed to update status", error.toException());
+                        Log.e("FirebaseUpdate", "Lỗi cập nhật trạng thái", error.toException());
                     }
                 });
     }
 
 
-//    private void updateStatusInFirebase(FormApprove formApprove, String newStatus, int position) {
-//        firebaseReference.child("leaverequestapprovals")
-//                .orderByChild("leaveRequestID")
-//                .equalTo(formApprove.getFormApproveID())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        for (DataSnapshot approvalSnapshot : snapshot.getChildren()) {
-//                            // Cập nhật trạng thái trong Firebase
-//                            approvalSnapshot.getRef().child("status").setValue(newStatus);
-//
-//                            // Cập nhật dữ liệu trong adapter
-//                            formApprove.setStatusApprover(newStatus);
-//                            faForm.set(position, formApprove);
-//                            notifyDataSetChanged();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Log.e("FirebaseUpdate", "Failed to update status", error.toException());
-//                    }
-//                });
-//    }
 }

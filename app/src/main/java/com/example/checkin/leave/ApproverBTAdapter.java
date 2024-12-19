@@ -133,52 +133,6 @@ public class ApproverBTAdapter extends BaseAdapter implements Filterable {
             }
         }
 
-//        if (isAlreadySelected) {
-//            // Nếu người phê duyệt đã được chọn, làm mờ item
-//            view.setAlpha(0.5f);  // Giảm độ sáng
-//            btnApprover.setEnabled(false); // Không cho phép chọn lại
-//            checkmark.setVisibility(View.GONE); // Ẩn dấu tick
-//        } else {
-//            // Nếu người phê duyệt chưa được chọn
-//            if (isItemSelected && i == selectedPosition) {
-//                // Nếu item đang được chọn
-//                checkmark.setVisibility(View.VISIBLE);
-//                view.setAlpha(1.0f); // Item được chọn sẽ hiển thị rõ
-//            } else {
-//                checkmark.setVisibility(View.GONE);
-//                view.setAlpha(1.0f); // Các item không được chọn sẽ không bị mờ
-//                btnApprover.setEnabled(true); // Cho phép chọn các item chưa được chọn
-//            }
-//        }
-
-
-//        if (isAlreadySelected) {
-//            // Nếu người phê duyệt đã được chọn
-//            view.setAlpha(0.5f);  // Giữ nguyên độ sáng
-//            btnApprover.setEnabled(false); // Không cho phép chọn lại
-//            checkmark.setVisibility(View.GONE); // Hiển thị dấu tích
-//        }
-//
-//
-//        if (isItemSelected) {
-//            if (i == selectedPosition) {
-//                checkmark.setVisibility(View.VISIBLE);
-//                view.setAlpha(1.0f); // Item được chọn sẽ hiển thị rõ
-//            } else if (isAlreadySelected){
-//                checkmark.setVisibility(View.GONE);
-//                view.setAlpha(0.5f); // Nếu người này đã được chọn, thì mờ đi
-//                btnApprover.setEnabled(false); // Không cho chọn lại
-//            } else {
-//                checkmark.setVisibility(View.GONE);
-//                view.setAlpha(0.5f);
-//                btnApprover.setEnabled(false);// Các item không được chọn sẽ bị mờ
-//            }
-//
-//        } else {
-//            checkmark.setVisibility(View.GONE);
-//            view.setAlpha(1.0f);
-//            btnApprover.setEnabled(true);// Nếu chưa chọn item nào, tất cả item đều hiển thị rõ
-//        }
 
         btnApprover.setOnClickListener(v -> {
             if (isItemSelected && i == selectedPosition) {
@@ -244,7 +198,7 @@ public class ApproverBTAdapter extends BaseAdapter implements Filterable {
     }
     public ApproverBT getSelectedApproverName() {
         if (selectedPosition != -1 && selectedPosition < filteredList.size()) {
-            return filteredList.get(selectedPosition); // Trả về người phê duyệt đã chọn
+            return filteredList.get(selectedPosition);
         }
         return null;
     }
