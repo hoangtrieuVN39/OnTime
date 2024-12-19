@@ -19,11 +19,18 @@ public class FormViewModel extends ViewModel {
         this.employeeID = parent.getEmployeeID();
     }
 
+    public String getEmployeeID() {
+        return employeeID;
+    }
 
     public void onFilterBtnClicked() {
     }
 
     public void setCurrentFragment(int parentFragment) {
         currentFragmentID = parentFragment;
+    }
+
+    public int getCurrentFragment() {
+        return currentFragmentID;
     }
 }

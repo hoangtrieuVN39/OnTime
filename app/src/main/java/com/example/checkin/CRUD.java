@@ -23,10 +23,10 @@ import java.util.Map;
 public class CRUD {
     DatabaseReference database;
 
-//    public CRUD(Context context){
-//        FirebaseApp.initializeApp(context);
-//        database = FirebaseDatabase.getInstance().getReference();
-//    }
+    public CRUD(Context context){
+        FirebaseApp.initializeApp(context);
+        database = FirebaseDatabase.getInstance().getReference();
+    }
 
     public DatabaseReference getDatabase() {
         return database;

@@ -48,7 +48,7 @@ public class FormFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = MainleaveLayoutBinding.inflate(inflater, container, false);
 
-        viewModel = new ViewModelProvider(this).get(FormViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
         viewModel.loadDataFromParent(parentViewModel);
 
         return binding.getRoot();

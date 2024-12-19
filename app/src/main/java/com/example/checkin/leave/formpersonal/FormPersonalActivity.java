@@ -84,12 +84,8 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_form_personal);
 
-//        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formPersonal);
-//        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
-
         setListMonth();
         setListStatus();
-
 
         try {
             DBHelper = new DatabaseHelper(this, null);
@@ -575,7 +571,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         }
     }
 
-
     public void setListMonth() {
         listMonth.add(new MonthSpinner("Chọn thời gian"));
         listMonth.add(new MonthSpinner("Tuần này"));
@@ -585,13 +580,13 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         listMonth.add(new MonthSpinner("Năm này"));
         listMonth.add(new MonthSpinner("Năm trước"));
     }
+
     public void setListStatus(){
         listStatus.add(new StatusSpinner("Chọn trạng thái"));
         listStatus.add(new StatusSpinner("Đồng ý"));
         listStatus.add(new StatusSpinner("Chưa phê duyệt"));
         listStatus.add(new StatusSpinner("Loại bỏ"));
     }
-
 
     private void showBottomSheetDialog() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(FormPersonalActivity.this, R.style.BottomSheetDialogTheme);
