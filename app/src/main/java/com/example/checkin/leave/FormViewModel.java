@@ -1,6 +1,9 @@
 package com.example.checkin.leave;
 
-import androidx.fragment.app.Fragment;
+import android.view.View;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.checkin.BaseViewModel;
@@ -13,6 +16,12 @@ public class FormViewModel extends ViewModel {
     private String employeeID;
     int currentFragmentID;
 
+    public MutableLiveData<View.OnClickListener> onBtnFilterClicked = new MutableLiveData<View.OnClickListener>(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+        }
+    });
+
     public void loadDataFromParent(BaseViewModel _parent){
         this.parent = _parent;
         this.dbHelper = parent.getDbHelper();
@@ -23,14 +32,19 @@ public class FormViewModel extends ViewModel {
         return employeeID;
     }
 
-    public void onFilterBtnClicked() {
-    }
-
     public void setCurrentFragment(int parentFragment) {
         currentFragmentID = parentFragment;
     }
 
     public int getCurrentFragment() {
         return currentFragmentID;
+    }
+
+    public void setOnBtnFilterClicked(View.OnClickListener _onBtnFilterClicked) {
+        onBtnFilterClicked.setValue(_onBtnFilterClicked);
+    }
+
+    public LiveData<View.OnClickListener> getOnFilterBtnClicked() {
+        return onBtnFilterClicked;
     }
 }

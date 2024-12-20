@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -27,6 +28,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener;
 import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.Objects;
 
 public class FormFragment extends Fragment {
 
@@ -66,15 +69,40 @@ public class FormFragment extends Fragment {
 
         toolbar = binding.toolbar;
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
+        navController.navigate(R.id.formListFragment);
 
         tabLayout = binding.tabLayout;
         setupTabLayout();
 
-        viewModel.setCurrentFragment(R.id.formPersonalFragment);
-        binding.buttonlistFilter.setOnClickListener(new View.OnClickListener() {
+        viewModel.setCurrentFragment(R.id.formListFragment);
+//        binding.buttonlistFilter.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                viewModel.onFilterBtnClicked();
+//            }
+//        });
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        System.out.println(viewModel.getOnFilterBtnClicked());
+        viewModel.getOnFilterBtnClicked().observe(getViewLifecycleOwner(), new Observer<View.OnClickListener>() {
             @Override
-            public void onClick(View v) {
-                viewModel.onFilterBtnClicked();
+            public void onChanged(View.OnClickListener newValue) {
+                if (!Objects.equals(newValue, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                })){
+                    binding.buttonlistFilter.setVisibility(View.VISIBLE);
+                    binding.buttonlistFilter.setOnClickListener(newValue);
+                } else {
+                    binding.buttonlistFilter.setVisibility(View.INVISIBLE);
+                    binding.buttonlistFilter.setOnClickListener(null);
+                }
             }
         });
     }

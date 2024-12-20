@@ -3,6 +3,7 @@ package com.example.checkin.leave.formlist;
 import static com.example.checkin.leave.formapprove.FormApproveActivity.formatDate;
 import static com.example.checkin.leave.formpersonal.FormPersonalActivity.formatDateTime;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ import com.example.checkin.leave.AllFormAdapter;
 import com.example.checkin.leave.FormViewModel;
 import com.example.checkin.leave.MonthSpinnerAdapter;
 import com.example.checkin.leave.StatusSpinnerAdapter;
+import com.example.checkin.leave.formdetail.FormApproveDetailActivity;
+import com.example.checkin.leave.formdetail.FormDetailActivity;
 import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.models.MonthSpinner;
@@ -145,17 +148,11 @@ public class FormListFragment extends Fragment {
         spThang.setAdapter(msAdapter);
 
         lvAllForm = binding.formListLv;
-        afAdapter = new AllFormAdapter(getContext(),listfilterAllForm, new OnFormClickListener() {
-            @Override
-            public void onFormClick(Form form) {
-
-            }
-        },db);
+        afAdapter = new AllFormAdapter(requireActivity(),listAllForm,db);
         lvAllForm.setAdapter(afAdapter);
 
 //        btnFilter = binding.;
         searchView = binding.nhanvienlistSearch;
-
 
         spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -199,7 +196,34 @@ public class FormListFragment extends Fragment {
             }
         });
 
+        viewModel.setOnBtnFilterClicked(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterBottomSheetDialog();
+            }
+        });
+
         return binding.getRoot();
+    }
+
+    private void onFormList(Object formlist) {
+        if (formlist instanceof Form){
+            Form form = (Form) formlist;
+            Intent intent = new Intent(requireActivity(), FormDetailActivity.class);
+            intent.putExtra("formid", form.getFormID());
+            intent.putExtra("caller", "FormListActivity");
+            startActivity(intent);
+            requireActivity().finish();
+        }
+        else if(formlist instanceof FormApprove){
+            FormApprove formApprove = (FormApprove) formlist;
+            Intent intent = new Intent(requireActivity(), FormApproveDetailActivity.class);
+            intent.putExtra("formidOfApprove", formApprove.getFormID());
+            intent.putExtra("formApproveid",formApprove.getFormApproveID());
+            intent.putExtra("caller", "FormListActivity");
+            startActivity(intent);
+            requireActivity().finish();
+        }
     }
 
     private void loadDataFApproverFromFirebase(String targetEmployee, FormListActivity.DataLoadCallback callback) {
