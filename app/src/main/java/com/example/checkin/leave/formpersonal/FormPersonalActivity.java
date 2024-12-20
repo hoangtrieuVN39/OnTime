@@ -84,9 +84,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.formpersonal_layout);
 
-//        Utils.onCreateSubNav(this, findViewById(R.id.subnav_bar), R.id.formPersonal);
-//        Utils.onCreateNav(this, findViewById(R.id.nav_bar), R.id.leave);
-
         setListMonth();
         setListStatus();
 
@@ -192,7 +189,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         }
     }
 
-
     private void loadDataTypeFormFromDatabase() {
         List<List> leaveType = DBHelper.loadDataHandler("LeaveType", null, null);
             ListtypeForm.clear();
@@ -201,11 +197,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             ListtypeForm.add(new TypeForm(nameTypeform));
         }
     }
-
-
-
-
-
 
 
     private void loadDataFromFirebase(String targetEmployee,DataLoadCallbackForm callbackform) {
@@ -390,58 +381,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                 });
     }
 
-    private void loadDataFromDatabase() {
-    String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-            "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-            "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-            "LeaveRequest.LeaveID AS LeaveID, " +
-            "LeaveRequest.CountShift AS CountShift, " +
-            "LeaveRequest.Status AS Status, " +
-            "LeaveRequest.Reason AS Reason " +
-            "FROM LeaveRequest " +
-            "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID";
 
-    SQLiteDatabase db = DBHelper.getReadableDatabase();
-    Cursor cursor = db.rawQuery(query, null);
-
-    if (cursor != null && cursor.moveToFirst()) {
-        listForms.clear();
-        do {
-            int formIDindex = cursor.getColumnIndex("LeaveID");
-            int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-            int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-            int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-            int reasonIndex = cursor.getColumnIndex("Reason");
-            int statussIndex = cursor.getColumnIndex("Status");
-            int CountshiftIndex = cursor.getColumnIndex("CountShift");
-
-            if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1) {
-                String formID = cursor.getString(formIDindex);
-                String nameForm = cursor.getString(nameFormIndex);
-                String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-                String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-                String reason = cursor.getString(reasonIndex);
-                String status = cursor.getString(statussIndex);
-                int countShift = cursor.getInt(CountshiftIndex);
-
-                System.out.println(leaveStartTime);
-                String formattedStartTime = formatDateTime(leaveStartTime);
-                String formattedEndTime = formatDateTime(leaveEndTime);
-
-                String dateOff = formattedStartTime + " - " + formattedEndTime;
-
-                listForms.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason, status, countShift));
-            }
-        } while (cursor.moveToNext());
-    }
-
-
-    if (cursor != null) {
-        cursor.close();
-    }
-        filteredForms.clear();
-        filteredForms.addAll(listForms);
-    }
 
     public static String formatDateTime(String dateTime) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -628,43 +568,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         LocalDate inputDate = LocalDate.parse(formattedDate, dateFormatter);
         LocalDate today = LocalDate.now();
         return (today.getYear() - 1) == inputDate.getYear();
-    }
-
-
-
-
-    private void filterFormsByMonth(String selectedMonth) {
-        filteredForms.clear();
-        if (selectedMonth == null || selectedMonth.isEmpty() || selectedMonth.equals("Tất cả")) {
-            filteredForms.addAll(listForms);
-        } else {
-            String monthNumber = getMonthNumberFromSpinner(selectedMonth);
-
-            for (Form form : listForms) {
-
-                String formMonth = form.getDateoffstart().substring(5, 7);
-
-                if (formMonth.equals(monthNumber)) {
-                    filteredForms.add(form);
-                }
-            }
-        }
-        fAdapter.notifyDataSetChanged();
-    }
-
-    private void filterFormsByStatus(String selectedStatus) {
-        filteredForms.clear();
-        if (selectedStatus == null || selectedStatus.isEmpty() || selectedStatus.equals("All")) {
-            filteredForms.addAll(listForms);
-        } else {
-            for (Form form : listForms) {
-                String formStatus = form.getStatus();
-                if (formStatus.equals(selectedStatus)) {
-                    filteredForms.add(form);
-                }
-            }
-        }
-        fAdapter.notifyDataSetChanged();
     }
 
 

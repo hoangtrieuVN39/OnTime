@@ -101,8 +101,8 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
 
 
 
-        loadDataFAFromFirebase();
-//        loadDataFAFromFirebase("NV003");
+//        loadDataFAFromFirebase();
+        loadDataFAFromFirebase("NV001");
 //        loadDataTypeFormFromDatabase();
 //        loadDataFAFromDatabase();
         Log.d("FormApproverss", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
@@ -185,27 +185,24 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         allChip.setChecked(selectedChipFilters.contains("Tất cả"));
         chipGroup.addView(allChip);
 
-        getLeaveTypeNames(new OnLeaveTypeNamesLoadedListener() {
-            @Override
-            public void onLoaded(List<String> leaveTypeNames) {
-                for (String leaveTypeName : leaveTypeNames) {
-                    Chip chip = new Chip(FormApproveActivity.this);
-                    chip.setText(leaveTypeName);
-                    chip.setCheckable(true);
-                    chip.setChecked(selectedChipFilters.contains(leaveTypeName));
-                    chip.setChipBackgroundColorResource(R.color.selector_chip_background);
-                    chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
-                    chip.setChipStrokeWidth(1f);
-                    chip.setTextColor(getResources().getColor(R.color.black));
-                    chipGroup.addView(chip);
-                }
+        List<String> leaveTypeNames = getLeaveTypeNames();
+        if (leaveTypeNames != null) {
+            for (String leaveTypeName : leaveTypeNames) {
+                Chip chip = new Chip(FormApproveActivity.this);
+                chip.setText(leaveTypeName);
+                chip.setCheckable(true);
+                chip.setChecked(selectedChipFilters.contains(leaveTypeName));
+                chip.setChipBackgroundColorResource(R.color.selector_chip_background);
+                chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
+                chip.setChipStrokeWidth(1f);
+                chip.setTextColor(getResources().getColor(R.color.black));
+                chipGroup.addView(chip);
             }
+        } else {
+            Toast.makeText(this, "Không thể tải dữ liệu từ cơ sở dữ liệu", Toast.LENGTH_SHORT).show();
+        }
 
-            @Override
-            public void onError(Exception e) {
-                Toast.makeText(FormApproveActivity.this, "Lỗi khi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
         closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
         cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
@@ -289,53 +286,26 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         faAdapter.notifyDataSetChanged();
     }
 
-    public void getLeaveTypeNames(OnLeaveTypeNamesLoadedListener listener) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference leaveTypeRef = database.getReference("leavetypes");
+    public List<String> getLeaveTypeNames() {
+        List<String> leaveTypeNames = new ArrayList<>();
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT LeaveTypeName FROM LeaveType", null);
 
-        leaveTypeRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<String> leaveTypeNames = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String leaveTypeName = snapshot.child("leaveTypeName").getValue(String.class);
-                    if (leaveTypeName != null) {
-                        leaveTypeName = new String(leaveTypeName.getBytes(StandardCharsets.UTF_8));
-                        leaveTypeNames.add(leaveTypeName);
-                    }
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+
+                if (nameFormIndex != -1 ) {
+                    String nameForm = cursor.getString(nameFormIndex);
+                    leaveTypeNames.add(nameForm);
                 }
-                listener.onLoaded(leaveTypeNames);
-            }
+            } while (cursor.moveToNext());
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Firebase", "Lỗi khi tải dữ liệu: " + databaseError.getMessage());
-                listener.onError(databaseError.toException());
-            }
-        });
-    }
-
-    private void loadDataTypeFormFromFirebase() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        listfilterTypeForm.clear();
-
-        databaseReference.child("leavetypes").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot leaveTypeSnapshot : snapshot.getChildren()) {
-                    String nameFilterTypeForm = leaveTypeSnapshot.child("LeaveTypeName").getValue(String.class);
-                    if (nameFilterTypeForm != null) {
-                        listfilterTypeForm.add(new FilterTypeForm(nameFilterTypeForm));
-                    }
-                }
-                faAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Failed to fetch LeaveTypes", error.toException());
-            }
-        });
+        if (cursor != null) {
+            cursor.close();
+        }
+        return leaveTypeNames;
     }
 
 
@@ -352,17 +322,10 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         listStatus.add(new StatusSpinner("Chọn trạng thái"));
         listStatus.add(new StatusSpinner("Đồng ý"));
         listStatus.add(new StatusSpinner("Chưa phê duyệt"));
-        listStatus.add(new StatusSpinner("Loaị bỏ"));
+        listStatus.add(new StatusSpinner("Loại bỏ"));
     }
 
-    private void loadDataTypeFormFromDatabase() {
-        List<List> leaveType = DBHelper.loadDataHandler("LeaveType", null, null);
-        listfilterTypeForm.clear();
-        for (List<String> row : leaveType) {
-            String nameFilterTypeform = row.get(1);
-            listfilterTypeForm.add(new FilterTypeForm(nameFilterTypeform));
-        }
-    }
+
 
 
     private void loadDataFAFromFirebase(String filterEmployeeID) {
@@ -602,70 +565,6 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         });
     }
 
-    private void loadDataFAFromDatabase() {
-        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-                "LeaveRequestApproval.LeaveApprovalID AS LeaveApprovalID, " +
-                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-                "LeaveRequest.LeaveID AS LeaveID, " +
-                "LeaveRequestApproval.Status AS Status, " +
-                "LeaveRequest.Reason AS Reason, " +
-                "LeaveRequest.CountShift AS CountShift, " +
-                "LeaveRequest.CreatedTime AS CreatedTime, " +
-                "Employee.EmployeeName AS EmployeeName " +
-                "FROM LeaveRequest " +
-                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
-                "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
-                "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
-
-
-        SQLiteDatabase db = DBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            listFormApprove.clear();
-            do {
-                int formIDindex = cursor.getColumnIndex("LeaveID");
-                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-                int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
-                int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
-                int leaveRAIndex = cursor.getColumnIndex("LeaveApprovalID");
-                int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-                int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-                int reasonIndex = cursor.getColumnIndex("Reason");
-                int statussIndex = cursor.getColumnIndex("Status");
-                int CountshiftIndex = cursor.getColumnIndex("CountShift");
-
-                if (leaveRAIndex != -1 && formIDindex != -1  && nameFormIndex != -1  && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
-                    String formID = cursor.getString(formIDindex);
-                    String nameForm = cursor.getString(nameFormIndex);
-                    String leaveRA = cursor.getString(leaveRAIndex);
-                    String employeeName = cursor.getString(employeeNameIndex);
-                    String createdTime = cursor.getString(createdTimeIndex);
-                    String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-                    String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-                    String reason = cursor.getString(reasonIndex);
-                    String status = cursor.getString(statussIndex);
-                    int countShift = cursor.getInt(CountshiftIndex);
-
-                    String formattedCreatedTime = formatDate(createdTime);
-                    String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
-                    String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
-
-                    String dateOff = formattedStartTime + " - " + formattedEndTime;
-
-                    listFormApprove.add(new FormApprove(leaveRA,nameForm,formattedStartTime,formattedEndTime,formattedCreatedTime,reason,formID,employeeName,status,countShift));
-                }
-            } while (cursor.moveToNext());
-        }
-
-
-        if (cursor != null) {
-            cursor.close();
-        }
-        listfilterFormApprove.clear();
-        listfilterFormApprove.addAll(listFormApprove);
-    }
 
     public static String formatDate(String dateTime) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

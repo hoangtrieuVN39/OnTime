@@ -119,7 +119,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
 //                Log.d("AllFormrre", "Dữ liệu listfilterAllForm: " + listAllForm.size());
 //                afAdapter.updateFilteredList(listAllForm);
 //                lvAllForm.setAdapter(afAdapter);
-////                loadInitialData();
 //            }
 //        });
 
@@ -732,29 +731,23 @@ public class FormListActivity extends Activity implements OnFormListClickListene
         chipGroup.addView(allChip);
 
 
-        getLeaveTypeNames(new OnLeaveTypeNamesLoadedListener() {
-            @Override
-            public void onLoaded(List<String> leaveTypeNames) {
-                for (String leaveTypeName : leaveTypeNames) {
-                    Chip chip = new Chip(FormListActivity.this);
-                    chip.setText(leaveTypeName);
-                    chip.setCheckable(true);
-                    chip.setChecked(selectedChipFilters.contains(leaveTypeName));
-                    chip.setChipBackgroundColorResource(R.color.selector_chip_background);
-                    chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
-                    chip.setChipStrokeWidth(1f);
-                    chip.setTextColor(getResources().getColor(R.color.black));
-                    // chip.setCheckedIcon(null);
-                    chip.setChecked(selectedChipFilters.contains(leaveTypeName));
-                    chipGroup.addView(chip);
-                }
+        List<String> leaveTypeNames = getLeaveTypeNames();
+        if (leaveTypeNames != null) {
+            for (String leaveTypeName : leaveTypeNames) {
+                Chip chip = new Chip(FormListActivity.this);
+                chip.setText(leaveTypeName);
+                chip.setCheckable(true);
+                chip.setChecked(selectedChipFilters.contains(leaveTypeName));
+                chip.setChipBackgroundColorResource(R.color.selector_chip_background);
+                chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
+                chip.setChipStrokeWidth(1f);
+                chip.setTextColor(getResources().getColor(R.color.black));
+                chipGroup.addView(chip);
             }
+        } else {
+            Toast.makeText(this, "Không thể tải dữ liệu từ cơ sở dữ liệu", Toast.LENGTH_SHORT).show();
+        }
 
-            @Override
-            public void onError(Exception e) {
-                Toast.makeText(FormListActivity.this, "Lỗi khi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
 
         closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
         cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
@@ -841,112 +834,30 @@ public class FormListActivity extends Activity implements OnFormListClickListene
         afAdapter.notifyDataSetChanged();
     }
 
-    public void getLeaveTypeNames(OnLeaveTypeNamesLoadedListener listener) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference leaveTypeRef = database.getReference("leavetypes");
 
-        leaveTypeRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<String> leaveTypeNames = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String leaveTypeName = snapshot.child("leaveTypeName").getValue(String.class);
-                    if (leaveTypeName != null) {
-                        leaveTypeName = new String(leaveTypeName.getBytes(StandardCharsets.UTF_8));
-                        leaveTypeNames.add(leaveTypeName);
-                    }
-                }
-                listener.onLoaded(leaveTypeNames);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Firebase", "Lỗi khi tải dữ liệu: " + databaseError.getMessage());
-                listener.onError(databaseError.toException());
-            }
-        });
-    }
-
-//    public List<String> getLeaveTypeNames() {
-//        List<String> leaveTypeNames = new ArrayList<>();
-//        SQLiteDatabase db = DBHelper.getReadableDatabase();
-//        Cursor cursor = db.rawQuery("SELECT LeaveTypeName FROM LeaveType", null);
-//
-//        if (cursor != null && cursor.moveToFirst()) {
-//            do {
-//                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-//
-//                if (nameFormIndex != -1 ) {
-//                    String nameForm = cursor.getString(nameFormIndex);
-//                    leaveTypeNames.add(nameForm);
-//                }
-//            } while (cursor.moveToNext());
-//        }
-//
-//        if (cursor != null) {
-//            cursor.close();
-//        }
-//        return leaveTypeNames;
-//    }
-
-
-
-
-    private void loadDataFormFromDatabase() {
-        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-                "LeaveRequest.LeaveID AS LeaveID, " +
-                "LeaveRequestApproval.Status AS Status, " +
-                "LeaveRequest.CountShift AS CountShift, " +
-                "LeaveRequest.Reason AS Reason, " +
-                "LeaveRequest.CreatedTime AS CreatedTime, " +
-                "Employee.EmployeeName AS EmployeeName " +
-                "FROM LeaveRequest " +
-                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
-                "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
-                "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
-
+    public List<String> getLeaveTypeNames() {
+        List<String> leaveTypeNames = new ArrayList<>();
         SQLiteDatabase db = DBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery("SELECT LeaveTypeName FROM LeaveType", null);
 
         if (cursor != null && cursor.moveToFirst()) {
-            listAllForm.clear();
             do {
-                int formIDindex = cursor.getColumnIndex("LeaveID");
                 int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-                int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-                int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-                int reasonIndex = cursor.getColumnIndex("Reason");
-                int statussIndex = cursor.getColumnIndex("Status");
-                int CountshiftIndex = cursor.getColumnIndex("CountShift");
 
-                if (nameFormIndex != -1 && formIDindex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
-                    String formID = cursor.getString(formIDindex);
+                if (nameFormIndex != -1 ) {
                     String nameForm = cursor.getString(nameFormIndex);
-                    String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-                    String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-                    String reason = cursor.getString(reasonIndex);
-                    String status = cursor.getString(statussIndex);
-                    int countShift = cursor.getInt(CountshiftIndex);
-
-                    String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
-                    String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
-
-                    String dateOff = formattedStartTime + " - " + formattedEndTime;
-
-                    listAllForm.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason, status, countShift));
+                    leaveTypeNames.add(nameForm);
                 }
             } while (cursor.moveToNext());
         }
 
-
         if (cursor != null) {
             cursor.close();
         }
-        listfilterAllForm.clear();
-        listfilterAllForm.addAll(listAllForm);
+        return leaveTypeNames;
     }
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {

@@ -174,7 +174,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             @Override
             public void onClick(View v) {
                 String leaveTypeName = typeformNameSpinner.getSelectedItem().toString();
-                String employeeID = "NV002";
+                String employeeID = "NV001";
                 String startDate = startDateEditText.getText().toString();
                 String startTime = startHourEditText.getText().toString();
                 String endDate = endDateEditText.getText().toString();

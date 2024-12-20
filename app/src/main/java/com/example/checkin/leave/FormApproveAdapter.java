@@ -121,18 +121,23 @@ public class FormApproveAdapter extends BaseAdapter {
             btnReject.setOnClickListener(v -> updateStatusForm(formApprove, "Loại bỏ", i));
 
         }
+
         txtStatusApprove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if ("Chưa phê duyệt".equals(formApprove.getStatusApprover())) {
-                    txtStatusApprove.setVisibility(View.GONE);
-                    recallLayoutContainer.setVisibility(View.VISIBLE);
-                } else {
-                    txtStatusApprove.setVisibility(View.VISIBLE);
-                    recallLayoutContainer.setVisibility(View.GONE);
+                    if (txtStatusApprove.getVisibility() == View.VISIBLE) {
+                        txtStatusApprove.setVisibility(View.GONE);
+                        recallLayoutContainer.setVisibility(View.VISIBLE);
+                    } else {
+                        txtStatusApprove.setVisibility(View.VISIBLE);
+                        recallLayoutContainer.setVisibility(View.GONE);
+                    }
                 }
             }
         });
+
+
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
