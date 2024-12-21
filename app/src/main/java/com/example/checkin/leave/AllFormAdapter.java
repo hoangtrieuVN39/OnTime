@@ -41,10 +41,9 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     private List<Object> filteredList;
     DatabaseReference firebaseReference;
 
-    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormListClickListener aflistener, SQLiteDatabase db) {
+    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, SQLiteDatabase db) {
         this.inflater = LayoutInflater.from(listAllFormContext);
         this.afForm = afForm;
-        this.afListener = aflistener;
         this.originalList = afForm;
         this.filteredList = new ArrayList<>(afForm);
         this.database = db;

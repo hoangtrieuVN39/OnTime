@@ -1,131 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="10dp">
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
+        android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        <LinearLayout
+            android:id="@+id/filter_approver_month_status"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="15dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/br_edittext">
+
+                <Spinner
+                    android:id="@+id/listStatus_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/br_edittext">
+
+                <Spinner
+                    android:id="@+id/listMonth_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <SearchView
+                android:id="@+id/nhanvienlist_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/br_edittext"
+                android:iconifiedByDefault="false"
+                android:queryHint="Tìm nhân viên" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
-            android:orientation="vertical"
+            android:background="#FBF7EF"
             android:padding="10dp">
 
-            <LinearLayout
-                android:id="@+id/nav_header"
+            <ListView
+                android:id="@+id/formList_lv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/titleFormApprove_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Đơn từ"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="25dp"
-                        android:textStyle="bold"></TextView>
-
-                    <ImageButton
-                        android:id="@+id/buttonlist_filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical|end"
-                        android:background="@null"
-                        android:contentDescription="Back"
-                        android:src="@drawable/filter" />
-
-                </FrameLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/list_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:id="@+id/filter_approver_month_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginBottom="15dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/br_edittext">
-
-                        <Spinner
-                            android:id="@+id/listStatus_spinner"
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:layout_marginBottom="16dp"
-                            android:layout_weight="1" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/br_edittext">
-
-                        <Spinner
-                            android:id="@+id/listMonth_spinner"
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:layout_marginBottom="16dp"
-                            android:layout_weight="1" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp">
-
-                    <SearchView
-                        android:id="@+id/nhanvienlist_search"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/br_edittext"
-                        android:iconifiedByDefault="false"
-                        android:queryHint="Tìm nhân viên" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#FBF7EF"
-                    android:padding="10dp">
-
-                    <ListView
-                        android:id="@+id/formList_lv"
-                        android:layout_width="match_parent"
-                        android:layout_height="610dp"
-                        android:divider="@android:color/transparent"
-                        android:dividerHeight="8dp" />
-                </LinearLayout>
-
-            </LinearLayout>
+                android:layout_height="610dp"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="8dp" />
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </LinearLayout>
+
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/nav_footer"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentBottom="true">-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:orientation="vertical">-->
+
+    <!--            <ImageView-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_gravity="center"-->
+    <!--                android:src="@drawable/clock">-->
+    <!--            </ImageView>-->
+
+    <!--            <Button-->
+    <!--                android:id="@+id/button_chamcong"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:background="@color/white"-->
+    <!--                android:text="Chấm công"-->
+    <!--                android:textAllCaps="false"-->
+    <!--                android:textSize="15dp">-->
+    <!--            </Button>-->
+    <!--        </LinearLayout>-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:orientation="vertical">-->
+
+    <!--            <ImageView-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_gravity="center"-->
+    <!--                android:src="@drawable/history">-->
+
+    <!--            </ImageView>-->
+
+    <!--            <Button-->
+    <!--                android:id="@+id/button_lichsu"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:background="@color/white"-->
+    <!--                android:text="Lịch sử"-->
+    <!--                android:textAllCaps="false"-->
+    <!--                android:textSize="15dp">-->
+
+    <!--            </Button>-->
+    <!--        </LinearLayout>-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:orientation="vertical">-->
+
+    <!--            <ImageView-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_gravity="center"-->
+    <!--                android:src="@drawable/form">-->
+
+    <!--            </ImageView>-->
+
+    <!--            <Button-->
+    <!--                android:id="@+id/button_dontu"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:background="@color/white"-->
+    <!--                android:text="Đơn từ"-->
+    <!--                android:textAllCaps="false"-->
+    <!--                android:textSize="15dp">-->
+
+    <!--            </Button>-->
+    <!--        </LinearLayout>-->
+    <!--    </LinearLayout>-->
+</LinearLayout>

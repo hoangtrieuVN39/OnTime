@@ -87,7 +87,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         setListMonth();
         setListStatus();
 
-
         try {
             DBHelper = new DatabaseHelper(this, null);
             db = DBHelper.getWritableDatabase();
@@ -170,12 +169,12 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             }
         });
 
-        Intent intent = getIntent();
-        boolean isDeleted = intent.getBooleanExtra("isDeleted", false);
-
-        if (isDeleted) {
-            Toast.makeText(this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
-        }
+//        Intent intent = getIntent();
+//        boolean isDeleted = intent.getBooleanExtra("isDeleted", false);
+//
+//        if (isDeleted) {
+//            Toast.makeText(this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override
@@ -396,7 +395,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         }
     }
 
-
     public void setListMonth() {
         listMonth.add(new MonthSpinner("Chọn thời gian"));
         listMonth.add(new MonthSpinner("Tuần này"));
@@ -406,13 +404,13 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         listMonth.add(new MonthSpinner("Năm này"));
         listMonth.add(new MonthSpinner("Năm trước"));
     }
+
     public void setListStatus(){
         listStatus.add(new StatusSpinner("Chọn trạng thái"));
         listStatus.add(new StatusSpinner("Đồng ý"));
         listStatus.add(new StatusSpinner("Chưa phê duyệt"));
         listStatus.add(new StatusSpinner("Loại bỏ"));
     }
-
 
     private void showBottomSheetDialog() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(FormPersonalActivity.this, R.style.BottomSheetDialogTheme);

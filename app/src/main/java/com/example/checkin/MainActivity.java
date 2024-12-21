@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
             FormFragment = new FormFragment(viewModel);
         }
 
-
         // Initial fragment setup
         getSupportFragmentManager().beginTransaction()
                 .add(binding.fragmentContainerView.getId(), checkinMainFragment)

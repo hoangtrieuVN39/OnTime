@@ -46,8 +46,8 @@
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chip_filter"
         android:layout_width="match_parent"
-        style="@style/Widget.MaterialComponents.Chip.Choice"
         android:layout_height="wrap_content"
+        android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
         app:chipSpacing="8dp"
         android:paddingBottom="16dp">
 

@@ -154,7 +154,7 @@ public class FormListActivity extends Activity implements OnFormListClickListene
         spThang.setAdapter(msAdapter);
 
         lvAllForm = findViewById(R.id.formList_lv);
-        afAdapter = new AllFormAdapter(this,listAllForm,this,db);
+//        afAdapter = new AllFormAdapter(this,listAllForm,this,db);
 //        lvAllForm.setAdapter(afAdapter);
 
         btnFilter = findViewById(R.id.buttonlist_filter);
