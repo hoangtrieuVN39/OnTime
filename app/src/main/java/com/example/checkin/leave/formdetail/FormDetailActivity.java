@@ -39,7 +39,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +140,6 @@ public class FormDetailActivity extends Activity {
         ViewGroupReject.setVisibility(View.GONE);
 
 
-
         btnBack.setOnClickListener(view -> {
             String caller = getIntent().getStringExtra("caller");
             Intent intent = null;
@@ -148,6 +150,7 @@ public class FormDetailActivity extends Activity {
             startActivity(intent);
             finish();
         });
+
 
         recallBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +164,7 @@ public class FormDetailActivity extends Activity {
                         intent.putExtra("isDeleted", true);
                         startActivity(intent);
                     }
-                }, 4000);
+                }, 3000);
             }
         });
     }
@@ -349,10 +352,7 @@ public class FormDetailActivity extends Activity {
                 });
     }
 
-
     public interface DataLoadCallbackFormDT {
         void onDataLoaded();
     }
-
-
 }

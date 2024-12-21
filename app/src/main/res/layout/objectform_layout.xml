@@ -117,7 +117,7 @@
         android:layout_alignParentEnd="true"
         android:orientation="horizontal"
         android:layout_gravity="end"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/icon_recall"

@@ -54,6 +54,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -124,13 +125,13 @@ public class FormListActivity extends Activity implements OnFormListClickListene
 
 
 
-        loadDataFApproverFromFirebase("NV001",new DataLoadCallback() {
+        loadDataFApproverFromFirebase("NV009",new DataLoadCallback() {
             @Override
             public void onDataLoaded() {
 
             }
         });
-        loadDataFormFromFirebase("NV001", new DataLoadCallback() {
+        loadDataFormFromFirebase("NV009", new DataLoadCallback() {
             @Override
             public void onDataLoaded() {
                 Log.d("listAllForm", "Dữ liệu listfilterAllForm: " + listAllForm.size());
@@ -348,6 +349,7 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                     String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                     String statusLR = leaveRequestSnapshot.child("status").getValue(String.class);
                     Integer countshift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
+                    String CreateTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
 
                     databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -377,7 +379,7 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                             String formattedEndTime = formatDateTime(leaveEndTime);
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                                            listAllForm.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,countshift));
+                                            listAllForm.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,CreateTime,countshift));
                                             loadInitialData();
                                             callback.onDataLoaded();
                                             Log.d("OnlyForm", "Dữ liệu được tải thành công: " + listAllForm.size());
@@ -552,6 +554,7 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                     String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                     String statusLR = leaveRequestSnapshot.child("status").getValue(String.class);
                     Integer countshift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
+                    String CreateTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
 
                     databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -581,7 +584,7 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                             String formattedStartTime = formatDateTime(leaveStartTime);
                                             String formattedEndTime = formatDateTime(leaveEndTime);
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
-                                            listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,countshift));
+                                            listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,CreateTime,countshift));
 
                                             listAllForm.clear();
 //                                                filteredForms.addAll(listForms);
@@ -623,76 +626,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
     }
 
 
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void loadDataFAFromDatabase() {
-        String query = "SELECT LeaveType.LeaveTypeName AS LeaveTypeName, " +
-                "LeaveRequest.LeaveStartTime AS LeaveStartTime, " +
-                "LeaveRequest.LeaveEndTime AS LeaveEndTime, " +
-                "LeaveRequestApproval.LeaveApprovalID AS LeaveApprovalID, " +
-                "LeaveRequest.LeaveID AS LeaveID, " +
-                "LeaveRequestApproval.Status AS Status, " +
-                "LeaveRequest.Reason AS Reason, " +
-                "LeaveRequest.CountShift AS CountShift, " +
-                "LeaveRequest.CreatedTime AS CreatedTime, " +
-                "Employee.EmployeeName AS EmployeeName " +
-                "FROM LeaveRequest " +
-                "INNER JOIN LeaveType ON LeaveRequest.LeaveTypeID = LeaveType.LeaveTypeID " +
-                "INNER JOIN LeaveRequestApproval ON LeaveRequest.LeaveID = LeaveRequestApproval.LeaveID " +
-                "INNER JOIN Employee ON LeaveRequest.EmployeeID = Employee.EmployeeID";
-
-
-        SQLiteDatabase db = DBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            listAllForm.clear();
-            do {
-                int formIDindex = cursor.getColumnIndex("LeaveID");
-                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
-                int employeeNameIndex = cursor.getColumnIndex("EmployeeName");
-                int createdTimeIndex = cursor.getColumnIndex("CreatedTime");
-                int leaveRAIndex = cursor.getColumnIndex("LeaveApprovalID");
-                int leaveStartTimeIndex = cursor.getColumnIndex("LeaveStartTime");
-                int leaveEndTimeIndex = cursor.getColumnIndex("LeaveEndTime");
-                int reasonIndex = cursor.getColumnIndex("Reason");
-                int statussIndex = cursor.getColumnIndex("Status");
-                int CountshiftIndex = cursor.getColumnIndex("CountShift");
-
-                if (nameFormIndex != -1  && formIDindex!= -1 && employeeNameIndex != -1 && createdTimeIndex != -1 && leaveStartTimeIndex != -1 && leaveEndTimeIndex != -1 && reasonIndex != -1 && statussIndex != -1 && CountshiftIndex != -1) {
-                    String formID = cursor.getString(formIDindex);
-                    String nameForm = cursor.getString(nameFormIndex);
-                    String employeeName = cursor.getString(employeeNameIndex);
-                    String leaveRA = cursor.getString(leaveRAIndex);
-                    String createdTime = cursor.getString(createdTimeIndex);
-                    String leaveStartTime = cursor.getString(leaveStartTimeIndex);
-                    String leaveEndTime = cursor.getString(leaveEndTimeIndex);
-                    String reason = cursor.getString(reasonIndex);
-                    String status = cursor.getString(statussIndex);
-                    int countShift = cursor.getInt(CountshiftIndex);
-
-                    String formattedCreatedTime = FormApproveActivity.formatDate(createdTime);
-                    String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
-                    String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
-
-                    String dateOff = formattedStartTime + " - " + formattedEndTime;
-
-//                    listFormApprove.add(new FormApprove(nameForm,dateOff,formattedCreatedTime,reason,employeeName,status));
-                    listAllForm.add(new FormApprove(leaveRA,nameForm,formattedStartTime,formattedEndTime,formattedCreatedTime,reason,formID,employeeName,status, countShift));
-                    listAllForm.add(new Form(formID,nameForm, formattedStartTime,formattedEndTime, reason,status, countShift));
-                }
-            } while (cursor.moveToNext());
-        }
-
-
-        if (cursor != null) {
-            cursor.close();
-        }
-        listfilterAllForm.clear();
-        listfilterAllForm.addAll(listAllForm);
-//        Log.d("listfilterAllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm);
-//        afAdapter.notifyDataSetChanged();
-    }
 
     public void setListMonth() {
         listMonth.add(new MonthSpinner("Chọn thời gian"));

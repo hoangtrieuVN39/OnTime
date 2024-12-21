@@ -9,5 +9,5 @@
         android:color="@color/black"/>
 
     <!-- Độ bo tròn của các góc -->
-    <corners android:radius="30dp"/>
+    <corners android:radius="15dp"/>
 </shape>

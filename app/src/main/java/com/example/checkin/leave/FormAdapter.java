@@ -21,7 +21,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FormAdapter extends BaseAdapter {
@@ -101,33 +104,17 @@ public class FormAdapter extends BaseAdapter {
 //            TextView notApprovedTxt = recallLayoutContainer.findViewById(R.id.not_approved_txt);
             Button recallBtn = recallLayoutContainer.findViewById(R.id.Recall_btn);
 
-//            notApprovedTxt.setText(form.getStatus());
 
-//            recallBtn.setOnClickListener(new View.OnClickListener()
-//                @Override
-//                public void onClick(View v) {
-//                    String leaveId = form.getFormID();  // Lấy LeaveID của đơn từ
-//                    try {
-//                        deleteLeaveRequest(leaveId);  // Xóa đơn từ khỏi cơ sở dữ liệu
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    fForm.remove(i);  // Xóa khỏi danh sách
-//                    notifyDataSetChanged();  //
-//                }
-//            });
             recallBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String leaveId = form.getFormID(); // Lấy LeaveID của đơn từ
-                    deleteLeaveRequestFromFirebase(leaveId); // Xóa đơn từ từ Firebase
-                    fForm.remove(i); // Xóa khỏi danh sách
-                    notifyDataSetChanged(); // Cập nhật lại adapter
+                    String leaveId = form.getFormID();
+                    deleteLeaveRequestFromFirebase(leaveId);
+                    fForm.remove(i);
+                    notifyDataSetChanged();
                 }
             });
         }
-
-
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +130,7 @@ public class FormAdapter extends BaseAdapter {
         Listform.addAll(newFilteredList);
         notifyDataSetChanged();
     }
+
 
 
     private void deleteLeaveRequestFromFirebase(String leaveRequestID) {
@@ -170,16 +158,4 @@ public class FormAdapter extends BaseAdapter {
                 });
     }
 
-
-    private void deleteLeaveRequest(String leaveId) throws IOException {
-        if (dbHelper == null) {
-            dbHelper = new DatabaseHelper(fContext, null);
-        }
-        if (database == null || !database.isOpen()) {
-            database = dbHelper.getWritableDatabase();
-        }
-        String whereClause = "LeaveID=?";
-        String[] whereArgs = {leaveId};
-        database.delete("LeaveRequest", whereClause, whereArgs);
-    }
 }
