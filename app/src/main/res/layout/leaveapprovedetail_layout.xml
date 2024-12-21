@@ -334,7 +334,9 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_gravity="bottom"
-        android:layout_margin="5dp">
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -393,7 +395,9 @@
         android:background="@drawable/gray_background"
         android:gravity="center"
         android:layout_gravity="bottom"
-        android:layout_margin="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"
         android:visibility="visible">
 
         <Button
@@ -415,7 +419,9 @@
         android:background="@drawable/yellow_background"
         android:gravity="center"
         android:layout_gravity="bottom"
-        android:layout_margin="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"
         android:visibility="visible">
 
 

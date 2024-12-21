@@ -99,10 +99,8 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
             e.printStackTrace();
         }
 
-
-
-//        loadDataFAFromFirebase();
-        loadDataFAFromFirebase("NV001");
+        loadDataFAFromFirebase();
+//        loadDataFAFromFirebase("NV001");
 //        loadDataTypeFormFromDatabase();
 //        loadDataFAFromDatabase();
         Log.d("FormApproverss", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
