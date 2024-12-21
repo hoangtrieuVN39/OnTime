@@ -38,10 +38,9 @@ public class FormApproveAdapter extends BaseAdapter {
     private final SQLiteDatabase database;
     DatabaseReference firebaseReference;
 
-    public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormApproverClickListener falistener, SQLiteDatabase db) {
+    public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, SQLiteDatabase db) {
         this.faContext = listFormApproveContext;
         this.faForm = faForm;
-        this.faListener = falistener;
         this.database = db;
 //        this.firebaseReference = firebaseReference;
         this.firebaseReference = FirebaseDatabase.getInstance().getReference();

@@ -55,7 +55,7 @@
             android:id="@+id/itemChip_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Theme.Checkin.Chip"
+            android:theme="@style/Theme.MaterialComponents.Light.Bridge"
             app:chipBackgroundColor="@color/selector_chip_background"
             app:chipStrokeColor="@color/selector_chip_stroke"
             app:chipStrokeWidth="1dp"

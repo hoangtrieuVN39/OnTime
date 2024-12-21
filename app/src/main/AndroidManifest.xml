@@ -46,11 +46,11 @@
 <!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
 <!--        </activity>-->
 
-<!--        <activity-->
-<!--            android:name="com.example.checkin.leave.formdetail.FormDetailActivity"-->
-<!--            android:exported="true"-->
-<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
-<!--        </activity>-->
+        <activity
+            android:name="com.example.checkin.leave.formdetail.FormDetailActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
 
         <activity
             android:name=".MainActivity"

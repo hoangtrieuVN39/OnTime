@@ -119,7 +119,7 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         ssAdapter = new StatusSpinnerAdapter(this,R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
 
-        faAdapter = new FormApproveAdapter(this, listfilterFormApprove,this,db);
+        faAdapter = new FormApproveAdapter(this, listfilterFormApprove,db);
         lvFormApprove.setAdapter(faAdapter);
 
         spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -227,7 +227,6 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         bottomSheetDialog.show();
     }
 
-
     private List<String> getSelectedFilters(ChipGroup chipGroup) {
         List<String> selectedFilters = new ArrayList<>();
         for (int i = 0; i < chipGroup.getChildCount(); i++) {
@@ -257,6 +256,7 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         for (FormApprove formApprove : originalList) {
             Log.d("OriginalList", "Tên loại form trong originalList: " + formApprove.getNameFormApprove());
         }
+
         ArrayList<FormApprove> filteredList = new ArrayList<>();
         for (FormApprove formApprove : originalList) {
             Log.d("FormApproveName", "Tên loại form: " + formApprove.getNameFormApprove());
@@ -271,7 +271,6 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         if (filteredList.isEmpty()) {
             Toast.makeText(FormApproveActivity.this, "Không có dữ liệu phù hợp!", Toast.LENGTH_SHORT).show();
         }
-
 
         listfilterFormApprove.clear();
         listfilterFormApprove.addAll(filteredList);
