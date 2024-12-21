@@ -228,13 +228,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ListView
+                <com.example.checkin.models.ShowAllListView
                     android:id="@+id/flowApproverdt_lv"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="0dp"
                     android:divider="@android:color/transparent"
                     android:dividerHeight="8dp">
-                </ListView>
+                </com.example.checkin.models.ShowAllListView>
 
                 <LinearLayout
                     android:id="@+id/footer_layout"
@@ -335,7 +335,9 @@
         android:background="@drawable/round_corner_red"
         android:gravity="center"
         android:layout_gravity="bottom"
-        android:layout_margin="5dp">
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp">
 
         <ImageView
             android:id="@+id/icon_recall"
@@ -363,7 +365,9 @@
         android:background="@drawable/gray_background"
         android:gravity="center"
         android:layout_gravity="bottom"
-        android:layout_margin="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"
         android:visibility="gone">
 
         <Button
@@ -385,9 +389,10 @@
         android:background="@drawable/yellow_background"
         android:gravity="center"
         android:layout_gravity="bottom"
-        android:layout_margin="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"
         android:visibility="gone">
-
 
         <Button
             android:id="@+id/Approved_btn"
@@ -400,5 +405,4 @@
             android:textStyle="bold"
             android:background="@null"/>
     </LinearLayout>
-
 </LinearLayout>
