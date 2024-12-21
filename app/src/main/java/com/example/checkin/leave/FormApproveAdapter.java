@@ -147,9 +147,7 @@ public class FormApproveAdapter extends BaseAdapter {
         });
         return view;
     }
-
-
-
+    
     private void updateStatusForm(FormApprove formApprove, String newStatus, int position) {
         firebaseReference.child("leaverequestapprovals")
                 .orderByChild("leaveRequestID")

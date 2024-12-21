@@ -183,6 +183,7 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         allChip.setChipStrokeWidth(1f);
         allChip.setTextColor(getResources().getColor(R.color.black));
         allChip.setChecked(selectedChipFilters.contains("Tất cả"));
+        allChip.setCheckedIcon(null);
         chipGroup.addView(allChip);
 
         List<String> leaveTypeNames = getLeaveTypeNames();
@@ -196,6 +197,7 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
                 chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
                 chip.setChipStrokeWidth(1f);
                 chip.setTextColor(getResources().getColor(R.color.black));
+                chip.setCheckedIcon(null);
                 chipGroup.addView(chip);
             }
         } else {

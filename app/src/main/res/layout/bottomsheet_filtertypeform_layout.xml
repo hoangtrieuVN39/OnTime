@@ -43,7 +43,6 @@
         android:paddingBottom="8dp"
         android:textColor="@android:color/black"/>
 
-    <!-- ChipGroup for filter options -->
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chip_filter"
         android:layout_width="match_parent"
@@ -51,18 +50,6 @@
         android:layout_height="wrap_content"
         app:chipSpacing="8dp"
         android:paddingBottom="16dp">
-
-<!--        &lt;!&ndash; Chip options &ndash;&gt;-->
-<!--        <com.google.android.material.chip.Chip-->
-<!--            android:id="@+id/itemChip_chip"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Tất cả"-->
-<!--            style="@style/Widget.MaterialComponents.Chip.Choice"-->
-<!--            app:chipBackgroundColor="@color/selector_chip_background"-->
-<!--            app:chipStrokeColor="@color/selector_chip_stroke"-->
-<!--            app:chipStrokeWidth="1dp"-->
-<!--            android:textColor="@color/black"/>-->
 
     </com.google.android.material.chip.ChipGroup>
 
