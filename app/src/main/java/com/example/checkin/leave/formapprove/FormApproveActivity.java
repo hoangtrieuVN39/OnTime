@@ -21,6 +21,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormApproverClickListener;
@@ -28,6 +30,7 @@ import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
 import com.example.checkin.leave.FormApproveAdapter;
+import com.example.checkin.leave.FormViewModel;
 import com.example.checkin.leave.MonthSpinnerAdapter;
 import com.example.checkin.leave.StatusSpinnerAdapter;
 import com.example.checkin.leave.formdetail.FormApproveDetailActivity;
@@ -82,6 +85,7 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
     private final List<FormApprove> currentList = new ArrayList<>();
     private List<String> selectedChipFilters = new ArrayList<>();
 
+    FormViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +95,8 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         setListMonth();
         setListStatus();
 
+
+
         lvFormApprove = findViewById(R.id.formApprove_lv);
         try {
             DBHelper = new DatabaseHelper(this, null);
@@ -98,8 +104,6 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
 
 //        loadDataFAFromFirebase();
         loadDataFAFromFirebase("NV001");
@@ -121,6 +125,8 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
 
         faAdapter = new FormApproveAdapter(this, listfilterFormApprove,db);
         lvFormApprove.setAdapter(faAdapter);
+
+
 
         spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -150,12 +156,12 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
             }
         });
 
-        btnFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showFilterBottomSheetDialog();
-            }
-        });
+//        btnFilter.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showFilterBottomSheetDialog();
+//            }
+//        });
 
         Intent intent = getIntent();
         boolean isUpdated = intent.getBooleanExtra("isUpdated", false);

@@ -103,6 +103,13 @@ public class FormPersonalFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentFormPersonalBinding.inflate(inflater, container, false);
 
+
+        viewModel.setOnBtnFilterClicked(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
         lvForm = binding.formLv;
         filteredForms.addAll(listForms);
         btn_addForm = binding.addFormBtn;

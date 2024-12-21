@@ -103,6 +103,15 @@ public class FormApproveFragment extends Fragment {
         setListMonth();
         setListStatus();
 
+        viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
+
+        viewModel.setOnBtnFilterClicked(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterBottomSheetDialog();
+            }
+        });
+
         lvFormApprove = binding.formApproveLv;
         try {
             DBHelper = new DatabaseHelper(requireContext(), null);
@@ -157,12 +166,12 @@ public class FormApproveFragment extends Fragment {
             }
         });
 
-        btnFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showFilterBottomSheetDialog();
-            }
-        });
+//        btnFilter.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showFilterBottomSheetDialog();
+//            }
+//        });
 
 //        Intent intent = getIntent();
 //        boolean isUpdated = intent.getBooleanExtra("isUpdated", false);

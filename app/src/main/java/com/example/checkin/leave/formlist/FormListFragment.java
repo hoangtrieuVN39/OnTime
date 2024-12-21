@@ -477,7 +477,7 @@ public class FormListFragment extends Fragment {
         Button confirmButton = sheetView.findViewById(R.id.confirmFilter_btn);
 
         // Tạo Chip "Tất cả"
-        Chip allChip = new Chip(getContext());
+        Chip allChip = new Chip(requireContext());
         allChip.setText("Tất cả");
         allChip.setCheckable(true);
         allChip.setChipBackgroundColorResource(R.color.selector_chip_background);
