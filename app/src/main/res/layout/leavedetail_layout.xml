@@ -394,7 +394,6 @@
         android:layout_marginRight="10dp"
         android:visibility="gone">
 
-
         <Button
             android:id="@+id/Approved_btn"
             android:layout_width="wrap_content"
@@ -406,5 +405,4 @@
             android:textStyle="bold"
             android:background="@null"/>
     </LinearLayout>
-
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -99,8 +100,9 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
             e.printStackTrace();
         }
 
-        loadDataFAFromFirebase();
-//        loadDataFAFromFirebase("NV001");
+//        loadDataFAFromFirebase();
+        loadDataFAFromFirebase("NV001");
+
 //        loadDataTypeFormFromDatabase();
 //        loadDataFAFromDatabase();
         Log.d("FormApproverss", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
@@ -173,7 +175,7 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         Button cancelButton = sheetView.findViewById(R.id.cancelFilter_btn);
         Button confirmButton = sheetView.findViewById(R.id.confirmFilter_btn);
 
-        Chip allChip = new Chip(this);
+        Chip allChip = new Chip(new ContextThemeWrapper(this, R.style.Theme_Checkin_Chip));
         allChip.setText("Tất cả");
         allChip.setCheckable(true);
         allChip.setChipBackgroundColorResource(R.color.selector_chip_background);
@@ -187,7 +189,7 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
         List<String> leaveTypeNames = getLeaveTypeNames();
         if (leaveTypeNames != null) {
             for (String leaveTypeName : leaveTypeNames) {
-                Chip chip = new Chip(FormApproveActivity.this);
+                Chip chip = new Chip(new ContextThemeWrapper(this, R.style.Theme_Checkin_Chip));
                 chip.setText(leaveTypeName);
                 chip.setCheckable(true);
                 chip.setChecked(selectedChipFilters.contains(leaveTypeName));
