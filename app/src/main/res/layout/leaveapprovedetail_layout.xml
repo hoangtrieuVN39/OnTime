@@ -228,13 +228,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ListView
+                <com.example.checkin.models.ShowAllListView
                     android:id="@+id/flowApproverdt_lv"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="0dp"
                     android:divider="@android:color/transparent"
                     android:dividerHeight="8dp">
-                </ListView>
+                </com.example.checkin.models.ShowAllListView>
 
                 <LinearLayout
                     android:id="@+id/footer_layout"
