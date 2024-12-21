@@ -731,7 +731,6 @@ public class FormListActivity extends Activity implements OnFormListClickListene
         allChip.setCheckedIcon(null);
         chipGroup.addView(allChip);
 
-
         List<String> leaveTypeNames = getLeaveTypeNames();
         if (leaveTypeNames != null) {
             for (String leaveTypeName : leaveTypeNames) {
