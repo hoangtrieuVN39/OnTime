@@ -1,6 +1,7 @@
 package com.example.checkin.leave;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.example.checkin.OnFormApproverClickListener;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.OnFormListClickListener;
+import com.example.checkin.leave.formdetail.FormApproveDetailActivity;
 import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.R;
@@ -33,16 +35,17 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     LayoutInflater inflater;
     ArrayList<Object> afForm;
     OnFormListClickListener afListener;
-    OnFormClickListener fListener;
     OnFormApproverClickListener faListener;
     private Filter allFormFilter;
     private SQLiteDatabase database;
     private final List<Object> originalList;
     private List<Object> filteredList;
     DatabaseReference firebaseReference;
+    Context listAllFormContext;
 
     public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, SQLiteDatabase db) {
         this.inflater = LayoutInflater.from(listAllFormContext);
+        this.listAllFormContext = listAllFormContext;
         this.afForm = afForm;
         this.originalList = afForm;
         this.filteredList = new ArrayList<>(afForm);
@@ -240,5 +243,4 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     public Filter getFilter() {
         return allFormFilter;
     }
-
 }

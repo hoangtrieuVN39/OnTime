@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -192,7 +193,7 @@ public class FormApproveFragment extends Fragment {
         Button cancelButton = sheetView.findViewById(R.id.cancelFilter_btn);
         Button confirmButton = sheetView.findViewById(R.id.confirmFilter_btn);
 
-        Chip allChip = new Chip(requireContext());
+        Chip allChip = new Chip(new ContextThemeWrapper(requireContext(), R.style.Theme_Checkin_Chip));
         allChip.setText("Tất cả");
         allChip.setCheckable(true);
         allChip.setChipBackgroundColorResource(R.color.selector_chip_background);
@@ -206,7 +207,7 @@ public class FormApproveFragment extends Fragment {
         List<String> leaveTypeNames = getLeaveTypeNames();
         if (leaveTypeNames != null) {
             for (String leaveTypeName : leaveTypeNames) {
-                Chip chip = new Chip(requireContext());
+                Chip chip = new Chip(new ContextThemeWrapper(requireContext(), R.style.Theme_Checkin_Chip));
                 chip.setText(leaveTypeName);
                 chip.setCheckable(true);
                 chip.setChecked(selectedChipFilters.contains(leaveTypeName));
@@ -218,8 +219,9 @@ public class FormApproveFragment extends Fragment {
                 chipGroup.addView(chip);
             }
         } else {
-//            Toast.makeText(this, "Không thể tải dữ liệu từ cơ sở dữ liệu", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Không thể tải dữ liệu từ cơ sở dữ liệu", Toast.LENGTH_SHORT).show();
         }
+
 
         closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
         cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());

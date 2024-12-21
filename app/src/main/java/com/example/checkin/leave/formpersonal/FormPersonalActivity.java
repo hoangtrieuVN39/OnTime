@@ -94,8 +94,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             e.printStackTrace();
         }
 
-
-
 //        loadDataAllFromFirebase(new DataLoadCallbackForm() {
 //            @Override
 //            public void onDataLoaded() {

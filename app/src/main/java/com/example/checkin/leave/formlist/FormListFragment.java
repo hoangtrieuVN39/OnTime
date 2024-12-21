@@ -4,6 +4,7 @@ import static com.example.checkin.leave.formapprove.FormApproveActivity.formatDa
 import static com.example.checkin.leave.formpersonal.FormPersonalActivity.formatDateTime;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -468,7 +470,7 @@ public class FormListFragment extends Fragment {
     }
 
     private void showFilterBottomSheetDialog() {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme);
         View sheetView = getLayoutInflater().inflate(R.layout.bottomsheet_filtertypeform_layout, null);
 
         ChipGroup chipGroup = sheetView.findViewById(R.id.chip_filter);
@@ -476,8 +478,7 @@ public class FormListFragment extends Fragment {
         Button cancelButton = sheetView.findViewById(R.id.cancelFilter_btn);
         Button confirmButton = sheetView.findViewById(R.id.confirmFilter_btn);
 
-        // Tạo Chip "Tất cả"
-        Chip allChip = new Chip(requireContext());
+        Chip allChip = new Chip(new ContextThemeWrapper(requireContext(), R.style.Theme_Checkin_Chip));
         allChip.setText("Tất cả");
         allChip.setCheckable(true);
         allChip.setChipBackgroundColorResource(R.color.selector_chip_background);
@@ -485,48 +486,41 @@ public class FormListFragment extends Fragment {
         allChip.setChipStrokeWidth(1f);
         allChip.setTextColor(getResources().getColor(R.color.black));
         allChip.setChecked(selectedChipFilters.contains("Tất cả"));
+        allChip.setCheckedIcon(null);
         chipGroup.addView(allChip);
 
-
-        // Lấy dữ liệu từ Firebase
-        getLeaveTypeNames(new FormListActivity.OnLeaveTypeNamesLoadedListener() {
-            @Override
-            public void onLoaded(List<String> leaveTypeNames) {
-                for (String leaveTypeName : leaveTypeNames) {
-                    Chip chip = new Chip(getContext());
-                    chip.setText(leaveTypeName);
-                    chip.setCheckable(true);
-                    chip.setChecked(selectedChipFilters.contains(leaveTypeName));
-                    chip.setChipBackgroundColorResource(R.color.selector_chip_background);
-                    chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
-                    chip.setChipStrokeWidth(1f);
-                    chip.setTextColor(getResources().getColor(R.color.black));
-                    // chip.setCheckedIcon(null);
-                    chip.setChecked(selectedChipFilters.contains(leaveTypeName));
-                    chipGroup.addView(chip);
-                }
+        List<String> leaveTypeNames = getLeaveTypeNames();
+        if (leaveTypeNames != null) {
+            for (String leaveTypeName : leaveTypeNames) {
+                Chip chip = new Chip(new ContextThemeWrapper(requireContext(), R.style.Theme_Checkin_Chip));
+                chip.setText(leaveTypeName);
+                chip.setCheckable(true);
+                chip.setChecked(selectedChipFilters.contains(leaveTypeName));
+                chip.setChipBackgroundColorResource(R.color.selector_chip_background);
+                chip.setChipStrokeColorResource(R.color.selector_chip_stroke);
+                chip.setChipStrokeWidth(1f);
+                chip.setTextColor(getResources().getColor(R.color.black));
+                chip.setCheckedIcon(null);
+                chipGroup.addView(chip);
             }
+        } else {
+            Toast.makeText(requireContext(), "Không thể tải dữ liệu từ cơ sở dữ liệu", Toast.LENGTH_SHORT).show();
+        }
 
-            @Override
-            public void onError(Exception e) {
-                Toast.makeText(getContext(), "Lỗi khi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
 
         closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
         cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
         confirmButton.setOnClickListener(v -> {
-            // Cập nhật selectedChipFilters với các filter đã chọn
             selectedChipFilters = getSelectedFilters(chipGroup);
             Log.d("SelectedChipFilters", "Dữ liệu selectedChipFilters: " + selectedChipFilters);
 
             if (selectedChipFilters.isEmpty() || selectedChipFilters.contains("Tất cả")) {
                 selectedChipFilters.clear();
-                showAllItems(); // Hiển thị tất cả các item
-                onChipAllSelected(); // Cập nhật filter
+                showAllItems();
+                onChipAllSelected();
                 afAdapter.updateFilteredList(listfilterAllForm);
             } else {
-                filterFormList(selectedChipFilters);// Lọc lại danh sách theo các filter
+                filterFormList(selectedChipFilters);
                 afAdapter.updateFilteredList(listfilterAllForm);
             }
             bottomSheetDialog.dismiss();
@@ -601,30 +595,26 @@ public class FormListFragment extends Fragment {
         afAdapter.notifyDataSetChanged();
     }
 
-    public void getLeaveTypeNames(FormListActivity.OnLeaveTypeNamesLoadedListener listener) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference leaveTypeRef = database.getReference("leavetypes");
+    public List<String> getLeaveTypeNames() {
+        List<String> leaveTypeNames = new ArrayList<>();
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT LeaveTypeName FROM LeaveType", null);
 
-        leaveTypeRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<String> leaveTypeNames = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String leaveTypeName = snapshot.child("leaveTypeName").getValue(String.class);
-                    if (leaveTypeName != null) {
-                        leaveTypeName = new String(leaveTypeName.getBytes(StandardCharsets.UTF_8));
-                        leaveTypeNames.add(leaveTypeName);
-                    }
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+
+                if (nameFormIndex != -1 ) {
+                    String nameForm = cursor.getString(nameFormIndex);
+                    leaveTypeNames.add(nameForm);
                 }
-                listener.onLoaded(leaveTypeNames); // Trả về danh sách qua listener
-            }
+            } while (cursor.moveToNext());
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Firebase", "Lỗi khi tải dữ liệu: " + databaseError.getMessage());
-                listener.onError(databaseError.toException());
-            }
-        });
+        if (cursor != null) {
+            cursor.close();
+        }
+        return leaveTypeNames;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

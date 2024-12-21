@@ -226,7 +226,6 @@ public class FormApproveActivity extends Activity implements OnFormApproverClick
                 onChipAllSelected();
             } else {
                 filterFormList(selectedChipFilters);
-
             }
             bottomSheetDialog.dismiss();
         });
