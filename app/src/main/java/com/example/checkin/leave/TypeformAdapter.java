@@ -14,13 +14,14 @@ import com.example.checkin.leave.formcreate.FormCreateActivity;
 import com.example.checkin.models.TypeForm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TypeformAdapter extends BaseAdapter {
     Context tfContext;
-    ArrayList<TypeForm> tForm;
+    List<String> tForm;
     OnFormClickListener tfListener;
 
-    public TypeformAdapter (Context context, ArrayList<TypeForm> forms, OnFormClickListener listener) {
+    public TypeformAdapter (Context context, List<String> forms, OnFormClickListener listener) {
         tfContext = context;
         tForm = forms;
         tfListener = listener;
@@ -49,13 +50,13 @@ public class TypeformAdapter extends BaseAdapter {
 
         Button btnTypeForm = view.findViewById(R.id.itemTypeform_btn);
 
-        btnTypeForm.setText(tForm.get(i).getNameTypeform());
+        btnTypeForm.setText(tForm.get(i));
 
         btnTypeForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(tfContext, FormCreateActivity.class);
-                intent.putExtra("TYPEFORM_NAME", tForm.get(i).getNameTypeform());
+                intent.putExtra("TYPEFORM_NAME", tForm.get(i));
                 tfContext.startActivity(intent);
 //                tfListener.onFormClick(tForm.get(i).getNameTypeform());
             }

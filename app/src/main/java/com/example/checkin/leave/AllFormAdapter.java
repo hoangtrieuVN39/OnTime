@@ -17,6 +17,7 @@ import com.example.checkin.OnFormApproverClickListener;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.OnFormListClickListener;
 import com.example.checkin.leave.formdetail.FormApproveDetailActivity;
+import com.example.checkin.leave.formdetail.FormDetailActivity;
 import com.example.checkin.models.Form;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.R;
@@ -43,10 +44,11 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     DatabaseReference firebaseReference;
     Context listAllFormContext;
 
-    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, SQLiteDatabase db) {
+    public AllFormAdapter(Context listAllFormContext, ArrayList<Object> afForm, OnFormListClickListener afListener, SQLiteDatabase db) {
         this.inflater = LayoutInflater.from(listAllFormContext);
         this.listAllFormContext = listAllFormContext;
         this.afForm = afForm;
+        this.afListener = afListener;
         this.originalList = afForm;
         this.filteredList = new ArrayList<>(afForm);
         this.database = db;
@@ -134,7 +136,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    afListener.onFormList(afForm.get(i));
+                    onFormList(afForm.get(i));
                 }
             });
         }
@@ -181,7 +183,7 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    afListener.onFormList(afForm.get(i));
+                    onFormList(afForm.get(i));
                 }
             });
         }
@@ -242,5 +244,23 @@ public class AllFormAdapter extends BaseAdapter implements Filterable{
     @Override
     public Filter getFilter() {
         return allFormFilter;
+    }
+
+    public void onFormList(Object formlist) {
+        if (formlist instanceof Form){
+            Form form = (Form) formlist;
+            Intent intent = new Intent(listAllFormContext, FormDetailActivity.class);
+            intent.putExtra("formid", form.getFormID());
+            intent.putExtra("caller", "FormListActivity");
+            listAllFormContext.startActivity(intent);
+        }
+        else if(formlist instanceof FormApprove){
+            FormApprove formApprove = (FormApprove) formlist;
+            Intent intent = new Intent(listAllFormContext, FormApproveDetailActivity.class);
+            intent.putExtra("formidOfApprove", formApprove.getFormID());
+            intent.putExtra("formApproveid",formApprove.getFormApproveID());
+            intent.putExtra("caller", "FormListActivity");
+            listAllFormContext.startActivity(intent);
+        }
     }
 }

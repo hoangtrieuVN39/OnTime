@@ -26,8 +26,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.checkin.DatabaseHelper;
+import com.example.checkin.OnFormApproverClickListener;
 import com.example.checkin.R;
 import com.example.checkin.databinding.FormapproveLayoutBinding;
+import com.example.checkin.databinding.FragmentFormApproveBinding;
 import com.example.checkin.leave.FormApproveAdapter;
 import com.example.checkin.leave.FormViewModel;
 import com.example.checkin.leave.MonthSpinnerAdapter;
@@ -83,13 +85,14 @@ public class FormApproveFragment extends Fragment {
     private final List<FormApprove> currentList = new ArrayList<>();
     private List<String> selectedChipFilters = new ArrayList<>();
 
-    FormapproveLayoutBinding binding;
+    FragmentFormApproveBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
         this.employeeID = viewModel.getEmployeeID();
+        viewModel.setCurrentFragment(R.id.formApproveFragment);
 
     }
 
@@ -97,7 +100,7 @@ public class FormApproveFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        binding = FormapproveLayoutBinding.inflate(inflater, container, false);
+        binding = FragmentFormApproveBinding.inflate(inflater, container, false);
 
         View view = binding.getRoot();
 
@@ -124,10 +127,8 @@ public class FormApproveFragment extends Fragment {
         loadDataFAFromFirebase("NV001");
         Log.d("FormApproverss", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
 
-
         spTrangThai = binding.approveStatusSpinner;
         spThang = binding.approveMonthSpinner;
-        btnFilter = binding.buttonFilter;
 
         msAdapter = new MonthSpinnerAdapter(requireContext(), R.layout.monthcategoty_spiner_layout, listMonth);
 //        msAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -136,7 +137,7 @@ public class FormApproveFragment extends Fragment {
         ssAdapter = new StatusSpinnerAdapter(requireContext(),R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
 
-        faAdapter = new FormApproveAdapter(requireContext(), listfilterFormApprove,db);
+        faAdapter = new FormApproveAdapter(requireContext(), listfilterFormApprove, this::onFormApprover, db);
         lvFormApprove.setAdapter(faAdapter);
 
         spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -166,20 +167,6 @@ public class FormApproveFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-//        btnFilter.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showFilterBottomSheetDialog();
-//            }
-//        });
-
-//        Intent intent = getIntent();
-//        boolean isUpdated = intent.getBooleanExtra("isUpdated", false);
-//
-//        if (isUpdated) {
-//            Toast.makeText(this, "Trạng thái đã được cập nhật!", Toast.LENGTH_SHORT).show();
-//        }
 
         return view;
     }

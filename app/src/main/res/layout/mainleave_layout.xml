@@ -15,13 +15,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 style="@style/Theme.Checkin.Toolbar">
+                <FrameLayout
+                    android:layout_width="24dp"
+                    android:layout_height="24dp">
+
+                </FrameLayout>
                 <ImageButton
                     android:id="@+id/buttonlist_filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="end"
                     android:background="@null"
                     android:contentDescription="Back"
-                    android:src="@drawable/filter" />
+                    android:src="@drawable/filter"
+                    android:layout_marginBottom="16dp"/>
             </androidx.appcompat.widget.Toolbar>
 
             <com.google.android.material.tabs.TabLayout

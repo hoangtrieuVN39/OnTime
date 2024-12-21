@@ -68,7 +68,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
     public ArrayList<Form> filteredForms = new ArrayList<>();
     ArrayList<MonthSpinner> listMonth = new ArrayList<>();
     ArrayList<StatusSpinner> listStatus = new ArrayList<>();
-    ArrayList<TypeForm> ListtypeForm = new ArrayList<>();
+    List<String> ListtypeForm = new ArrayList<>();
     Spinner spTrangThai, spThang;
     MonthSpinnerAdapter msAdapter;
     StatusSpinnerAdapter ssAdapter;
@@ -191,7 +191,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             ListtypeForm.clear();
         for (List<String> row : leaveType) {
             String nameTypeform = row.get(1);
-            ListtypeForm.add(new TypeForm(nameTypeform));
+            ListtypeForm.add(nameTypeform);
         }
     }
 
@@ -430,10 +430,10 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         lvTypeForm.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TypeForm selectedTypeForm = ListtypeForm.get(position);
+                String selectedTypeForm = ListtypeForm.get(position);
 
                 Intent intent = new Intent(FormPersonalActivity.this, FormCreateActivity.class);
-                intent.putExtra("selectedType", selectedTypeForm.getNameTypeform());
+                intent.putExtra("selectedType", selectedTypeForm);
                 startActivity(intent);
                 bottomSheetDialog.dismiss();
             }

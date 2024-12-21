@@ -3,6 +3,7 @@ package com.example.checkin.leave.formpersonal;
 import static android.content.Intent.getIntent;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
@@ -73,6 +74,7 @@ public class FormPersonalFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
         this.employeeID = viewModel.getEmployeeID();
+        viewModel.setCurrentFragment(R.id.formPersonalFragment);
 
         setListMonth();
         setListStatus();
@@ -93,9 +95,7 @@ public class FormPersonalFragment extends Fragment {
                 Log.d("filteredForms", "Dữ liệu listfilterAllForm: " + filteredForms.size());
             }
         });
-        loadDataTypeFormFromDatabase();
-
-        viewModel = new ViewModelProvider(this).get(FormViewModel.class);
+        ListtypeForm = getLeaveTypeNames();
     }
 
     @Override
@@ -103,12 +103,7 @@ public class FormPersonalFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentFormPersonalBinding.inflate(inflater, container, false);
 
-
-        viewModel.setOnBtnFilterClicked(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
+        viewModel.setOnBtnFilterClicked(null);
 
         lvForm = binding.formLv;
         filteredForms.addAll(listForms);
@@ -123,15 +118,7 @@ public class FormPersonalFragment extends Fragment {
 
         ssAdapter = new StatusSpinnerAdapter(getContext(),R.layout.statuscategory_spinner_layout,listStatus);
         spTrangThai.setAdapter(ssAdapter);
-        fAdapter = new FormAdapter(getContext(), filteredForms, new OnFormClickListener() {
-            @Override
-            public void onFormClick(Form form) {
-                Intent intent = new Intent(requireActivity(), FormDetailActivity.class);
-                intent.putExtra("formid", form.getFormID());
-                startActivity(intent);
-                requireActivity().finish();
-            }
-        }, DBHelper);
+        fAdapter = new FormAdapter(getContext(), filteredForms, this::onFormClick, DBHelper);
         lvForm.setAdapter(fAdapter);
 
         spThang.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -173,13 +160,20 @@ public class FormPersonalFragment extends Fragment {
         return binding.getRoot();
     }
 
+    public void onFormClick(Form form) {
+        Intent intent = new Intent(requireActivity(), FormDetailActivity.class);
+        intent.putExtra("formid", form.getFormID());
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
     ListView lvForm;
     FormAdapter fAdapter;
     ArrayList<Form> listForms = new ArrayList<>();
     ArrayList<Form> filteredForms = new ArrayList<>();
     ArrayList<MonthSpinner> listMonth = new ArrayList<>();
     ArrayList<StatusSpinner> listStatus = new ArrayList<>();
-    ArrayList<TypeForm> ListtypeForm = new ArrayList<>();
+    List<String> ListtypeForm = new ArrayList<>();
     Spinner spTrangThai, spThang;
     MonthSpinnerAdapter msAdapter;
     StatusSpinnerAdapter ssAdapter;
@@ -202,16 +196,27 @@ public class FormPersonalFragment extends Fragment {
         }
     }
 
+    public List<String> getLeaveTypeNames() {
+        List<String> leaveTypeNames = new ArrayList<>();
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT LeaveTypeName FROM LeaveType", null);
 
-    private void loadDataTypeFormFromDatabase() {
-        List<List> leaveType = DBHelper.loadDataHandler("LeaveType", null, null);
-        ListtypeForm.clear();
-        for (List<String> row : leaveType) {
-            String nameTypeform = row.get(1);
-            ListtypeForm.add(new TypeForm(nameTypeform));
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int nameFormIndex = cursor.getColumnIndex("LeaveTypeName");
+
+                if (nameFormIndex != -1 ) {
+                    String nameForm = cursor.getString(nameFormIndex);
+                    leaveTypeNames.add(nameForm);
+                }
+            } while (cursor.moveToNext());
         }
-    }
 
+        if (cursor != null) {
+            cursor.close();
+        }
+        return leaveTypeNames;
+    }
     private void loadDataFromFirebase(String targetEmployee, FormPersonalActivity.DataLoadCallbackForm callbackform) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -375,10 +380,9 @@ public class FormPersonalFragment extends Fragment {
         lvTypeForm.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TypeForm selectedTypeForm = ListtypeForm.get(position);
-
+                String selectedTypeForm = ListtypeForm.get(position);
                 Intent intent = new Intent(getContext(), FormCreateActivity.class);
-                intent.putExtra("selectedType", selectedTypeForm.getNameTypeform());
+                intent.putExtra("selectedType", selectedTypeForm);
                 startActivity(intent);
                 bottomSheetDialog.dismiss();
             }

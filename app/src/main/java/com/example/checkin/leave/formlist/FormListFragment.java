@@ -1,6 +1,6 @@
 package com.example.checkin.leave.formlist;
 
-import static com.example.checkin.leave.formapprove.FormApproveActivity.formatDate;
+import static com.example.checkin.leave.formapprove.FormApproveFragment.formatDate;
 import static com.example.checkin.leave.formpersonal.FormPersonalActivity.formatDateTime;
 
 import android.content.Intent;
@@ -106,6 +106,8 @@ public class FormListFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
         this.employeeID = viewModel.getEmployeeID();
+        viewModel.setCurrentFragment(R.id.formListFragment);
+
 
         setListMonth();
         setListStatus();
@@ -150,7 +152,7 @@ public class FormListFragment extends Fragment {
         spThang.setAdapter(msAdapter);
 
         lvAllForm = binding.formListLv;
-        afAdapter = new AllFormAdapter(requireActivity(),listAllForm,db);
+        afAdapter = new AllFormAdapter(requireActivity(),listAllForm, this::onFormList,db);
         lvAllForm.setAdapter(afAdapter);
 
 //        btnFilter = binding.;

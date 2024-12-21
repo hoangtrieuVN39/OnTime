@@ -63,40 +63,25 @@ public class FormFragment extends Fragment {
 
         navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.view);
         navController = navHostFragment.getNavController();
+        navController.setLifecycleOwner(requireActivity());
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.formPersonalFragment, R.id.formApproveFragment, R.id.formListFragment
         ).build();
 
         toolbar = binding.toolbar;
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
-        navController.navigate(R.id.formListFragment);
 
         tabLayout = binding.tabLayout;
         setupTabLayout();
-
-        viewModel.setCurrentFragment(R.id.formListFragment);
-//        binding.buttonlistFilter.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                viewModel.onFilterBtnClicked();
-//            }
-//        });
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        System.out.println(viewModel.getOnFilterBtnClicked());
         viewModel.getOnFilterBtnClicked().observe(getViewLifecycleOwner(), new Observer<View.OnClickListener>() {
             @Override
             public void onChanged(View.OnClickListener newValue) {
-                if (!Objects.equals(newValue, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                })){
+                if (viewModel.currentFragmentID != R.id.formPersonalFragment){
                     binding.buttonlistFilter.setVisibility(View.VISIBLE);
                     binding.buttonlistFilter.setOnClickListener(newValue);
                 } else {

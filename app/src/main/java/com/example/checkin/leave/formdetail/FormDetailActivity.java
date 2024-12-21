@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.checkin.DatabaseHelper;
+import com.example.checkin.MainActivity;
 import com.example.checkin.R;
 import com.example.checkin.leave.FlowApproverAdapter;
 import com.example.checkin.leave.FormAdapter;
@@ -142,8 +143,8 @@ public class FormDetailActivity extends Activity {
             String caller = getIntent().getStringExtra("caller");
             Intent intent = null;
             if ("FormPersonalActivity".equals(caller)) {
-                intent = new Intent(this, FormPersonalActivity.class);
-            } else {intent = new Intent(this, FormListActivity.class);
+                intent = new Intent(this, MainActivity.class);
+            } else {intent = new Intent(this, MainActivity.class);
             }
             startActivity(intent);
             finish();

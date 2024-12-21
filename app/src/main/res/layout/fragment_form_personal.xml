@@ -58,7 +58,7 @@
         <LinearLayout
             android:id="@+id/list_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@id/nav_header"
             android:orientation="vertical">
 
@@ -108,7 +108,7 @@
                 <ListView
                     android:id="@+id/form_lv"
                     android:layout_width="match_parent"
-                    android:layout_height="613dp"
+                    android:layout_height="match_parent"
                     android:divider="@android:color/transparent"
                     android:dividerHeight="8dp" />
             </LinearLayout>

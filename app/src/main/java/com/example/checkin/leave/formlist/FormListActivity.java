@@ -1,6 +1,7 @@
 package com.example.checkin.leave.formlist;
 
-import static com.example.checkin.leave.formapprove.FormApproveActivity.formatDate;
+//import static com.example.checkin.leave.formapprove.FormApproveActivity.formatDate;
+import static com.example.checkin.leave.formapprove.FormApproveFragment.formatDate;
 import static com.example.checkin.leave.formpersonal.FormPersonalActivity.formatDateTime;
 
 import android.app.Activity;
@@ -28,7 +29,7 @@ import com.example.checkin.DatabaseHelper;
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.OnFormListClickListener;
 import com.example.checkin.R;
-import com.example.checkin.leave.formapprove.FormApproveActivity;
+//import com.example.checkin.leave.formapprove.FormApproveActivity;
 import com.example.checkin.leave.formdetail.FormApproveDetailActivity;
 import com.example.checkin.leave.formdetail.FormDetailActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
@@ -671,7 +672,7 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                     String status = cursor.getString(statussIndex);
                     int countShift = cursor.getInt(CountshiftIndex);
 
-                    String formattedCreatedTime = FormApproveActivity.formatDate(createdTime);
+                    String formattedCreatedTime = formatDate(createdTime);
                     String formattedStartTime = FormPersonalActivity.formatDateTime(leaveStartTime);
                     String formattedEndTime = FormPersonalActivity.formatDateTime(leaveEndTime);
 

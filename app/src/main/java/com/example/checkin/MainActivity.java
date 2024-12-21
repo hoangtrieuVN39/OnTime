@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
         bottomNavigation = binding.subnavBar;
         bottomNavigation.setOnItemSelectedListener(this::onItemSelectedListener);
-        bottomNavigation.setSelectedItemId(R.id.form);
+        bottomNavigation.setSelectedItemId(R.id.checkinMain);
     }
 
     private boolean onItemSelectedListener(MenuItem item) {
