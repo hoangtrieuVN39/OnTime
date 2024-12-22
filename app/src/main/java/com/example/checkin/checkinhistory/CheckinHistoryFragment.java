@@ -65,7 +65,7 @@ public class CheckinHistoryFragment extends Fragment {
         ListDateAdapter adapter = viewModel.getDateAdapter(filterID, getContext());
         adapter.setOnItemClickListener(position -> {
 
-                });
+        });
         listView.setAdapter(adapter);
 
     }
