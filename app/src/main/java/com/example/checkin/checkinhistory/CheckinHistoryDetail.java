@@ -177,13 +177,13 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             workDetailCheckinValidTxt.setText(shift[3]);
             workDetailCheckoutValidTxt.setText(shift[3]);
             if (shift[1].equals(checkTime)) {
-                workDetailCheckinLateTxt.setText(shift[1]);
+                workDetailCheckinLateTxt.setText("");
             } else {
                 workDetailCheckinLateTxt.setText("Hợp lệ");
                 workDetailCheckinLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
             }
             if (shift[2].equals(checkTime)) {
-                workDetailCheckoutLateTxt.setText(shift[1]);
+                workDetailCheckoutLateTxt.setText("");
             } else {
                 workDetailCheckoutLateTxt.setText("Hợp lệ");
                 workDetailCheckoutLateTxt.setTextColor(getResources().getColor(R.color.purple_700));

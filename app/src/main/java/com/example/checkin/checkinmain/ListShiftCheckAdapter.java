@@ -126,8 +126,8 @@ public class ListShiftCheckAdapter extends BaseAdapter {
 
         List<List> table = dbHelper.loadDataHandler("Attendance", filter, new String[]{"CreatedTime", "AttendanceType"});
 
-        sdf.applyPattern("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat sdff = new SimpleDateFormat("HH:mm:ss");
+        sdf.applyPattern("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdff = new SimpleDateFormat("HH:mm");
         for (int i = 0; i < table.size(); i++) {
             checkList.add(new String[]{
                     sdff.format(sdf.parse(table.get(i).get(0).toString())),
