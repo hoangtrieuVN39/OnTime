@@ -71,6 +71,7 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/work_count_date_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="right"
@@ -105,9 +106,11 @@
                     android:textSize="14sp" />
 
                 <View
+                    android:id="@+id/morning_highlight"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="#FBCC08" />
+                    android:background="@android:color/holo_orange_light"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -124,11 +127,12 @@
                     android:text="Ca Chiều"
                     android:textColor="#14161A"
                     android:textSize="14sp" />
-
-                <!--                            <View-->
-                <!--                                android:layout_width="match_parent"-->
-                <!--                                android:layout_height="2dp"-->
-                <!--                                android:background="#FF0000" />-->
+                <View
+                    android:id="@+id/afternoon_highlight"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@android:color/holo_orange_light"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <LinearLayout
@@ -145,11 +149,12 @@
                     android:text="Ca Tối"
                     android:textColor="#14161A"
                     android:textSize="14sp" />
-
-                <!--            <View-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="2dp"-->
-                <!--                android:background="#FF0000" />-->
+                <View
+                    android:id="@+id/dinner_highlight"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@android:color/holo_orange_light"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>
@@ -345,7 +350,7 @@
                         android:id="@+id/work_detail_checkin_late_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="( Trễ 55 phút)"
+                        android:text=""
                         android:textColor="#BB1B1B"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -372,6 +377,12 @@
                         android:textColor="#14BD4F"
                         android:textSize="16sp"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
 
                 </LinearLayout>
@@ -414,11 +425,19 @@
                         android:id="@+id/work_detail_checkout_time_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="40dp"
+                        android:layout_marginEnd="10dp"
                         android:text="12:21"
                         android:textColor="#2E333D"
                         android:textSize="16sp"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/work_detail_checkout_late_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#BB1B1B"
+                        android:textSize="14sp" />
 
 
                 </LinearLayout>
@@ -456,4 +475,3 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
