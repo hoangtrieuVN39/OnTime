@@ -140,13 +140,13 @@ public class FormDetailActivity extends Activity {
 
 
         btnBack.setOnClickListener(view -> {
-            String caller = getIntent().getStringExtra("caller");
-            Intent intent = null;
-            if ("FormPersonalActivity".equals(caller)) {
-                intent = new Intent(this, MainActivity.class);
-            } else {intent = new Intent(this, MainActivity.class);
-            }
-            startActivity(intent);
+//            String caller = getIntent().getStringExtra("caller");
+//            Intent intent = null;
+//            if ("FormPersonalActivity".equals(caller)) {
+//                intent = new Intent(this, MainActivity.class);
+//            } else {intent = new Intent(this, MainActivity.class);
+//            }
+//            startActivity(intent);
             finish();
         });
 

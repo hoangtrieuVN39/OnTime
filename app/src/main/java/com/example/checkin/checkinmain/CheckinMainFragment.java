@@ -94,10 +94,10 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         viewModel = new ViewModelProvider(requireActivity()).get(CheckinMainViewModel.class);
 
         // Load Database asynchronously
+        viewModel.loadDataFromParent(parent);
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             try {
-                viewModel.loadDataFromParent(parent);
                 viewModel.loadData(getContext(), parent.getEmployeeID());
                 uiHandler.post(() -> {
                     updateUIListView(viewModel.getListShift());

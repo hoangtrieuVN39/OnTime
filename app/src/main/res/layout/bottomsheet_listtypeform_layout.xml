@@ -18,31 +18,32 @@
             android:layout_height="wrap_content"
             android:layout_weight="12"
             android:text="Đơn từ"
+            android:textColor="@android:color/black"
             android:textSize="25sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:textStyle="bold" />
+
         <ImageButton
             android:id="@+id/close_btn"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:src="@drawable/ic_close"
             android:layout_gravity="center"
-            android:contentDescription="Back" />
+            android:layout_weight="1"
+            android:background="@null"
+            android:contentDescription="Back"
+            android:src="@drawable/ic_close" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp"
+        android:background="@drawable/rc_color"
         android:orientation="vertical"
-        android:background="@drawable/rc_color">
+        android:padding="5dp">
 
         <ListView
             android:id="@+id/typeForm_lv"
             android:layout_width="match_parent"
-            android:layout_height="424dp"
+            android:layout_height="match_parent"
             android:divider="@android:color/transparent"
             android:dividerHeight="8dp" />
     </LinearLayout>

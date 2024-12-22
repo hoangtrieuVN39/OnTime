@@ -141,7 +141,6 @@ public class FormPersonalFragment extends Fragment {
                 StatusSpinner status = listStatus.get(position);
                 String selectedStatus = status.getNameStatus();
                 String selectedMonth = ((MonthSpinner) spThang.getSelectedItem()).getNameMonth();
-                System.out.println(((MonthSpinner) spThang.getSelectedItem()).getNameMonth());
                 filterFormsByMonthAndStatus(selectedMonth, selectedStatus);
             }
 
@@ -165,7 +164,6 @@ public class FormPersonalFragment extends Fragment {
         Intent intent = new Intent(requireActivity(), FormDetailActivity.class);
         intent.putExtra("formid", form.getFormID());
         startActivity(intent);
-        requireActivity().finish();
     }
 
     ListView lvForm;
@@ -353,11 +351,10 @@ public class FormPersonalFragment extends Fragment {
 
 
     private void showBottomSheetDialog() {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
-        View sheetView = LayoutInflater.from(getContext()).inflate(R.layout.bottomsheet_listtypeform_layout, null);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme);
+        View sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottomsheet_listtypeform_layout, null);
 
         lvTypeForm = sheetView.findViewById(R.id.typeForm_lv);
-
         ImageButton closeButton = sheetView.findViewById(R.id.close_btn);
 
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -366,7 +363,8 @@ public class FormPersonalFragment extends Fragment {
                 bottomSheetDialog.dismiss();
             }
         });
-        TypeformAdapter typeformAdapter = new TypeformAdapter(getContext(), ListtypeForm, new OnFormClickListener() {
+
+        TypeformAdapter typeformAdapter = new TypeformAdapter(requireContext(), ListtypeForm, new OnFormClickListener() {
             @Override
             public void onFormClick(Form form) {
                 Intent intent = new Intent(requireActivity(), FormDetailActivity.class);
@@ -381,13 +379,13 @@ public class FormPersonalFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedTypeForm = ListtypeForm.get(position);
-                Intent intent = new Intent(getContext(), FormCreateActivity.class);
+
+                Intent intent = new Intent(requireContext(), FormCreateActivity.class);
                 intent.putExtra("selectedType", selectedTypeForm);
                 startActivity(intent);
                 bottomSheetDialog.dismiss();
             }
         });
-
 
         bottomSheetDialog.setContentView(sheetView);
 
@@ -397,7 +395,22 @@ public class FormPersonalFragment extends Fragment {
             if (bottomSheet != null) {
                 BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-                bottomSheetBehavior.setDraggable(false); // Tắt khả năng vuốt
+                // Set the height to match parent (full screen)
+                ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
+                layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                bottomSheet.setLayoutParams(layoutParams);
+
+                // Expand the bottom sheet
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                // Disable dragging
+                bottomSheetBehavior.setDraggable(false);
+
+//                // Optional: Remove the default background dim
+//                Window window = d.getWindow();
+//                if (window != null) {
+//                    window.setDimAmount(0f);
+//                }
             }
         });
 

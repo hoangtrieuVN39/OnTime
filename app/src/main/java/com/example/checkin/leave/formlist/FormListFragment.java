@@ -217,7 +217,6 @@ public class FormListFragment extends Fragment {
             intent.putExtra("formid", form.getFormID());
             intent.putExtra("caller", "FormListActivity");
             startActivity(intent);
-            requireActivity().finish();
         }
         else if(formlist instanceof FormApprove){
             FormApprove formApprove = (FormApprove) formlist;
@@ -226,7 +225,6 @@ public class FormListFragment extends Fragment {
             intent.putExtra("formApproveid",formApprove.getFormApproveID());
             intent.putExtra("caller", "FormListActivity");
             startActivity(intent);
-            requireActivity().finish();
         }
     }
 

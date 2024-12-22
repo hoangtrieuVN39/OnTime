@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -538,8 +539,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         });
 
 
-
-
         nhanvienSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -569,7 +568,12 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             if (bottomSheet != null) {
                 BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-                bottomSheetBehavior.setPeekHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.9));
+                ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
+                layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                bottomSheet.setLayoutParams(layoutParams);
+
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
                 bottomSheetBehavior.setDraggable(false);
             }
         });

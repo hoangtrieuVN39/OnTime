@@ -712,7 +712,6 @@ public class FormApproveFragment extends Fragment {
         intent.putExtra("formApproveid",formApprove.getFormApproveID());
         intent.putExtra("caller", "FormApproveDetailActivity");
         startActivity(intent);
-        requireActivity().finish();
     }
 
     public interface OnLeaveTypeNamesLoadedListener {

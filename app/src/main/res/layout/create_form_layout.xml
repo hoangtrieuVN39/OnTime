@@ -42,36 +42,37 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/createForm_btn"
         android:layout_below="@id/header_lnLayout"
-        android:layout_above="@+id/createForm_btn">
+        android:layout_marginBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/br_edittext"
-                android:layout_marginBottom="10dp">
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/titleForm_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Loại đơn từ"
+                    android:layout_gravity="center"
                     android:layout_marginStart="10dp"
-                    android:textSize="17sp"
-                    android:layout_gravity="center">
-                </TextView>
+                    android:text="Loại đơn từ"
+                    android:textSize="17sp"></TextView>
 
                 <Spinner
                     android:id="@+id/typeForm_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:layout_weight="6"
-                    android:paddingStart="5dp"/>
+                    android:paddingStart="5dp" />
             </LinearLayout>
 
 
@@ -80,15 +81,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Thời gian áp dụng"
+                android:textColor="@android:color/black"
                 android:textSize="25dp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black" />
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp">
 
                 <Button
                     android:id="@+id/shiftMorning_btn"
@@ -103,31 +104,31 @@
                     android:id="@+id/shiftAfternoon_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/round_corner2"
                     android:text="Ca chiều"
                     android:textAllCaps="false"
-                    android:background="@drawable/round_corner2"
-                    android:layout_marginStart="10dp"
-                    android:textColor="#575E72"/>
+                    android:textColor="#575E72" />
 
                 <Button
                     android:id="@+id/shiftNight_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/round_corner2"
                     android:text="Ca tối"
                     android:textAllCaps="false"
-                    android:background="@drawable/round_corner2"
-                    android:layout_marginStart="10dp"
-                    android:textColor="#575E72"/>
+                    android:textColor="#575E72" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/startDate_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:text="Thời gian bắt đầu"
-                android:textStyle="bold"
                 android:textSize="16dp"
-                android:layout_marginTop="10dp" />
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -142,45 +143,46 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/calendar"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginStart="5dp"/>
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/calendar" />
 
                     <EditText
                         android:id="@+id/StartDate_tedit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Chọn ngày"
-                        android:textColorHint="#9E9E9E"
+                        android:layout_gravity="center_vertical"
                         android:background="@null"
                         android:focusable="false"
-                        android:layout_gravity="center_vertical"
-                        android:padding="9dp"/>
+                        android:hint="Chọn ngày"
+                        android:padding="9dp"
+                        android:textColorHint="#9E9E9E" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/br_edittext"
+                    android:layout_gravity="center"
                     android:layout_marginStart="5dp"
-                    android:layout_gravity="center">
+                    android:layout_weight="1"
+                    android:background="@drawable/br_edittext">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/access_time"
                         android:layout_gravity="center"
-                        android:layout_marginStart="5dp"/>
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/access_time" />
+
                     <EditText
                         android:id="@+id/StartHour_tedit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Chọn giờ"
-                        android:textColorHint="#9E9E9E"
-                        android:focusable="false"
                         android:background="@null"
-                        android:padding="9dp"/>
+                        android:focusable="false"
+                        android:hint="Chọn giờ"
+                        android:padding="9dp"
+                        android:textColorHint="#9E9E9E" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -188,10 +190,10 @@
                 android:id="@+id/endDate_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:text="Thời gian kết thúc"
-                android:textStyle="bold"
                 android:textSize="16dp"
-                android:layout_marginTop="10dp" />
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -207,44 +209,44 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/calendar"
                         android:layout_gravity="center"
-                        android:layout_marginStart="5dp"/>
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/calendar" />
 
                     <EditText
                         android:id="@+id/EndDate_tedit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Chọn ngày"
-                        android:textColorHint="#9E9E9E"
-                        android:focusable="false"
                         android:background="@null"
-                        android:padding="9dp"/>
+                        android:focusable="false"
+                        android:hint="Chọn ngày"
+                        android:padding="9dp"
+                        android:textColorHint="#9E9E9E" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/br_edittext"
-                    android:layout_marginStart="5dp">
+                    android:background="@drawable/br_edittext">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/access_time"
                         android:layout_gravity="center"
-                        android:layout_marginStart="5dp"/>
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/access_time" />
 
                     <EditText
                         android:id="@+id/EndHour_tedit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Chọn giờ"
-                        android:textColorHint="#9E9E9E"
+                        android:background="@null"
                         android:focusable="false"
+                        android:hint="Chọn giờ"
                         android:padding="9dp"
-                        android:background="@null"/>
+                        android:textColorHint="#9E9E9E" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -252,18 +254,18 @@
                 android:id="@+id/infoShift_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="Thông tin công"
-                android:textSize="25dp"
-                android:textStyle="bold"
                 android:textColor="@android:color/black"
-                android:layout_marginBottom="10dp" />
+                android:textSize="25dp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
                 android:background="@drawable/rc_color"
-                android:orientation="vertical"
-                android:layout_marginBottom="15dp">
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -283,8 +285,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="0"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -293,37 +295,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Lý do"
+                android:textColor="#575E72"
                 android:textSize="16dp"
-                android:textStyle="bold"
-                android:textColor="#575E72"/>
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/reason_tedit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nhập lý do"
-                android:textColorHint="#9E9E9E"
+                android:layout_marginBottom="15dp"
                 android:background="@drawable/br_edittext"
-                android:padding="10dp"
-                android:focusable="true"
                 android:clickable="true"
+                android:focusable="true"
+                android:hint="Nhập lý do"
                 android:inputType="textMultiLine"
-                android:layout_marginBottom="15dp"/>
+                android:padding="10dp"
+                android:textColorHint="#9E9E9E" />
 
             <TextView
                 android:id="@+id/approveFlow_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:text="Luồng phê duyệt"
-                android:textSize="25dp"
-                android:textStyle="bold"
                 android:textColor="@android:color/black"
-                android:layout_marginBottom="5dp" />
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:id="@+id/flowApprover_lnl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:id="@+id/flowApprove_linearlayout"
                     android:layout_width="wrap_content"
@@ -336,8 +340,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:src="@drawable/add_circle_approver"
-                        android:contentDescription="Add Approver" />
+                        android:contentDescription="Add Approver"
+                        android:src="@drawable/add_circle_approver" />
 
                     <!-- TextView tên người phê duyệt -->
                     <TextView
@@ -356,8 +360,8 @@
                 <View
                     android:layout_width="2dp"
                     android:layout_height="12dp"
-                    android:background="#4367FC"
-                    android:layout_marginStart="11dp" />
+                    android:layout_marginStart="11dp"
+                    android:background="#4367FC" />
                 <!-- Phần Hoàn tất phê duyệt -->
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -368,18 +372,18 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/radio_button_checked"
-                        android:contentDescription="Complete Approval" />
+                        android:contentDescription="Complete Approval"
+                        android:src="@drawable/radio_button_checked" />
 
                     <!-- TextView Hoàn tất phê duyệt -->
                     <TextView
                         android:id="@+id/complete_approval_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:text="Hoàn tất phê duyệt"
-                        android:textSize="16sp"
                         android:textColor="@android:color/black"
-                        android:layout_marginStart="8dp" />
+                        android:textSize="16sp" />
                 </LinearLayout>
 
             </LinearLayout>

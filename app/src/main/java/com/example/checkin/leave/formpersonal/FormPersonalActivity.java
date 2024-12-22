@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -404,7 +406,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         View sheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bottomsheet_listtypeform_layout, null);
 
         lvTypeForm = sheetView.findViewById(R.id.typeForm_lv);
-
         ImageButton closeButton = sheetView.findViewById(R.id.close_btn);
 
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -413,6 +414,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                 bottomSheetDialog.dismiss();
             }
         });
+
         TypeformAdapter typeformAdapter = new TypeformAdapter(this, ListtypeForm, this);
         lvTypeForm.setAdapter(typeformAdapter);
 
@@ -428,7 +430,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             }
         });
 
-
         bottomSheetDialog.setContentView(sheetView);
 
         bottomSheetDialog.setOnShowListener(dialog -> {
@@ -437,8 +438,22 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             if (bottomSheet != null) {
                 BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-//                bottomSheetBehavior.setPeekHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.9));
+                // Set the height to match parent (full screen)
+                ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
+                layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                bottomSheet.setLayoutParams(layoutParams);
+
+                // Expand the bottom sheet
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                // Disable dragging
                 bottomSheetBehavior.setDraggable(false);
+
+//                // Optional: Remove the default background dim
+//                Window window = d.getWindow();
+//                if (window != null) {
+//                    window.setDimAmount(0f);
+//                }
             }
         });
 
