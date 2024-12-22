@@ -173,7 +173,6 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             workDetailCheckoutTimeTxt.setText(shift[2]);
             workDetailLocationTxt.setText(shift[3]);
 
-
             workDetailCheckinValidTxt.setText(shift[3]);
             workDetailCheckoutValidTxt.setText(shift[3]);
             if (shift[1].equals(checkTime)) {
