@@ -213,7 +213,8 @@
                     android:layout_height="40dp"
                     android:layout_marginRight="10dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_locate" />
+                    android:src="@drawable/outline_location_on_24"
+                    android:tint="#2E333D" />
 
 
                 <LinearLayout
@@ -252,7 +253,8 @@
                     android:layout_height="40dp"
                     android:layout_marginRight="10dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_money" />
+                    android:src="@drawable/icon"
+                    android:tintMode="add" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"

@@ -28,8 +28,6 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             workDetailCheckoutTimeTxt, workDetailCheckoutValidTxt, mainTabbarTimekeepingTxt;
     private ImageView icBack, icLocate, icMoney, icClock;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

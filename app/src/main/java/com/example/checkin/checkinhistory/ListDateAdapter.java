@@ -27,7 +27,6 @@ public class ListDateAdapter extends BaseAdapter {
     private final DatabaseHelper dbHelper;
     private final List<Shift> listShift;
     private final String employee;
-
     private OnItemClickListener listener;
 
     public ListDateAdapter(Context context, List<Date> dates, DatabaseHelper dbHelper, List<Shift> listShift, String employee) {
@@ -36,6 +35,7 @@ public class ListDateAdapter extends BaseAdapter {
         this.dbHelper = dbHelper;
         this.listShift = listShift;
         this.employee = employee;
+        this.listener = listener;
     }
 
     public interface OnItemClickListener {
