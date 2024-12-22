@@ -64,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
                 .add(binding.fragmentContainerView.getId(), checkinMainFragment)
                 .add(binding.fragmentContainerView.getId(), checkinHistoryFragment)
                 .add(binding.fragmentContainerView.getId(), FormFragment)
-                .hide(checkinMainFragment)
-                .hide(checkinHistoryFragment) // Add only once
+                .show(checkinMainFragment)
+                .hide(checkinHistoryFragment)
+                .hide(FormFragment) // Add only once
                 .commit();
         bottomNavigation = binding.subnavBar;
         bottomNavigation.setOnItemSelectedListener(this::onItemSelectedListener);

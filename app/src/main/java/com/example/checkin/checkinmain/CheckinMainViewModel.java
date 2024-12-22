@@ -22,10 +22,10 @@ import java.util.List;
 
 public class CheckinMainViewModel extends ViewModel {
 
-    private final MutableLiveData<Shift> currentShift = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isCheckedIn = new MutableLiveData<>();
-    private final MutableLiveData<Place> currentPlace = new MutableLiveData<>();
-    private final MutableLiveData<Double> distance = new MutableLiveData<>();
+    private final MutableLiveData<Shift> _currentShift = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> _isCheckedIn = new MutableLiveData<>();
+    private final MutableLiveData<Place> _currentPlace = new MutableLiveData<>();
+    private final MutableLiveData<Double> _distance = new MutableLiveData<>();
     private DatabaseHelper dbHelper;
     private String employeeID;
     private BaseViewModel parent;
@@ -38,37 +38,44 @@ public class CheckinMainViewModel extends ViewModel {
         employeeID = parent.getEmployeeID();
         shifts = parent.getListShift();
         places = parent.getPlaces();
+
+        updateData(new Date());
     }
 
     public LiveData<Shift> getCurrentShift() {
-        return currentShift;
+        return _currentShift;
     }
 
     public LiveData<Boolean> getIsCheckedIn() {
-        return isCheckedIn;
+        return _isCheckedIn;
     }
 
     public LiveData<Place> getCurrentPlace() {
-        return currentPlace;
+        return _currentPlace;
     }
 
     public LiveData<Double> getDistance() {
-        return distance;
+        return _distance;
     }
 
     public void updateData(Date current) {
         try {
             List result = Utils.isCheckedInAndCurrentShift(employeeID, dbHelper, current, shifts);
-            currentShift.setValue((Shift) result.get(0));
-            isCheckedIn.setValue((Boolean) result.get(1));
+            if (result != null && result.size() >= 2) {
+                _currentShift.setValue((Shift) result.get(0));
+                _isCheckedIn.setValue((Boolean) result.get(1));
+            }
         } catch (Exception e) {
             Log.e("CheckinViewModel", "Error updating data", e);
         }
     }
 
     public void updateLocation(Location location) {
-        currentPlace.setValue(Utils.getCurrentPlace(places, location));
-        distance.setValue(Utils.getDisPlace(currentPlace.getValue(), location));
+        if (location != null) {
+            Place place = Utils.getCurrentPlace(places, location);
+            _currentPlace.setValue(place);
+            _distance.setValue(Utils.getDisPlace(place, location));
+        }
     }
 
     public void onCheckBtnClicked(String employeeID, Shift currentshift, Place cPlace, Location clocation, Date current) throws ParseException {
@@ -79,7 +86,7 @@ public class CheckinMainViewModel extends ViewModel {
         String attendanceTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current.getTime());
         String attendanceType;
 
-        if (isCheckedIn.getValue() == true){
+        if (_isCheckedIn.getValue() == true){
             attendanceType = "Check out";
         }
         else {

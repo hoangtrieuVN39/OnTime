@@ -93,16 +93,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        loadDataAllFromFirebase(new DataLoadCallbackForm() {
-//            @Override
-//            public void onDataLoaded() {
-//                fAdapter.notifyDataSetChanged();
-//                fAdapter.updateListForm(filteredForms);
-//                lvForm.setAdapter(fAdapter);
-//                Log.d("filteredForms", "Dữ liệu listfilterAllForm: " + filteredForms.size());
-//            }
-//        });
         loadDataFromFirebase("NV001",new DataLoadCallbackForm() {
             @Override
             public void onDataLoaded() {
@@ -114,7 +104,6 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
         });
 
         loadDataTypeFormFromDatabase();
-        //        loadDataFromDatabase();
 
         lvForm = findViewById(R.id.form_lv);
         btn_addForm = findViewById(R.id.addForm_btn);

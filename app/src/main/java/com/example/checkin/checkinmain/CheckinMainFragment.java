@@ -91,7 +91,7 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Initialize ViewModel
-        viewModel = new ViewModelProvider(this).get(CheckinMainViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(CheckinMainViewModel.class);
 
         // Load Database asynchronously
         Executor executor = Executors.newSingleThreadExecutor();
@@ -118,7 +118,6 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = CheckinmaintestLayoutBinding.inflate(inflater, container, false);
 
-        // Initialize components
         currentshift_txt = binding.currentshiftTxt;
         currenttime_txt = binding.currenttimeTxt;
         currentdate_txt = binding.currentdateTxt;
@@ -129,53 +128,14 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         checkin_txt = binding.checkinTxt;
         listShift = binding.listShift;
 
-        uiUpdateRunnable = () -> {
-            current = new Date();
-            viewModel.updateData(current);
-            uiHandler.postDelayed(uiUpdateRunnable, 1000);
-        };
+        setupUI();
+        setupObservers();
+        setupLocationHandling();
 
-        uiHandler.post(uiUpdateRunnable);
+        return binding.getRoot();
+    }
 
-        Switch sw = binding.mapSw;
-        sw.setOnCheckedChangeListener(this::switchMap);
-
-        updateUIListView(viewModel.getListShift());
-
-        // Observe LiveData from ViewModel
-        viewModel.getCurrentShift().observe(getViewLifecycleOwner(), new Observer<Shift>() {
-            @Override
-            public void onChanged(Shift shift) {
-                currentshift = shift;
-                updateUI();
-            }
-        });
-
-        viewModel.getIsCheckedIn().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean checkedIn) {
-                isCheckedIn = checkedIn;
-                updateUI();
-            }
-        });
-
-        viewModel.getCurrentPlace().observe(getViewLifecycleOwner(), new Observer<Place>() {
-            @Override
-            public void onChanged(Place place) {
-                cPlace = place;
-                updateUI();
-            }
-        });
-
-        viewModel.getDistance().observe(getViewLifecycleOwner(), new Observer<Double>() {
-            @Override
-            public void onChanged(Double dist) {
-                distance = dist;
-                updateUI();
-            }
-        });
-
-        // Request location permissions
+    private void setupLocationHandling() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestLocationLayout.setVisibility(View.VISIBLE);
             Button requestLocationButton = binding.requestBtn;
@@ -187,8 +147,50 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
             requestLocationLayout.setVisibility(View.INVISIBLE);
             onCreateMap();
         }
+    }
 
-        return binding.getRoot();
+    private void setupObservers() {
+        viewModel.getCurrentShift().observe(getViewLifecycleOwner(), shift -> {
+            currentshift = shift;
+            updateUI();
+        });
+
+        viewModel.getIsCheckedIn().observe(getViewLifecycleOwner(), checkedIn -> {
+            isCheckedIn = checkedIn;
+            updateUI();
+        });
+
+        viewModel.getCurrentPlace().observe(getViewLifecycleOwner(), place -> {
+            cPlace = place;
+            updateUI();
+        });
+
+        viewModel.getDistance().observe(getViewLifecycleOwner(), dist -> {
+            distance = dist;
+            updateUI();
+        });
+    }
+
+    private void removeObservers() {
+        viewModel.getCurrentShift().removeObservers(getViewLifecycleOwner());
+        viewModel.getIsCheckedIn().removeObservers(getViewLifecycleOwner());
+        viewModel.getCurrentPlace().removeObservers(getViewLifecycleOwner());
+        viewModel.getDistance().removeObservers(getViewLifecycleOwner());
+    }
+
+
+    private void setupUI() {
+        uiUpdateRunnable = () -> {
+            if (isAdded()) {
+                current = new Date();
+                viewModel.updateData(current);
+                uiHandler.postDelayed(uiUpdateRunnable, 1000);
+            }
+        };
+        uiHandler.post(uiUpdateRunnable);
+
+        binding.mapSw.setOnCheckedChangeListener(this::switchMap);
+        updateUIListView(viewModel.getListShift());
     }
 
     private void updateUIListView(List<Shift> shifts) {
@@ -313,5 +315,31 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
                 onCreateMap();
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        uiHandler.post(uiUpdateRunnable);
+        setupObservers();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        uiHandler.removeCallbacks(uiUpdateRunnable);
+        removeObservers();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        removeObservers();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        removeObservers();
     }
 }

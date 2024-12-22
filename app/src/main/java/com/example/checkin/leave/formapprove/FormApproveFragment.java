@@ -315,7 +315,7 @@ public class FormApproveFragment extends Fragment {
 
 
     public void setListMonth() {
-        listMonth.add(new MonthSpinner("Chọn thời gian"));
+        listMonth.add(new MonthSpinner("Thời gian"));
         listMonth.add(new MonthSpinner("Tuần này"));
         listMonth.add(new MonthSpinner("Tuần trước"));
         listMonth.add(new MonthSpinner("Tháng này"));
@@ -324,7 +324,7 @@ public class FormApproveFragment extends Fragment {
         listMonth.add(new MonthSpinner("Năm trước"));
     }
     public void setListStatus(){
-        listStatus.add(new StatusSpinner("Chọn trạng thái"));
+        listStatus.add(new StatusSpinner("Trạng thái"));
         listStatus.add(new StatusSpinner("Đồng ý"));
         listStatus.add(new StatusSpinner("Chưa phê duyệt"));
         listStatus.add(new StatusSpinner("Loại bỏ"));
@@ -590,8 +590,8 @@ public class FormApproveFragment extends Fragment {
 
 //        List<FormApprove> tempFilteredList = new ArrayList<>(listfilterFormApprove);
         listfilterFormApprove.clear();
-        boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
-        boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
+        boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Thời gian"));
+        boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Trạng thái"));
 
         //    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 

@@ -141,6 +141,7 @@ public class FormPersonalFragment extends Fragment {
                 StatusSpinner status = listStatus.get(position);
                 String selectedStatus = status.getNameStatus();
                 String selectedMonth = ((MonthSpinner) spThang.getSelectedItem()).getNameMonth();
+                System.out.println(((MonthSpinner) spThang.getSelectedItem()).getNameMonth());
                 filterFormsByMonthAndStatus(selectedMonth, selectedStatus);
             }
 
@@ -192,7 +193,6 @@ public class FormPersonalFragment extends Fragment {
 
         if (isSuccess) {
             Toast.makeText(getContext(), "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
-
         }
     }
 
@@ -406,8 +406,8 @@ public class FormPersonalFragment extends Fragment {
 
     public void filterFormsByMonthAndStatus(String selectedMonth, String selectedStatus) {
         filteredForms.clear();
-        boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Chọn thời gian"));
-        boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Chọn trạng thái"));
+        boolean filterByMonth = (selectedMonth != null && !selectedMonth.isEmpty() && !selectedMonth.equals("Thời gian"));
+        boolean filterByStatus = (selectedStatus != null && !selectedStatus.isEmpty() && !selectedStatus.equals("Trạng thái"));
 
         for (Form form : listForms) {
             boolean matchesMonth = true;

@@ -42,6 +42,7 @@ public class FormApproveAdapter extends BaseAdapter {
         this.faContext = listFormApproveContext;
         this.faForm = faForm;
         this.database = db;
+        this.faListener = faListener;
 //        this.firebaseReference = firebaseReference;
         this.firebaseReference = FirebaseDatabase.getInstance().getReference();
     }

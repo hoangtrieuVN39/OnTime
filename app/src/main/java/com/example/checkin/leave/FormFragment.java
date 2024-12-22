@@ -63,7 +63,7 @@ public class FormFragment extends Fragment {
 
         navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.view);
         navController = navHostFragment.getNavController();
-        navController.setLifecycleOwner(requireActivity());
+
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.formPersonalFragment, R.id.formApproveFragment, R.id.formListFragment
         ).build();
@@ -78,9 +78,10 @@ public class FormFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        viewModel.getOnFilterBtnClicked().observe(getViewLifecycleOwner(), new Observer<View.OnClickListener>() {
+        viewModel.getOnFilterBtnClicked().observe(requireActivity(), new Observer<View.OnClickListener>() {
             @Override
             public void onChanged(View.OnClickListener newValue) {
+                System.out.println(newValue);
                 if (viewModel.currentFragmentID != R.id.formPersonalFragment){
                     binding.buttonlistFilter.setVisibility(View.VISIBLE);
                     binding.buttonlistFilter.setOnClickListener(newValue);
@@ -90,6 +91,8 @@ public class FormFragment extends Fragment {
                 }
             }
         });
+
+        navController.navigate(R.id.formPersonalFragment);
     }
 
     private void setupTabLayout() {
