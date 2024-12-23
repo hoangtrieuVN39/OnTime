@@ -105,6 +105,7 @@ public class ListDateAdapter extends BaseAdapter {
         List<Shift> shifts;
         shifts = listShift;
         Double work_count = 0.0;
+        Double work_day = 0.0;
         String place = "Không có";
 
         for (Shift shift : shifts){
@@ -126,6 +127,9 @@ public class ListDateAdapter extends BaseAdapter {
             for (String[] check : shiftcheck){
                 if(date_s.equals(check[2])) {
                     work_count += (Double.parseDouble(check[0].substring(0, 2)) - Double.parseDouble(checkInTime.substring(0, 2))) + (Double.parseDouble(check[0].substring(3, 5)) - Double.parseDouble(checkInTime.substring(3, 5)))/60;
+                    if (work_count >= 4.0) {
+                        work_day++;
+                    }
                 }
                 place = getLocationFromId(check[3]);
                 date_s = check[2];
@@ -138,7 +142,7 @@ public class ListDateAdapter extends BaseAdapter {
             }
             shiftchecks.add(new String[]{shift.getShift_name(), checkinTime, checkoutTime, place, placeCheck});
         }
-        work_count_txt.setText((work_count*work_per_shift)+"");
+        work_count_txt.setText((work_day)+"");
         view.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(position, shiftchecks);
@@ -149,7 +153,8 @@ public class ListDateAdapter extends BaseAdapter {
                 context,
                 shiftchecks,
                 dates,
-                work_count*work_per_shift
+                work_count*work_per_shift,
+                work_day
         );
 
         shift_lv.setAdapter(adapter);
@@ -175,9 +180,9 @@ public class ListDateAdapter extends BaseAdapter {
         Log.d("ListDateAdapter", "Table table: " + table);
         for (int i = 0; i < table.size(); i++) {
             checkList.add(new String[]{
-                    dateFormat(table.get(i).get(0).toString(), "yyyy-MM-dd HH:mm:ss", "HH:mm:ss"),
+                    dateFormat(table.get(i).get(0).toString(), "yyyy-MM-dd HH:mm", "HH:mm"),
                     table.get(i).get(1).toString(),
-                    dateFormat(table.get(i).get(0).toString(), "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd"),
+                    dateFormat(table.get(i).get(0).toString(), "yyyy-MM-dd HH:mm", "yyyy-MM-dd"),
                     table.get(i).get(2).toString()
             });
         }

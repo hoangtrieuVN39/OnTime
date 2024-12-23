@@ -25,12 +25,14 @@ public class ListDateShiftAdapter extends BaseAdapter {
     private final Context context;
     private final List<Date> dates;
     private final Double workcount;
+    private final Double workday;
 
-    public ListDateShiftAdapter(Context context, List<String[]> shifts, List<Date> dates, Double workcount){
+    public ListDateShiftAdapter(Context context, List<String[]> shifts, List<Date> dates, Double workcount, Double workday){
         this.shifts = shifts;
         this.context = context;
         this.dates = dates;
         this.workcount = workcount;
+        this.workday = workday;
     }
 
     @Override
@@ -87,6 +89,7 @@ public class ListDateShiftAdapter extends BaseAdapter {
                     intent.putExtra("date", date);
                     intent.putExtra("shiftName", shifts.get(position)[0]);
                     intent.putExtra("workCounts", workcount);
+                    intent.putExtra("workDays", workday);
                     context.startActivity(intent);
                 } else {
                     throw new IllegalArgumentException("Context must be an instance of Activity");

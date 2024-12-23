@@ -68,6 +68,7 @@ public class CheckinHistoryDetail extends AppCompatActivity {
         String datee = getIntent().getStringExtra("date");
         String shiftNameTmp = getIntent().getStringExtra("shiftName");
         double workCountValue = getIntent().getDoubleExtra("workCounts", 0.0);
+        double workDayValue = getIntent().getDoubleExtra("workDays", 0.0);
 
         // Display the value in workDetailWorkRecordTxt
         if (shifts != null && !shifts.isEmpty()) {
@@ -91,7 +92,7 @@ public class CheckinHistoryDetail extends AppCompatActivity {
         }
 
         workDetailWorkRecordTxt.setText(String.valueOf(workCountValue));
-        workCountTxt.setText(String.valueOf(workCountValue));
+        workCountTxt.setText(String.valueOf(workDayValue));
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
