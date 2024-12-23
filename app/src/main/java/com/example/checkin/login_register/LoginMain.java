@@ -14,10 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.checkin.MainActivity;
+import com.example.checkin.OnAccountRetrievedListener;
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.AccountUtils;
 import com.example.checkin.Utils;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 
@@ -43,14 +45,31 @@ public class LoginMain extends Activity {
 
         sharedPreferences = getSharedPreferences("account_prefs", MODE_PRIVATE);
 
+//        if (sharedPreferences.contains("acc_email") && sharedPreferences.contains("acc_password")) {
+//            String email = sharedPreferences.getString("acc_email", "");
+//            String password = sharedPreferences.getString("acc_password", "");
+//            String user = Utils.getAccount(email, password, databaseHelper);
+//            if (user != null) {
+//                login(user);
+//            }
+//        }
+
         if (sharedPreferences.contains("acc_email") && sharedPreferences.contains("acc_password")) {
             String email = sharedPreferences.getString("acc_email", "");
             String password = sharedPreferences.getString("acc_password", "");
-            String user = Utils.getAccount(email, password, databaseHelper);
-            if (user != null) {
-                login(user);
-            }
+
+            Utils.getAccountFB(email, password, FirebaseDatabase.getInstance().getReference(), new OnAccountRetrievedListener() {
+                @Override
+                public void onAccountRetrieved(String user) {
+                    if (user != null) {
+                        login(user);
+                    } else {
+                        Toast.makeText(LoginMain.this, "Thông tin tài khoản không hợp lệ!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
+
 
         emailEditText = findViewById(R.id.email_tedit);
         passwordEditText = findViewById(R.id.password_tedit);
@@ -82,23 +101,45 @@ public class LoginMain extends Activity {
             }
         });
 
+//        loginButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String email = emailEditText.getText().toString().trim();
+//                String password = passwordEditText.getText().toString().trim();
+//
+//                String user = Utils.getAccount(email, password, databaseHelper);
+//
+//                if (user != null) {
+//                    Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+//                    addAccountPrefs(email, password);
+//                    login(user);
+//                } else {
+//                    Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                String user = Utils.getAccount(email, password, databaseHelper);
-
-                if (user != null) {
-                    Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                    addAccountPrefs(email, password);
-                    login(user);
-                } else {
-                    Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
-                }
+                Utils.getAccountFB(email, password, FirebaseDatabase.getInstance().getReference(), new OnAccountRetrievedListener() {
+                    @Override
+                    public void onAccountRetrieved(String user) {
+                        if (user != null) {
+                            Toast.makeText(LoginMain.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                            addAccountPrefs(email, password);
+                            login(user);
+                        } else {
+                            Toast.makeText(LoginMain.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
+
     }
 
     private void togglePasswordVisibility() {

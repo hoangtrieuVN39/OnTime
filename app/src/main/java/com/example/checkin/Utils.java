@@ -22,6 +22,10 @@ import com.example.checkin.models.classes.Place;
 import com.example.checkin.models.classes.Shift;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -463,4 +467,30 @@ public class Utils {
         System.out.println(hashPassword(plainPassword));
         return hashPassword(plainPassword).equals(hashedPassword);
     }
+
+    public static void getAccountFB(String email, String password, DatabaseReference databaseReference, OnAccountRetrievedListener listener) {
+        databaseReference.child("accounts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot accountSnapshot : dataSnapshot.getChildren()) {
+                    String dbEmail = accountSnapshot.child("email").getValue(String.class);
+                    String dbPassword = accountSnapshot.child("passwordd").getValue(String.class);
+
+                    if (email.equals(dbEmail) && password.equals(dbPassword)) {
+                        String employeeID = accountSnapshot.child("employeeID").getValue(String.class);
+                        listener.onAccountRetrieved(employeeID);
+                        return;
+                    }
+                }
+                listener.onAccountRetrieved(null); // Không tìm thấy tài khoản phù hợp
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onAccountRetrieved(null); // Truy vấn bị lỗi
+            }
+        });
+    }
+
+
 }

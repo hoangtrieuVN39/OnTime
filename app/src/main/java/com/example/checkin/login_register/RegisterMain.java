@@ -8,9 +8,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.checkin.OnAccountAddedListener;
+import com.example.checkin.OnEmployeeValidationListener;
 import com.example.checkin.R;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.AccountUtils;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 
@@ -64,17 +67,38 @@ public class RegisterMain extends Activity {
                     return;
                 }
 
-                if (!AccountUtils.isEmployeeValid(email, databaseHelper)) {
-                    Toast.makeText(RegisterMain.this, "Thông tin không khớp với bất kỳ nhân viên nào!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                if (!AccountUtils.isEmployeeValid(email, databaseHelper)) {
+//                    Toast.makeText(RegisterMain.this, "Thông tin không khớp với bất kỳ nhân viên nào!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
 
-                if (AccountUtils.addAccount(email, password, databaseHelper)) {
-                    Toast.makeText(RegisterMain.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(RegisterMain.this, "Đăng ký thất bại, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
-                }
+//                if (AccountUtils.addAccount(email, password, databaseHelper)) {
+//                    Toast.makeText(RegisterMain.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+//                    finish();
+//                } else {
+//                    Toast.makeText(RegisterMain.this, "Đăng ký thất bại, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+//                }
+
+                AccountUtils.isEmployeeValidFB(email, FirebaseDatabase.getInstance().getReference(), new OnEmployeeValidationListener() {
+                    @Override
+                    public void onValidationResult(boolean isValid) {
+                        if (!isValid) {
+                            Toast.makeText(RegisterMain.this, "Thông tin không khớp với bất kỳ nhân viên nào!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        AccountUtils.addAccountFB(email, password, FirebaseDatabase.getInstance().getReference(), new OnAccountAddedListener() {
+                            @Override
+                            public void onAccountAdded(boolean success, String message) {
+                                if (success) {
+                                    Toast.makeText(RegisterMain.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                } else {
+                                    Toast.makeText(RegisterMain.this, "Đăng ký thất bại: " + message, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
             }
         });
     }

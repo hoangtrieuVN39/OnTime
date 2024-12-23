@@ -610,26 +610,44 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
     }
 
     private void loadDataNameApproveFromFirebase() {
-        FirebaseDatabase.getInstance().getReference().child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ListApproverForm.clear();
-                for (DataSnapshot employeeSnapshot : snapshot.getChildren()) {
-                    String nameApprover = employeeSnapshot.child("employeeName").getValue(String.class);
-                    String ApproverID = employeeSnapshot.child("employeeID").getValue(String.class);
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-                    if (nameApprover != null) {
-                        ListApproverForm.add(new ApproverBT(nameApprover,ApproverID));
+        database.child("accounts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot accountSnapshot) {
+                ListApproverForm.clear();
+
+                for (DataSnapshot accountChild : accountSnapshot.getChildren()) {
+                    String employeeID = accountChild.child("employeeID").getValue(String.class);
+
+                    if (employeeID != null) {
+                        database.child("employees").child(employeeID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
+                                String nameApprover = employeeSnapshot.child("employeeName").getValue(String.class);
+
+                                if (nameApprover != null) {
+                                    String approverID = accountChild.child("accountID").getValue(String.class);
+                                    ListApproverForm.add(new ApproverBT(nameApprover, approverID));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("FirebaseError", "Failed to load employee details", error.toException());
+                            }
+                        });
                     }
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", "Failed to load employees", error.toException());
+                Log.e("FirebaseError", "Failed to load accounts", error.toException());
             }
         });
     }
+
 
 
     public List<WorkShift> getWorkShifts() {
