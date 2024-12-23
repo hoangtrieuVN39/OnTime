@@ -1,5 +1,6 @@
 package com.example.checkin.checkinhistory;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.example.checkin.BaseViewModel;
 import com.google.android.material.chip.ChipGroup;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class CheckinHistoryFragment extends Fragment {
@@ -63,9 +65,14 @@ public class CheckinHistoryFragment extends Fragment {
 
     public void updateListView(int filterID){
         ListDateAdapter adapter = viewModel.getDateAdapter(filterID, getContext());
-//        adapter.setOnItemClickListener(position -> {
-//
-//        });
+        adapter.setOnItemClickListener((position, shifts) -> {
+            Intent intent = new Intent(requireContext(), CheckinHistoryDetail.class);
+            String date = adapter.getDate(position);
+            intent.putExtra("date", date);
+            intent.putExtra("shifts",  new ArrayList<>(shifts));
+            intent.putExtra("shiftName", "Ca sáng");
+            startActivity(intent);
+        });
         listView.setAdapter(adapter);
 
     }

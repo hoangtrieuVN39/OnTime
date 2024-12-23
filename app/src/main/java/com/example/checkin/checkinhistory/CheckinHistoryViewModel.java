@@ -57,16 +57,23 @@ public class CheckinHistoryViewModel extends BaseViewModel {
                 cal.add(Calendar.WEEK_OF_YEAR, -1);
             }
 
-            // Set to the most recent Monday
-            cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+            // Get the current day of the week
+            int currentDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+            // If today is Sunday, adjust the calendar to include it
+            if (currentDayOfWeek == Calendar.SUNDAY) {
+                cal.add(Calendar.DAY_OF_WEEK, -6); // Go back 7 days to include Sunday
+            } else {
+                // Set to the most recent Monday (for other days)
+                cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+            }
 
             // Add dates for the week (Monday to Saturday)
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 7; i++) {
                 dates.add(cal.getTime());
                 cal.add(Calendar.DAY_OF_WEEK, 1);
             }
-        }
-        else if (id == R.id.thismonth_chip || id == R.id.lastmonht_chip) {
+        } else if (id == R.id.thismonth_chip || id == R.id.lastmonht_chip) {
             // Adjust for last month if needed
             if (id == R.id.lastmonht_chip) {
                 cal.add(Calendar.MONTH, -1);
