@@ -3,6 +3,7 @@ package com.example.checkin.checkinhistory;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,16 +68,26 @@ public class ListDateShiftAdapter extends BaseAdapter {
         shift_name.setText(shifts.get(position)[0]);
         Checkin_time.setText(shifts.get(position)[1]);
         Checkout_time.setText(shifts.get(position)[2]);
-        if (shifts.get(position)[1].equals("Không có")) {
+        if (shifts.get(position)[5].equals("Invalid")) {
             Checkin_time.setTextColor(Color.parseColor("#BB1B1B"));
         } else {
+            if (shifts.get(position)[1].equals("Không có")) {
+                Checkin_time.setTextColor(Color.parseColor("#8891A5"));
+                Checkin_time.setTypeface(Typeface.create(null, 500, false));
+            } else {
             Checkin_time.setTextColor(Color.BLACK);
+            }
         }
 
-        if (shifts.get(position)[2].equals("Không có")) {
+        if (shifts.get(position)[6].equals("Invalid")) {
             Checkout_time.setTextColor(Color.parseColor("#BB1B1B"));
         } else {
-            Checkout_time.setTextColor(Color.BLACK);
+            if (shifts.get(position)[2].equals("Không có")) {
+                Checkout_time.setTextColor(Color.parseColor("#8891A5"));
+                Checkout_time.setTypeface(Typeface.create(null, 500, false));
+            } else {
+                Checkout_time.setTextColor(Color.BLACK);
+            }
         }
         v.setOnClickListener(v1 -> {
             try {

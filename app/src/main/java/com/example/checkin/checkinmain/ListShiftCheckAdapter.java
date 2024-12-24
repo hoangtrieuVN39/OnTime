@@ -86,14 +86,14 @@ public class ListShiftCheckAdapter extends BaseAdapter {
             SimpleDateFormat sdff = new SimpleDateFormat("HH:mm:ss");
             Date date1 = sdff.parse(checkList.get(i)[0]);
 
-            if (checkList.get(i)[1].equals("Check in")) {
+            if (checkList.get(i)[1].equals("checkin")) {
                 check = new String[]{"Check", checkList.get(i)[0], "Check in", "1", "0"};
                 Date date2 = sdff.parse(shift.getShift_time_start());
                 if (Utils.isLate(date1, date2)){
                     check[4] = "1";
                 }
             }
-            if (checkList.get(i)[1].equals("Check out")) {
+            if (checkList.get(i)[1].equals("checkout")) {
                 check2 = new String[]{"Check", checkList.get(i)[0], "Check out", "1", "0"};
                 Date date2 = sdff.parse(shift.getShift_time_end());
                 if (Utils.isEarly(date1, date2)){

@@ -201,17 +201,17 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
     private void updateUI() {
         if (currentshift != null) {
             setCheckButton();
-            currentplace_txt.setText(cPlace != null ? cPlace.getPlaceName() : "Unknown Place");
             currentshift_txt.setText(currentshift.getShift_name());
-            currentdate_txt.setText(Utils.currentDate(current));
-            currenttime_txt.setText(new SimpleDateFormat("HH:mm:ss").format(current.getTime()));
-            currentdis.setText(String.format("Ngoài vị trí %.0f m", distance));
-            updateDistanceIndicator();
         } else {
             check_btn.setBackgroundResource(R.drawable.checkfailed_btn);
             checkin_txt.setText("Chưa có ca làm");
             check_btn.setOnTouchListener(null);
         }
+        currentdate_txt.setText(Utils.currentDate(current));
+        currentplace_txt.setText(cPlace != null ? cPlace.getPlaceName() : "Unknown Place");
+        currenttime_txt.setText(new SimpleDateFormat("HH:mm:ss").format(current.getTime()));
+        currentdis.setText(String.format("Ngoài vị trí %.0f m", distance));
+        updateDistanceIndicator();
     }
 
     private void updateDistanceIndicator() {

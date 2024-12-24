@@ -82,15 +82,15 @@ public class CheckinMainViewModel extends ViewModel {
         List<String> latest = dbHelper.getLast("Attendance", null, new String[]{"AttendanceID", "ShiftID"});
         int maxID = Integer.valueOf(latest.get(0).toString().substring(2));
         int newID = maxID+1;
-        String attendanceID = "CC"+String.format("%03d", newID);
+        String attendanceID = "AT"+String.format("%03d", newID);
         String attendanceTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current.getTime());
         String attendanceType;
 
         if (_isCheckedIn.getValue() == true){
-            attendanceType = "Check out";
+            attendanceType = "checkout";
         }
         else {
-            attendanceType = "Check in";
+            attendanceType = "checkin";
         }
         String[] insert = {attendanceID, attendanceTime, attendanceType, employeeID, currentshift.getShift_id(), cPlace.getPlaceID(), clocation.getLatitude() + "", clocation.getLongitude() + ""};
         for (int i = 0; i < insert.length; i++){

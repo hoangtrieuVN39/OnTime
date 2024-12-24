@@ -74,6 +74,5 @@ public class CheckinHistoryFragment extends Fragment {
             startActivity(intent);
         });
         listView.setAdapter(adapter);
-
     }
 }

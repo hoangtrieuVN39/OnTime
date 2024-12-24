@@ -54,7 +54,7 @@ public class Utils {
             }
         }
         else {
-            if (Objects.equals(lastAtt.get(2), "Check in")){
+            if (Objects.equals(lastAtt.get(2), "checkin")){
                 currentShift = Utils.getShift(lastAtt.get(4), shifts);
                 isCheckedIn = true;
             }
