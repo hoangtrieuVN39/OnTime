@@ -193,7 +193,8 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                         !endDate.isEmpty() &&
                         !endTime.isEmpty() &&
                         !reason.isEmpty() &&
-                        countShift > 0) {
+                        countShift > 0 &&
+                        !approvers.isEmpty()) {
                     addLeaveRequest(leaveTypeName, employeeID, startDate, startTime, endDate, endTime, countShift, reason, approvers);
 
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -240,48 +241,13 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                 if (approverNameText != null) {
                     String approverName = approverNameText.getText().toString();
                     if (!approverName.isEmpty()) {
-                        approvers.add(approverName);  // Thêm tên người phê duyệt vào danh sách
+                        approvers.add(approverName);
                     }
                 }
             }
         }
         return approvers;
     }
-
-//    private List<String> getSelectedApprovers() {
-//        List<String> approverIds = new ArrayList<>();
-//
-//        // Duyệt qua tất cả các phần tử con của flowApprover_lnl
-//        for (int i = 0; i < flowApproveLayout.getChildCount(); i++) {
-//            View child = flowApproveLayout.getChildAt(i);
-//
-//            // Giả sử mỗi phần tử là một TextView hoặc CheckBox
-//            if (child instanceof CheckBox) {
-//                CheckBox checkBox = (CheckBox) child;
-//                // Nếu CheckBox được chọn, lấy EmployeeID từ tag hoặc text
-//                if (checkBox.isChecked()) {
-//                    String employeeId = (String) checkBox.getTag(); // Tag chứa EmployeeID
-//                    if (employeeId != null) {
-//                        approverIds.add(employeeId);
-//                    }
-//                }
-//            }
-//        }
-//
-//        return approverIds;
-//    }
-
-//    public List<String> getSelectedApprovers() {
-//        List<String> selectedApprovers = new ArrayList<>();
-//        for (ApproverBT approver : approverList) { // giả sử approverList là danh sách tất cả người phê duyệt
-//            if (approver.isSelected()) { // Kiểm tra xem người phê duyệt này có được chọn không
-//                selectedApprovers.add(approver.getNameApproveform()); // Lấy EmployeeID của người phê duyệt
-//            }
-//        }
-//        return selectedApprovers;
-//    }
-
-
 
     private void clearInputFields() {
         startDateEditText.setText("");
@@ -516,14 +482,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         });
 
 
-//        confirmBtn.setOnClickListener(v -> {
-//            ApproverBT selectedApprover = approverBTAdapter.getSelectedApproverName();
-//            if (selectedApprover.getNameApproveform() != null) {
-////                approverNameText.setText(selectedApprover);
-//                addApproverToLayout(selectedApprover);
-//                bottomSheetDialog.dismiss();// Display the selected approver's name
-//            }
-//        });
+
         confirmBtn.setOnClickListener(v -> {
             ApproverBT selectedApprover = approverBTAdapter.getSelectedApproverName();
 
@@ -649,30 +608,50 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         ListApproverForm.clear();
         for (List<String> row : employees) {
             String nameApprover = row.get(1);
-            ListApproverForm.add(new ApproverBT(nameApprover));
+            String approverID = row.get(0);
+            ListApproverForm.add(new ApproverBT(nameApprover,approverID));
         }
     }
 
     private void loadDataNameApproveFromFirebase() {
-        FirebaseDatabase.getInstance().getReference().child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ListApproverForm.clear();
-                for (DataSnapshot employeeSnapshot : snapshot.getChildren()) {
-                    String nameApprover = employeeSnapshot.child("employeeName").getValue(String.class);
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-                    if (nameApprover != null) {
-                        ListApproverForm.add(new ApproverBT(nameApprover));
+        database.child("accounts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot accountSnapshot) {
+                ListApproverForm.clear();
+
+                for (DataSnapshot accountChild : accountSnapshot.getChildren()) {
+                    String employeeID = accountChild.child("employeeID").getValue(String.class);
+
+                    if (employeeID != null) {
+                        database.child("employees").child(employeeID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
+                                String nameApprover = employeeSnapshot.child("employeeName").getValue(String.class);
+
+                                if (nameApprover != null) {
+                                    String approverID = accountChild.child("accountID").getValue(String.class);
+                                    ListApproverForm.add(new ApproverBT(nameApprover, approverID));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("FirebaseError", "Failed to load employee details", error.toException());
+                            }
+                        });
                     }
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", "Failed to load employees", error.toException());
+                Log.e("FirebaseError", "Failed to load accounts", error.toException());
             }
         });
     }
+
 
 
     public List<WorkShift> getWorkShifts() {
@@ -724,7 +703,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                         generateNewFirebaseID("DT", "leaverequests", new OnIDGeneratedListener() {
                             @Override
                             public void onIDGenerated(String leaveID) {
-                                // Thêm dữ liệu vào bảng LeaveRequest
+
                                 LeaveRequest leaveRequest = new LeaveRequest(leaveID, formatDateTimetoFirebase(createdTime), "Chưa phê duyệt",
                                         leaveTypeID, employeeID, formatDateTimetoFirebase(leaveStartTime), formatDateTimetoFirebase(leaveEndTime), reason, countShift);
                                 leaveRequestRef.child(leaveID).setValue(leaveRequest)

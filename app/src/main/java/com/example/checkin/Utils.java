@@ -10,15 +10,22 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.checkin.checkinhistory.CheckinHistoryActivity;
 import com.example.checkin.checkinmain.CheckinMainActivity;
+import com.example.checkin.leave.formapprove.FormApproveActivity;
 import com.example.checkin.leave.formlist.FormListActivity;
 import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 import com.example.checkin.models.classes.Place;
 import com.example.checkin.models.classes.Shift;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -95,7 +102,7 @@ public class Utils {
     }
 
     public static boolean isLocationValid(double distance){
-        return distance <= 150 ;
+        return distance <= 100 ;
     }
 
     public static Double getDistance(Double lat1, Double lng1, Double lat2, Double lng2) {
@@ -227,6 +234,102 @@ public class Utils {
                 return false;
             }
         });
+    }
+
+    public static void onCreateSubNav(Context context, BottomNavigationView bottomNavigation, int selected){
+        bottomNavigation.setSelectedItemId(selected);
+        bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.formPersonal)
+                {
+                    context.startActivity(new Intent(context, FormPersonalActivity.class));
+                    return true;
+                }
+                else if (item.getItemId() == R.id.formApprove)
+                {
+                    context.startActivity(new Intent(context, FormApproveActivity.class));
+                    return true;
+                }
+                else if (item.getItemId() == R.id.formList)
+                {
+                    context.startActivity(new Intent(context, FormListActivity.class));
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+
+    public static void addLeaveRequest(String leaveTypeName, String employeeID,
+                                String startDate, String startTime,
+                                String endDate, String endTime,
+                                String reason, List<String> approvers,
+                                DatabaseHelper dbHelper) {
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Sử dụng transaction để đảm bảo tính toàn vẹn
+        db.beginTransaction();
+        try {
+            // 1. Kiểm tra LeaveTypeID từ tên
+            String leaveTypeID = getLeaveTypeIDByName(leaveTypeName, dbHelper);
+            if (leaveTypeID == null) {
+                throw new IllegalArgumentException("Loại nghỉ phép không tồn tại: " + leaveTypeName);
+            }
+
+            // 2. Tạo LeaveID và các giá trị cần thiết
+            String leaveID = generateNewLeaveID(dbHelper);
+            String createdTime = getCurrentDateTime();
+            String leaveStartTime = startDate + " " + startTime;
+            String leaveEndTime = endDate + " " + endTime;
+
+            // 3. Chuẩn bị ContentValues để thêm dữ liệu vào bảng LeaveRequest
+            ContentValues leaveRequestValues = new ContentValues();
+            leaveRequestValues.put("LeaveID", leaveID);
+            leaveRequestValues.put("CreatedTime", createdTime);
+            leaveRequestValues.put("Status", "Chưa phê duyệt");
+            leaveRequestValues.put("LeaveTypeID", leaveTypeID);
+            leaveRequestValues.put("EmployeeID", employeeID);
+            leaveRequestValues.put("LeaveStartTime", leaveStartTime);
+            leaveRequestValues.put("LeaveEndTime", leaveEndTime);
+            leaveRequestValues.put("Reason", reason);
+
+            long leaveRequestResult = db.insert("LeaveRequest", null, leaveRequestValues);
+            if (leaveRequestResult == -1) {
+                throw new Exception("Không thể thêm yêu cầu nghỉ phép vào bảng LeaveRequest.");
+            }
+            Log.d("AddLeaveRequest", "Inserted LeaveRequest successfully: " + leaveID);
+
+            // 4. Thêm từng người phê duyệt vào bảng LeaveRequestApproval
+            for (String approverID : approvers) {
+                String leaveApprovalID = generateNewLeaveApprovalID(dbHelper);
+
+                ContentValues approvalValues = new ContentValues();
+                approvalValues.put("LeaveApprovalID", leaveApprovalID);
+                approvalValues.put("LeaveID", leaveID);
+                approvalValues.put("EmployeeID", approverID);
+                approvalValues.put("Status", "Chưa phê duyệt");
+
+                long approvalResult = db.insert("LeaveRequestApproval", null, approvalValues);
+                if (approvalResult == -1) {
+                    throw new Exception("Không thể thêm người phê duyệt vào bảng LeaveRequestApproval.");
+                }
+                Log.d("AddLeaveRequest", "Inserted approver successfully: " + approverID);
+            }
+
+            // 5. Đánh dấu transaction thành công
+            db.setTransactionSuccessful();
+            Log.d("AddLeaveRequest", "Transaction completed successfully.");
+
+        } catch (Exception e) {
+            Log.e("AddLeaveRequest", "Error while adding leave request", e);
+        } finally {
+            // 6. Kết thúc transaction và đóng database
+            db.endTransaction();
+            db.close();
+        }
     }
 
     private static String generateNewLeaveID(DatabaseHelper dbHelper) {
@@ -365,6 +468,29 @@ public class Utils {
         return hashPassword(plainPassword).equals(hashedPassword);
     }
 
+    public static void getAccountFB(String email, String password, DatabaseReference databaseReference, OnAccountRetrievedListener listener) {
+        databaseReference.child("accounts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot accountSnapshot : dataSnapshot.getChildren()) {
+                    String dbEmail = accountSnapshot.child("email").getValue(String.class);
+                    String dbPassword = accountSnapshot.child("passwordd").getValue(String.class);
+
+                    if (email.equals(dbEmail) && password.equals(dbPassword)) {
+                        String employeeID = accountSnapshot.child("employeeID").getValue(String.class);
+                        listener.onAccountRetrieved(employeeID);
+                        return;
+                    }
+                }
+                listener.onAccountRetrieved(null); // Không tìm thấy tài khoản phù hợp
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onAccountRetrieved(null); // Truy vấn bị lỗi
+            }
+        });
+    }
 
 
 }

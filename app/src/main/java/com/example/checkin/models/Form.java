@@ -1,5 +1,7 @@
 package com.example.checkin.models;
 
+import java.util.Date;
+
 public class Form {
     String FormID;
     String nameForm;
@@ -7,14 +9,16 @@ public class Form {
     String dateoffend;
     String reason;
     String status;
+    String CreateTime;
     int CountShift;
-    public Form(String FormID, String nameForm, String dateoffstart,String dateoffend, String reason, String status,int CountShift){
+    public Form(String FormID, String nameForm, String dateoffstart,String dateoffend, String reason, String status,String CreateTime,int CountShift){
         this.FormID = FormID;
         this.nameForm = nameForm;
         this.dateoffstart = dateoffstart;
         this.dateoffend = dateoffend;
         this.reason = reason;
         this.status = status;
+        this.CreateTime = CreateTime;
         this.CountShift = CountShift;
 
     }
@@ -61,5 +65,12 @@ public class Form {
     public void setCountShift(int countShift) {
         CountShift = countShift;
     }
+    public String getCreateTime() {
+        return CreateTime;
+    }
+    public void setCreateTime(String createTime) {
+        CreateTime = createTime;
+    }
+
 
 }

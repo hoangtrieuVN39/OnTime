@@ -30,13 +30,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FormApproveAdapter extends BaseAdapter {
+public class
+FormApproveAdapter extends BaseAdapter {
 
     Context faContext;
     ArrayList<FormApprove> faForm;
     OnFormApproverClickListener faListener;
     private final SQLiteDatabase database;
     DatabaseReference firebaseReference;
+    boolean isRecallLayoutVisible = false;
 
     public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormApproverClickListener faListener, SQLiteDatabase db) {
         this.faContext = listFormApproveContext;
@@ -129,15 +131,15 @@ public class FormApproveAdapter extends BaseAdapter {
                     if (txtStatusApprove.getVisibility() == View.VISIBLE) {
                         txtStatusApprove.setVisibility(View.GONE);
                         recallLayoutContainer.setVisibility(View.VISIBLE);
+                        isRecallLayoutVisible = false;
                     } else {
                         txtStatusApprove.setVisibility(View.VISIBLE);
                         recallLayoutContainer.setVisibility(View.GONE);
+                        isRecallLayoutVisible = true;
                     }
                 }
             }
         });
-
-
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override

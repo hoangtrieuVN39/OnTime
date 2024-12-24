@@ -208,6 +208,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                     String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                     String statusLR = leaveRequestSnapshot.child("status").getValue(String.class);
                     int countshift = leaveRequestSnapshot.child("countShift").getValue(int.class);
+                    String CreateTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
 
                     // Fetch LeaveType to get LeaveTypeName
                     databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -237,7 +238,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                                             String formattedStartTime = formatDateTime(leaveStartTime);
                                             String formattedEndTime = formatDateTime(leaveEndTime);
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
-                                            listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,countshift));
+                                            listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,CreateTime,countshift));
 
                                             pendingCalls[0]--;
                                             if (pendingCalls[0] == 0) {
@@ -301,6 +302,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                             String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                             String statusLR = leaveRequestSnapshot.child("status").getValue(String.class);
                             int countshift = leaveRequestSnapshot.child("countShift").getValue(int.class);
+                            String CreateTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
 
                             databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -328,7 +330,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                                                     String formattedStartTime = formatDateTime(leaveStartTime);
                                                     String formattedEndTime = formatDateTime(leaveEndTime);
                                                     String dateOff = formattedStartTime + " - " + formattedEndTime;
-                                                    listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,countshift));
+                                                    listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,CreateTime,countshift));
 
                                                     pendingCalls[0]--;
                                                     if (pendingCalls[0] == 0) {
