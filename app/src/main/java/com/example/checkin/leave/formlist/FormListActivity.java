@@ -378,7 +378,7 @@ public class FormListActivity extends Activity implements OnFormListClickListene
                                             String formattedEndTime = formatDateTime(leaveEndTime);
                                             String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                                            listAllForm.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,CreateTime,countshift));
+                                            listAllForm.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR, CreateTime,countshift));
                                             loadInitialData();
                                             callback.onDataLoaded();
                                             Log.d("OnlyForm", "Dữ liệu được tải thành công: " + listAllForm.size());

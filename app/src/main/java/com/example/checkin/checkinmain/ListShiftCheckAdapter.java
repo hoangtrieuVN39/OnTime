@@ -137,7 +137,9 @@ public class ListShiftCheckAdapter extends BaseAdapter {
            @Override
            public void onDataChange(@NonNull DataSnapshot snapshot) {
                for (DataSnapshot child : snapshot.getChildren()){
-                   Log.d("attendances", child.toString());
+//                   Log.d("attendances", child.toString());
+//                   Log.d("shifts", shift.getShift_id());
+
                    if (child.child("shiftID").getValue(String.class).equals(shift.getShift_id())
                    && child.child("createdTime").getValue(String.class).startsWith(datefilter)){
                        String AttendanceType = child.child("attendanceType").getValue(String.class);
@@ -148,6 +150,7 @@ public class ListShiftCheckAdapter extends BaseAdapter {
                                    sdff.format(sdf.parse(CreatedTime)),
                                    AttendanceType
                            });
+                           Log.d("createdTime", checkList.toString());
                        } catch (ParseException e) {
                            throw new RuntimeException(e);
                        }
