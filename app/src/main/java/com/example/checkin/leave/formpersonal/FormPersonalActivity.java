@@ -95,6 +95,7 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             e.printStackTrace();
         }
 
+        DBHelper.syncDataToFirebase();
 
 
 //        loadDataAllFromFirebase(new DataLoadCallbackForm() {
