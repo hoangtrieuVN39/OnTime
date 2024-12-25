@@ -171,11 +171,30 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             workDetailCheckoutTimeTxt.setText(shift[2]);
             workDetailLocationTxt.setText(shift[3]);
 
+            workDetailCheckinValidTxt.setText(shift[3]);
+            workDetailCheckoutValidTxt.setText(shift[3]);
+
+            if (shift[1].equals(checkTime)) {
+                workDetailCheckinLateTxt.setText("");
+            } else {
+                workDetailCheckinLateTxt.setText("Hợp lệ");
+                workDetailCheckinLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
+            }
+
+            if (shift[2].equals(checkTime)) {
+                workDetailCheckoutLateTxt.setText("");
+            } else {
+                workDetailCheckoutLateTxt.setText("Hợp lệ");
+                workDetailCheckoutLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
+            }
+
+            // Add DateTimeFormatter for parsing check-in and check-out times
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
 
             LocalTime checkinTime = shift[1].equals(checkTime) ? null : LocalTime.parse(shift[1], formatter);
             LocalTime checkoutTime = shift[2].equals(checkTime) ? null : LocalTime.parse(shift[2], formatter);
 
+            // Define scheduled times for different shifts
             LocalTime scheduledMorningCheckin = LocalTime.of(8, 0);
             LocalTime scheduledMorningCheckout = LocalTime.of(12, 0);
 
@@ -185,6 +204,7 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             LocalTime scheduledDinnerCheckin = LocalTime.of(18, 0);
             LocalTime scheduledDinnerCheckout = LocalTime.of(22, 0);
 
+            // Validate check-in and check-out times based on shift type
             if (ShiftName.equals("Ca sáng")) {
                 validateCheckTimes(checkinTime, checkoutTime, scheduledMorningCheckin, scheduledMorningCheckout);
             } else if (ShiftName.equals("Ca chiều")) {
@@ -192,6 +212,7 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             } else if (ShiftName.equals("Ca tối")) {
                 validateCheckTimes(checkinTime, checkoutTime, scheduledDinnerCheckin, scheduledDinnerCheckout);
             }
+
         } else {
             Log.e("IntentError", "Invalid position: " + Position);
         }
@@ -208,7 +229,7 @@ public class CheckinHistoryDetail extends AppCompatActivity {
                 workDetailCheckinLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
             }
         } else {
-            workDetailCheckinLateTxt.setText("Không hợp lệ");
+            workDetailCheckinLateTxt.setText("");
             workDetailCheckinLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
         }
 
@@ -222,7 +243,7 @@ public class CheckinHistoryDetail extends AppCompatActivity {
                 workDetailCheckoutLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
             }
         } else {
-            workDetailCheckoutLateTxt.setText("Không hợp lệ");
+            workDetailCheckoutLateTxt.setText("");
             workDetailCheckoutLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
         }
     }
