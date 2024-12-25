@@ -8,10 +8,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 
+
+
 import com.example.checkin.OnFormClickListener;
 import com.example.checkin.R;
 import com.example.checkin.leave.formcreate.FormCreateActivity;
-import com.example.checkin.models.TypeForm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class TypeformAdapter extends BaseAdapter {
         tForm = forms;
         tfListener = listener;
     }
+
     @Override
     public int getCount() {
         return tForm.size();
@@ -43,6 +45,7 @@ public class TypeformAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+
         if (view == null) {
             LayoutInflater inf = LayoutInflater.from(tfContext);
             view = inf.inflate(R.layout.object_typeform_layout, viewGroup, false);

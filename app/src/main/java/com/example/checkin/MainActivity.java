@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             employeeID = getIntent().getStringExtra("EmployeeID");
         }
         else {
-            employeeID = "NV001";
+            employeeID = "NV005";
         }
 
         try {

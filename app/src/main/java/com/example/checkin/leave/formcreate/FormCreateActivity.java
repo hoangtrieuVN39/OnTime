@@ -135,10 +135,8 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeformNameSpinner.setAdapter(adapter);
 
-        EmployeeID = getIntent().getStringExtra("employee_ID");
         selectedType = getIntent().getStringExtra("TYPEFORM_NAME");
-        Log.d("a","EmployeeID: " + EmployeeID);
-        Log.d("b","TYPEFORM_NAME: " + selectedType);
+        EmployeeID = getIntent().getStringExtra("EMPLOYEE_ID");
         if (selectedType != null) {
             int position = adapter.getPosition(selectedType);
             if (position >= 0) {
@@ -180,7 +178,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             @Override
             public void onClick(View v) {
                 String leaveTypeName = typeformNameSpinner.getSelectedItem().toString();
-                String employeeID = EmployeeID;
+                String employeeID = "NV001";
                 String startDate = startDateEditText.getText().toString();
                 String startTime = startHourEditText.getText().toString();
                 String endDate = endDateEditText.getText().toString();
@@ -206,9 +204,10 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                         @Override
                         public void run() {
                             Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
-                            intent.putExtra("isSuccess", true);
-                            startActivity(intent);
+//                            Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
+//                            intent.putExtra("isSuccess", true);
+//                            startActivity(intent);
+                            finish();
 
                             clearInputFields();
                         }
