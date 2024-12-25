@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -171,14 +172,6 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         });
     }
 
-    private void removeObservers() {
-        viewModel.getCurrentShift().removeObservers(getViewLifecycleOwner());
-        viewModel.getIsCheckedIn().removeObservers(getViewLifecycleOwner());
-        viewModel.getCurrentPlace().removeObservers(getViewLifecycleOwner());
-        viewModel.getDistance().removeObservers(getViewLifecycleOwner());
-    }
-
-
     private void setupUI() {
         uiUpdateRunnable = () -> {
             if (isAdded()) {
@@ -204,6 +197,7 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
             currentshift_txt.setText(currentshift.getShift_name());
         } else {
             check_btn.setBackgroundResource(R.drawable.checkfailed_btn);
+            currentshift_txt.setText("Chưa có ca làm");
             checkin_txt.setText("Chưa có ca làm");
             check_btn.setOnTouchListener(null);
         }
@@ -211,6 +205,7 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         currentplace_txt.setText(cPlace != null ? cPlace.getPlaceName() : "Unknown Place");
         currenttime_txt.setText(new SimpleDateFormat("HH:mm:ss").format(current.getTime()));
         currentdis.setText(String.format("Ngoài vị trí %.0f m", distance));
+        updateUIListView(viewModel.getListShift());
         updateDistanceIndicator();
     }
 
@@ -324,22 +319,4 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         setupObservers();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        uiHandler.removeCallbacks(uiUpdateRunnable);
-        removeObservers();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        removeObservers();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        removeObservers();
-    }
 }

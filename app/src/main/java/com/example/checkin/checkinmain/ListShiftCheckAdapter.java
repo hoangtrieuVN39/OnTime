@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
+import com.example.checkin.models.classes.Attendance;
 import com.example.checkin.models.classes.Shift;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -33,13 +35,13 @@ public class ListShiftCheckAdapter extends BaseAdapter {
     List<String[]> checkArray;
     String employee;
     Date date;
-    DatabaseReference ref;
+    List<Attendance> attendances;
 
-    public ListShiftCheckAdapter(DatabaseReference ref, Context context, List<Shift> mShift, String employee, Date date){
+    public ListShiftCheckAdapter(List<Attendance> attendances, Context context, List<Shift> mShift, String employee, Date date){
         this.mContext = context;
         this.mShift = mShift;
         this.employee = employee;
-        this.ref = ref;
+        this.attendances = attendances;
         this.date = date;
     }
 
@@ -64,7 +66,7 @@ public class ListShiftCheckAdapter extends BaseAdapter {
         View v = inf.inflate(R.layout.shift_layout, null);
 
         try {
-            checkArray = getCheckList(date, mShift.get(position), employee);
+            checkArray = getCheckList(date, mShift.get(position));
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
@@ -81,30 +83,32 @@ public class ListShiftCheckAdapter extends BaseAdapter {
         return v;
     }
 
-    private List<String[]> getCheckList(Date date, Shift shift, String employee) throws ParseException {
+    private List<String[]> getCheckList(Date date, Shift shift) throws ParseException {
         checkArray = new ArrayList<>();
-
-        List<String[]> checkList = getListCheck(date, shift, employee);
 
         String[] check = new String[]{"Check", shift.getShift_time_start(), "Check in", "0", "0"};
         String[] check2 = new String[]{"Check", shift.getShift_time_end(), "Check out", "0", "0"};
 
-        for (int i = 0; i < checkList.size(); i++) {
-            SimpleDateFormat sdff = new SimpleDateFormat("HH:mm:ss");
-            Date date1 = sdff.parse(checkList.get(i)[0]);
+        for (int i = 0; i < attendances.size(); i++) {
+            String date1s = attendances.get(i).getCreatedTime();
+            String date2s = date.toString().substring(0, 10);
+            if (date1s.startsWith(date2s)) {
+                SimpleDateFormat sdff = new SimpleDateFormat("HH:mm:ss");
+                Date date1 = sdff.parse(attendances.get(i).getCreatedTime());
 
-            if (checkList.get(i)[1].equals("checkin")) {
-                check = new String[]{"Check", checkList.get(i)[0], "Check in", "1", "0"};
-                Date date2 = sdff.parse(shift.getShift_time_start());
-                if (Utils.isLate(date1, date2)){
-                    check[4] = "1";
+                if (attendances.get(i).getAttendanceType().equals("checkin")) {
+                    check = new String[]{"Check", attendances.get(i).getCreatedTime(), "Check in", "1", "0"};
+                    Date date2 = sdff.parse(shift.getShift_time_start());
+                    if (Utils.isLate(date1, date2)) {
+                        check[4] = "1";
+                    }
                 }
-            }
-            if (checkList.get(i)[1].equals("checkout")) {
-                check2 = new String[]{"Check", checkList.get(i)[0], "Check out", "1", "0"};
-                Date date2 = sdff.parse(shift.getShift_time_end());
-                if (Utils.isEarly(date1, date2)){
-                    check2[4] = "1";
+                if (attendances.get(i).getAttendanceType().equals("checkout")) {
+                    check2 = new String[]{"Check", attendances.get(i).getCreatedTime(), "Check out", "1", "0"};
+                    Date date2 = sdff.parse(shift.getShift_time_end());
+                    if (Utils.isEarly(date1, date2)) {
+                        check2[4] = "1";
+                    }
                 }
             }
         }
@@ -120,6 +124,7 @@ public class ListShiftCheckAdapter extends BaseAdapter {
                 return o1[1].compareTo(o2[1]);
             }
         });
+
         return checkArray;
     }
 
@@ -132,38 +137,6 @@ public class ListShiftCheckAdapter extends BaseAdapter {
         SimpleDateFormat sdff = new SimpleDateFormat("HH:mm:ss");
 
 //        List<List> table = dbHelper.loadDataHandler("Attendance", filter, new String[]{"CreatedTime", "AttendanceType"});
-
-        ref.child("attendances").orderByChild("employeeID").equalTo(employee).addValueEventListener(new ValueEventListener() {
-           @Override
-           public void onDataChange(@NonNull DataSnapshot snapshot) {
-               for (DataSnapshot child : snapshot.getChildren()){
-//                   Log.d("attendances", child.toString());
-//                   Log.d("shifts", shift.getShift_id());
-
-                   if (child.child("shiftID").getValue(String.class).equals(shift.getShift_id())
-                   && child.child("createdTime").getValue(String.class).startsWith(datefilter)){
-                       String AttendanceType = child.child("attendanceType").getValue(String.class);
-                       String CreatedTime = child.child("createdTime").getValue(String.class);
-
-                       try {
-                           checkList.add(new String[]{
-                                   sdff.format(sdf.parse(CreatedTime)),
-                                   AttendanceType
-                           });
-                           Log.d("createdTime", checkList.toString());
-                       } catch (ParseException e) {
-                           throw new RuntimeException(e);
-                       }
-                   }
-               }
-           }
-
-           @Override
-           public void onCancelled(@NonNull DatabaseError error) {
-
-           }
-        }
-       );
 
         return checkList;
     }

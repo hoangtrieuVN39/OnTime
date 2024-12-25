@@ -57,6 +57,8 @@ public class ListCheckAdapter extends BaseAdapter {
         ImageView check_icon = check_lyt.findViewById(R.id.icon);
         TextView check_time_txt = check_lyt.findViewById(R.id.check_time);
 
+        System.out.println(mCheck.get(i)[2]);
+
         if (mCheck.get(i)[2].equals("Bắt đầu") || mCheck.get(i)[2].equals("Kết thúc")) {
             icon.setImageResource(R.drawable.baseline_outlined_flag_24);
         } else {
