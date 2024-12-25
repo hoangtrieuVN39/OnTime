@@ -7,12 +7,12 @@ public class Attendance {
     private String employeeID;
     private String shiftID;
     private String placeID;
-    private String latitude;
-    private String longitude;
+    private double latitude;
+    private double longitude;
 
     public Attendance(){}
 
-    public Attendance(String attendanceID, String createdTime, String attendanceType, String employeeID, String shiftID,String placeID, String latitude, String longitude) {
+    public Attendance(String attendanceID, String createdTime, String attendanceType, String employeeID, String shiftID,String placeID, double latitude, double longitude) {
         this.attendanceID = attendanceID;
         this.createdTime = createdTime;
         this.attendanceType = attendanceType;
@@ -71,19 +71,19 @@ public class Attendance {
         this.placeID= placeID;
     }
 
-    public String getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
-    public String getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 }

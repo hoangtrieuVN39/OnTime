@@ -297,7 +297,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                 databaseReference.child("leaverequests").child(values[0]).setValue(leaveRequest);
                                 break;
                             case "Attendance":
-                                Attendance attendance = new Attendance(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]);
+                                Attendance attendance = new Attendance(values[0], values[1], values[2], values[3], values[4], values[5], Double.parseDouble(values[6]), Double.parseDouble(values[7]));
                                 databaseReference.child("attendances").child(values[0]).setValue(attendance);
                                 break;
                             case "LeaveRequestApproval":
