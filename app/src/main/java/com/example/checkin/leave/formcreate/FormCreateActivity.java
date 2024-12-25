@@ -73,6 +73,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class FormCreateActivity extends Activity implements OnFormNameClickListener {
     String selectedType;
+    public String EmployeeID;
     Spinner typeformNameSpinner;
     TextView titleApplyTime;
     DatabaseHelper DBHelper;
@@ -87,6 +88,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
     ListView lvApproverForm;
     private LinearLayout flowApproveLayout;
     private LayoutInflater inflater;
+
 
     LinkedHashSet<String> selectedApprovers = new LinkedHashSet<>(); // Danh sách những người phê duyệt đã chọn
     Set<String> listselectedApprovers = new HashSet<>();
@@ -133,7 +135,10 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeformNameSpinner.setAdapter(adapter);
 
+        EmployeeID = getIntent().getStringExtra("employee_ID");
         selectedType = getIntent().getStringExtra("TYPEFORM_NAME");
+        Log.d("a","EmployeeID: " + EmployeeID);
+        Log.d("b","TYPEFORM_NAME: " + selectedType);
         if (selectedType != null) {
             int position = adapter.getPosition(selectedType);
             if (position >= 0) {
@@ -175,7 +180,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             @Override
             public void onClick(View v) {
                 String leaveTypeName = typeformNameSpinner.getSelectedItem().toString();
-                String employeeID = "NV001";
+                String employeeID = EmployeeID;
                 String startDate = startDateEditText.getText().toString();
                 String startTime = startHourEditText.getText().toString();
                 String endDate = endDateEditText.getText().toString();

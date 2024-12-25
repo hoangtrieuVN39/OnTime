@@ -106,7 +106,6 @@ public class FormListFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
         this.employeeID = viewModel.getEmployeeID();
-        viewModel.setCurrentFragment(R.id.formListFragment);
 
 
         setListMonth();
@@ -128,10 +127,9 @@ public class FormListFragment extends Fragment {
         loadDataFormFromFirebase(employeeID, new FormListActivity.DataLoadCallback() {
             @Override
             public void onDataLoaded() {
-                Log.d("AllFormrre", "Dữ liệu listfilterAllForm: " + listAllForm.size());
-                listfilterAllForm.addAll(listAllForm);
-                Log.d("AllForm", "Dữ liệu listfilterAllForm: " + listfilterAllForm.size());
-                afAdapter.updateFilteredList(listfilterAllForm);
+                Log.d("listAllForm", "Dữ liệu listfilterAllForm: " + listAllForm.size());
+//                listfilterAllForm.addAll(listAllForm);
+                afAdapter.updateFilteredList(listAllForm);
                 lvAllForm.setAdapter(afAdapter);
             }
         });
@@ -215,7 +213,6 @@ public class FormListFragment extends Fragment {
             Form form = (Form) formlist;
             Intent intent = new Intent(requireActivity(), FormDetailActivity.class);
             intent.putExtra("formid", form.getFormID());
-            intent.putExtra("caller", "FormListActivity");
             startActivity(intent);
         }
         else if(formlist instanceof FormApprove){
@@ -223,7 +220,6 @@ public class FormListFragment extends Fragment {
             Intent intent = new Intent(requireActivity(), FormApproveDetailActivity.class);
             intent.putExtra("formidOfApprove", formApprove.getFormID());
             intent.putExtra("formApproveid",formApprove.getFormApproveID());
-            intent.putExtra("caller", "FormListActivity");
             startActivity(intent);
         }
     }
@@ -231,15 +227,12 @@ public class FormListFragment extends Fragment {
     private void loadDataFApproverFromFirebase(String targetEmployee, FormListActivity.DataLoadCallback callback) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        // Tạo các Map để lưu trữ dữ liệu tạm thời
         Map<String, DataSnapshot> employeesMap = new HashMap<>();
         Map<String, DataSnapshot> leaveRequestsMap = new HashMap<>();
         Map<String, DataSnapshot> leaveTypesMap = new HashMap<>();
 
-        // Xóa danh sách cũ trước khi tải mới
         listFormApprove.clear();
 
-        // Tải dữ liệu từ "employees"
         databaseReference.child("employees").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -247,7 +240,6 @@ public class FormListFragment extends Fragment {
                     employeesMap.put(employeeSnapshot.getKey(), employeeSnapshot);
                 }
 
-                // Tải dữ liệu từ "leaverequests"
                 databaseReference.child("leaverequests").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -255,7 +247,6 @@ public class FormListFragment extends Fragment {
                             leaveRequestsMap.put(leaveRequestSnapshot.getKey(), leaveRequestSnapshot);
                         }
 
-                        // Tải dữ liệu từ "leavetypes"
                         databaseReference.child("leavetypes").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -274,7 +265,6 @@ public class FormListFragment extends Fragment {
                                                     String status = approvalSnapshot.child("status").getValue(String.class);
                                                     String employeeID = approvalSnapshot.child("employeeID").getValue(String.class);
 
-                                                    // Lấy thông tin từ leaveRequestsMap
                                                     DataSnapshot leaveRequestSnapshot = leaveRequestsMap.get(leaveID);
                                                     if (leaveRequestSnapshot != null) {
                                                         String leaveTypeID = leaveRequestSnapshot.child("leaveTypeID").getValue(String.class);
@@ -282,27 +272,24 @@ public class FormListFragment extends Fragment {
                                                         String leaveEndTime = leaveRequestSnapshot.child("endDate").getValue(String.class);
                                                         String reason = leaveRequestSnapshot.child("reason").getValue(String.class);
                                                         String createdTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
+                                                        String employeelrID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                                                         Integer countShift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
 
-                                                        // Lấy thông tin từ leaveTypesMap
                                                         DataSnapshot leaveTypeSnapshot = leaveTypesMap.get(leaveTypeID);
                                                         String leaveTypeName = leaveTypeSnapshot != null
                                                                 ? leaveTypeSnapshot.child("leaveTypeName").getValue(String.class)
                                                                 : "Unknown";
 
-                                                        // Lấy thông tin từ employeesMap
-                                                        DataSnapshot employeeSnapshot = employeesMap.get(employeeID);
+                                                        DataSnapshot employeeSnapshot = employeesMap.get(employeelrID);
                                                         String employeeName = employeeSnapshot != null
                                                                 ? employeeSnapshot.child("employeeName").getValue(String.class)
                                                                 : "Unknown";
 
-                                                        // Định dạng dữ liệu
                                                         String formattedStartTime = formatDateTime(leaveStartTime);
                                                         String formattedEndTime = formatDateTime(leaveEndTime);
                                                         String formattedCreatedTime = formatDate(createdTime);
                                                         String dateOff = formattedStartTime + " - " + formattedEndTime;
 
-                                                        // Thêm vào danh sách
                                                         listFormApprove.add(new FormApprove(
                                                                 leaveRQApproveID,
                                                                 leaveTypeName,
@@ -318,7 +305,6 @@ public class FormListFragment extends Fragment {
                                                     }
                                                 }
 
-                                                // Cập nhật danh sách và adapter
 //                                        listfilterAllForm.clear();
                                                 listAllForm.addAll(listFormApprove);
 //                                        loadInitialData();

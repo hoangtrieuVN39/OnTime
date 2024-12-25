@@ -92,7 +92,6 @@ public class FormApproveFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
         this.employeeID = viewModel.getEmployeeID();
-        viewModel.setCurrentFragment(R.id.formApproveFragment);
 
     }
 
@@ -124,7 +123,7 @@ public class FormApproveFragment extends Fragment {
             e.printStackTrace();
         }
 
-        loadDataFAFromFirebase("NV001");
+        loadDataFAFromFirebase(employeeID);
         Log.d("FormApproverss", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
 
         spTrangThai = binding.approveStatusSpinner;

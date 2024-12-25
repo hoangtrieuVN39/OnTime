@@ -2,12 +2,16 @@ package com.example.checkin.leave;
 
 import android.view.View;
 
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.checkin.BaseViewModel;
 import com.example.checkin.DatabaseHelper;
+import com.example.checkin.leave.formapprove.FormApproveFragment;
+import com.example.checkin.leave.formlist.FormListFragment;
+import com.example.checkin.leave.formpersonal.FormPersonalFragment;
 
 public class FormViewModel extends ViewModel {
 
@@ -26,17 +30,18 @@ public class FormViewModel extends ViewModel {
         this.employeeID = parent.getEmployeeID();
     }
 
+    public int getCurrentFragmentID(){
+        return currentFragmentID;
+    }
+
     public String getEmployeeID() {
         return employeeID;
     }
 
-    public void setCurrentFragment(int parentFragment) {
+    public void setCurrentFragmentID(int parentFragment) {
         currentFragmentID = parentFragment;
     }
 
-    public int getCurrentFragment() {
-        return currentFragmentID;
-    }
 
     public void setOnBtnFilterClicked(View.OnClickListener _onBtnFilterClicked) {
         onBtnFilterClicked.setValue(_onBtnFilterClicked);

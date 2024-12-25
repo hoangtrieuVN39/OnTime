@@ -74,7 +74,6 @@ public class FormPersonalFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
         this.employeeID = viewModel.getEmployeeID();
-        viewModel.setCurrentFragment(R.id.formPersonalFragment);
 
         setListMonth();
         setListStatus();
@@ -369,9 +368,11 @@ public class FormPersonalFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedTypeForm = ListtypeForm.get(position);
-
+                String EmID = employeeID;
+                Log.d("a","EmID: " + EmID);
                 Intent intent = new Intent(requireContext(), FormCreateActivity.class);
                 intent.putExtra("selectedType", selectedTypeForm);
+                intent.putExtra("employee_ID", EmID);
                 startActivity(intent);
                 bottomSheetDialog.dismiss();
             }
