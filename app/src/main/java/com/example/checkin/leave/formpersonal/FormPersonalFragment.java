@@ -217,8 +217,6 @@ public class FormPersonalFragment extends Fragment {
     }
     private void loadDataFromFirebase(String targetEmployee, FormPersonalActivity.DataLoadCallbackForm callbackform) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        // Clear the current list
         listForms.clear();
         long[] pendingCalls = {0};
 
@@ -238,6 +236,7 @@ public class FormPersonalFragment extends Fragment {
                             String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                             String statusLR = leaveRequestSnapshot.child("status").getValue(String.class);
                             int countshift = leaveRequestSnapshot.child("countShift").getValue(int.class);
+                            String CreateTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
 
                             // Fetch LeaveType to get LeaveTypeName
                             databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -251,13 +250,11 @@ public class FormPersonalFragment extends Fragment {
                                         public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
                                             String employeeName = employeeSnapshot.child("employeeName").getValue(String.class);
 
-                                            // Search in LeaveRequestApproval for matching leaveRequestID
                                             databaseReference.child("leaverequestapprovals").addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot approvalSnapshot) {
                                                     String status = null;
 
-                                                    // Iterate through approvals to find matching leaveRequestID
                                                     for (DataSnapshot approval : approvalSnapshot.getChildren()) {
                                                         String approvalLeaveRequestID = approval.child("leaveRequestID").getValue(String.class);
                                                         if (leaveID.equals(approvalLeaveRequestID)) {
@@ -266,27 +263,20 @@ public class FormPersonalFragment extends Fragment {
                                                         }
                                                     }
 
-                                                    // Format data and add to listForms
                                                     String formattedStartTime = formatDateTime(leaveStartTime);
                                                     String formattedEndTime = formatDateTime(leaveEndTime);
                                                     String dateOff = formattedStartTime + " - " + formattedEndTime;
-                                                    listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,countshift));
+                                                    listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,CreateTime,countshift));
 
                                                     pendingCalls[0]--;
                                                     if (pendingCalls[0] == 0) {
-                                                        // Copy all data to listfilterAllForm after fetching is complete
                                                         filteredForms.clear();
                                                         filteredForms.addAll(listForms);
                                                         fAdapter.notifyDataSetChanged();
 
-                                                        // Notify that data loading is complete
                                                         callbackform.onDataLoaded();
                                                     }
 
-
-
-
-                                                    // Notify adapter after updating listForms
                                                     fAdapter.notifyDataSetChanged();
                                                 }
 

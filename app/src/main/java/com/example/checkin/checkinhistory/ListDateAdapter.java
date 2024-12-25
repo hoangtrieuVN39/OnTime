@@ -13,6 +13,11 @@ import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
 import com.example.checkin.models.classes.Shift;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,15 +37,16 @@ import android.util.Log;
 public class ListDateAdapter extends BaseAdapter {
     private final List<Date> dates;
     private final Context context;
-    private final DatabaseHelper dbHelper;
+//    private final DatabaseHelper dbHelper;
     private final List<Shift> listShift;
     private final String employee;
     private OnItemClickListener listener;
+    DatabaseReference databaseReference;
 
-    public ListDateAdapter(Context context, List<Date> dates, DatabaseHelper dbHelper, List<Shift> listShift, String employee) {
+    public ListDateAdapter(Context context, List<Date> dates, DatabaseReference databaseReference, List<Shift> listShift, String employee) {
         this.dates = dates;
         this.context = context;
-        this.dbHelper = dbHelper;
+        this.databaseReference = databaseReference;
         this.listShift = listShift;
         this.employee = employee;
     }
@@ -110,35 +116,6 @@ public class ListDateAdapter extends BaseAdapter {
         double work_count = 0.0;
         String place = "Không có";
 
-//        for (Shift shift : shifts){
-//            List<String[]> shiftcheck;
-//            String checkoutTime = "Không có";
-//            String checkinTime = "Không có";
-//            try {
-//                shiftcheck = getListCheck(dates.get(position), shift, employee);
-//            } catch (ParseException e) {
-//                throw new RuntimeException(e);
-//            }
-//            String date_s = "";
-//            String checkInTime = "";
-//            String placeCheck = "Không có";
-//
-//            for (String[] check : shiftcheck){
-//                if(date_s.equals(check[2])) {
-//                    work_count += (Double.parseDouble(check[0].substring(0, 2)) - Double.parseDouble(checkInTime.substring(0, 2))) + (Double.parseDouble(check[0].substring(3, 5)) - Double.parseDouble(checkInTime.substring(3, 5)))/60;
-//                }
-//                place = getLocationFromId(check[3]);
-//                date_s = check[2];
-//                checkInTime = check[0];
-//                if (check[1].equals("checkin")){
-//                    checkinTime = check[0];
-//                } else {
-//                    checkoutTime = check[0];
-//                }
-//            }
-//            shiftchecks.add(new String[]{shift.getShift_name(), checkinTime, checkoutTime, place, placeCheck});
-//        }
-
         for (Shift shift : shifts) {
             List<String[]> shiftcheck;
             String checkoutTime = "Không có";
@@ -159,7 +136,6 @@ public class ListDateAdapter extends BaseAdapter {
             boolean isCheckoutEarly = true;
 
             for (String[] check : shiftcheck) {
-
                 if (check[1].equals("checkin")) {
                     checkinTime = check[0];
                     try {
@@ -184,6 +160,7 @@ public class ListDateAdapter extends BaseAdapter {
             boolean isCheckoutValid = Objects.equals(checkoutTime, "Không có") || !isCheckoutEarly;
             shiftchecks.add(new String[]{shift.getShift_name(), checkinTime, checkoutTime, place, placeCheck, isCheckinValid ? "Valid" : "Invalid", isCheckoutValid ? "Valid" : "Invalid"});
         }
+
         work_count_txt.setText((work_count*1)+"");
         view.setOnClickListener(v -> {
             if (listener != null) {
@@ -208,24 +185,51 @@ public class ListDateAdapter extends BaseAdapter {
 
         String date_s = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        String filter = "ShiftID = '" + shift.getShift_id() + "' AND CreatedTime like '" + date_s + "%' AND EmployeeID = '" + employee + "'";
 
-        List<List> table = dbHelper.loadDataHandler("Attendance", filter, new String[]{"CreatedTime", "AttendanceType", "PlaceID"});
-        for (int i = 0; i < table.size(); i++) {
-            checkList.add(new String[]{
-                    dateFormat(table.get(i).get(0).toString(), "yyyy-MM-dd HH:mm:ss", "HH:mm:ss"),
-                    table.get(i).get(1).toString(),
-                    dateFormat(table.get(i).get(0).toString(), "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd"),
-                    table.get(i).get(2).toString()
-            });
-        }
+        Query getListCheck = databaseReference
+                .child("attendances")
+                .orderByChild("employeeID")
+                .equalTo(employee);
+
+        getListCheck.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot accountSnapshot : dataSnapshot.getChildren()) {
+
+                    String ShiftID = accountSnapshot.child("shiftID").getValue(String.class);
+                    String CreatedTime = accountSnapshot.child("createdTime").getValue(String.class);
+
+                    if (ShiftID.equals(shift.getShift_id())
+                            && CreatedTime.startsWith(date_s)) {
+                        Log.d("account", accountSnapshot.getKey());
+                        try {
+                            String AttendanceType = accountSnapshot.child("attendanceType").getValue(String.class);
+                            String PlaceID = accountSnapshot.child("placeID").getValue(String.class);
+                            checkList.add(new String[]{
+                                    dateFormat(CreatedTime, "yyyy-MM-dd HH:mm:ss", "HH:mm:ss"),
+                                    AttendanceType,
+                                    dateFormat(CreatedTime, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd"),
+                                    PlaceID
+                            });
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
         return checkList;
     }
-
-    private String getLocationFromId(String placeId) {
-        List<List> table = dbHelper.loadDataHandler("Place", "PlaceID = '" + placeId + "'", new String[]{"PlaceName"});
-        return table.get(0).get(0).toString();
-    }
+//
+//    private String getLocationFromId(String placeId) {
+//        List<List> table = dbHelper.loadDataHandler("Place", "PlaceID = '" + placeId + "'", new String[]{"PlaceName"});
+//        return table.get(0).get(0).toString();
+//    }
 
     private String dateFormat(String date, String oldFormat, String newFormat) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(oldFormat);

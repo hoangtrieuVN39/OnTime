@@ -98,7 +98,7 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             try {
-                viewModel.loadData(getContext(), parent.getEmployeeID());
+                viewModel.loadData(parent.getEmployeeID());
                 uiHandler.post(() -> {
                     updateUIListView(viewModel.getListShift());
                 });

@@ -58,7 +58,6 @@ public class CheckinHistoryDetail extends AppCompatActivity {
 
         // Mặc định: hiển thị gạch vàng dưới ca sáng
 
-
         shifts = (ArrayList<String[]>) getIntent().getSerializableExtra("shifts");
         // Xử lý khi click vào các ca làm việc
         handleClickShift();

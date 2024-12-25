@@ -6,6 +6,7 @@ import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.models.classes.Shift;
 import com.example.checkin.BaseViewModel;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,14 +19,12 @@ import java.util.concurrent.Executors;
 
 public class CheckinHistoryViewModel extends BaseViewModel {
     private BaseViewModel parent;
-    private DatabaseHelper dbHelper;
     private String employeeID;
     private List<Shift> shifts;
     ExecutorService fixedThreadPool = Executors.newSingleThreadExecutor();
 
     public void loadDataFromParent(BaseViewModel _parent){
         this.parent = _parent;
-        dbHelper = parent.getDbHelper();
         employeeID = parent.getEmployeeID();
         shifts = parent.getListShift();
     }
@@ -40,7 +39,7 @@ public class CheckinHistoryViewModel extends BaseViewModel {
                 .supplyAsync(() -> getDates(filterID), fixedThreadPool)
                 .thenApply(fetchedDates -> {
                     dates.addAll(fetchedDates);
-                    return new ListDateAdapter(context, dates, dbHelper, shifts, employeeID);
+                    return new ListDateAdapter(context, dates, FirebaseDatabase.getInstance().getReference(), shifts, employeeID);
                 });
 
         // If you need to wait for the adapter to be ready
