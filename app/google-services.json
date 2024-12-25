@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "528358778267",
-    "project_id": "ontime-e334b",
-    "storage_bucket": "ontime-e334b.firebasestorage.app"
+    "project_number": "205818698086",
+    "project_id": "ontime-bec6e",
+    "storage_bucket": "ontime-bec6e.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:528358778267:android:44731eed1e00966c946d3e",
+        "mobilesdk_app_id": "1:205818698086:android:b47d2f9d5d77d5379f90a7",
         "android_client_info": {
           "package_name": "com.example.checkin"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA6PlSGUWxS-3xv5Z5vrG7VuGB50I1DPJU"
+          "current_key": "AIzaSyBl2TzNTMYj3lQQlw1mo58fESulUW9OYGc"
         }
       ],
       "services": {

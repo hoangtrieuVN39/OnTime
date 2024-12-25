@@ -38,7 +38,6 @@ FormApproveAdapter extends BaseAdapter {
     OnFormApproverClickListener faListener;
     private final SQLiteDatabase database;
     DatabaseReference firebaseReference;
-    boolean isRecallLayoutVisible = false;
 
     public FormApproveAdapter(Context listFormApproveContext, ArrayList<FormApprove> faForm, OnFormApproverClickListener faListener, SQLiteDatabase db) {
         this.faContext = listFormApproveContext;
@@ -119,6 +118,8 @@ FormApproveAdapter extends BaseAdapter {
             txtStatusApprove.setVisibility(View.VISIBLE);
             recallLayoutContainer.setVisibility(View.GONE);
 
+
+
             btnApprove.setOnClickListener(v -> updateStatusForm(formApprove, "Đồng ý", i));
             btnReject.setOnClickListener(v -> updateStatusForm(formApprove, "Loại bỏ", i));
 
@@ -131,12 +132,23 @@ FormApproveAdapter extends BaseAdapter {
                     if (txtStatusApprove.getVisibility() == View.VISIBLE) {
                         txtStatusApprove.setVisibility(View.GONE);
                         recallLayoutContainer.setVisibility(View.VISIBLE);
-                        isRecallLayoutVisible = false;
                     } else {
                         txtStatusApprove.setVisibility(View.VISIBLE);
                         recallLayoutContainer.setVisibility(View.GONE);
-                        isRecallLayoutVisible = true;
                     }
+                }
+            }
+        });
+
+        recallLayoutContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (recallLayoutContainer.getVisibility() == View.VISIBLE) {
+                    recallLayoutContainer.setVisibility(View.GONE);
+                    txtStatusApprove.setVisibility(View.VISIBLE);
+                } else {
+                    txtStatusApprove.setVisibility(View.GONE);
+                    recallLayoutContainer.setVisibility(View.VISIBLE);
                 }
             }
         });
