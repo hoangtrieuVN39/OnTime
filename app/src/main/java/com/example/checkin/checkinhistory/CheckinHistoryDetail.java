@@ -16,6 +16,8 @@ import com.example.checkin.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +29,7 @@ public class CheckinHistoryDetail extends AppCompatActivity {
     private TextView workDetailDateTxt, workDetailNumWorkingTxt, workDetailMorningShiftTxt,
             workDetailAfternoonShiftTxt, workDetailDinnerShiftTxt, workDetailShiftTxt,
             workDetailShiftTimeTxt, workDetailLocationTxt, workDetailWorkRecordTxt, workCountTxt,
-            workDetailCheckinTimeTxt, workDetailCheckinLateTxt,workDetailCheckoutLateTxt,  workDetailCheckinValidTxt,
+            workDetailCheckinTimeTxt, workDetailCheckinLateTxt, workDetailCheckoutLateTxt,  workDetailCheckinValidTxt,
             workDetailCheckoutTimeTxt, workDetailCheckoutValidTxt, mainTabbarTimekeepingTxt;
     private ImageView icBack, icLocate, icMoney, icClock;
 
@@ -57,12 +59,9 @@ public class CheckinHistoryDetail extends AppCompatActivity {
         initializeViews();
 
         // Mặc định: hiển thị gạch vàng dưới ca sáng
-
-
         shifts = (ArrayList<String[]>) getIntent().getSerializableExtra("shifts");
         // Xử lý khi click vào các ca làm việc
         handleClickShift();
-
 
         // Lấy dữ liệu từ Intent (ngày và shifts)
         String datee = getIntent().getStringExtra("date");
@@ -102,7 +101,6 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-
         workDetailDateTxt.setText(datee);
 
         // Thiết lập các listeners cho các thành phần UI
@@ -131,14 +129,14 @@ public class CheckinHistoryDetail extends AppCompatActivity {
         icBack = findViewById(R.id.ic_back);
     }
 
-    private void handleClickShift () {
+    private void handleClickShift() {
         WorkMorning.setOnClickListener(v -> {
             MorningHighlight.setVisibility(View.VISIBLE);
             AfternoonHighlight.setVisibility(View.GONE);
             DinnerHighlight.setVisibility(View.GONE);
             workDetailShiftTxt.setText("Ca sáng");
-            workDetailShiftTimeTxt.setText("8:30 - 12:00");
-            handleClick("Ca sáng" , 0);
+            workDetailShiftTimeTxt.setText("8:00 - 12:00");
+            handleClick("Ca sáng", 0);
         });
 
         WorkAfternoon.setOnClickListener(v -> {
@@ -146,8 +144,8 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             AfternoonHighlight.setVisibility(View.VISIBLE);
             DinnerHighlight.setVisibility(View.GONE);
             workDetailShiftTxt.setText("Ca chiều");
-            workDetailShiftTimeTxt.setText("13:00 - 17:00");
-            handleClick("Ca chiều" , 1);
+            workDetailShiftTimeTxt.setText("13:00 - 15:00");
+            handleClick("Ca chiều", 1);
         });
 
         WorkDinner.setOnClickListener(v -> {
@@ -155,13 +153,12 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             AfternoonHighlight.setVisibility(View.GONE);
             DinnerHighlight.setVisibility(View.VISIBLE);
             workDetailShiftTxt.setText("Ca tối");
-            workDetailShiftTimeTxt.setText("18:00 - 22:00");
-            handleClick("Ca tối" , 2);
+            workDetailShiftTimeTxt.setText("19:00 - 22:00");
+            handleClick("Ca tối", 2);
         });
     }
 
-    private void handleClick (String key, int value) {
-
+    private void handleClick(String key, int value) {
         String checkTime = "Không có";
         String ShiftName = key;
         int Position = value;
@@ -174,27 +171,61 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             workDetailCheckoutTimeTxt.setText(shift[2]);
             workDetailLocationTxt.setText(shift[3]);
 
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
 
-            workDetailCheckinValidTxt.setText(shift[3]);
-            workDetailCheckoutValidTxt.setText(shift[3]);
-            if (shift[1].equals(checkTime)) {
-                workDetailCheckinLateTxt.setText("");
+            LocalTime checkinTime = shift[1].equals(checkTime) ? null : LocalTime.parse(shift[1], formatter);
+            LocalTime checkoutTime = shift[2].equals(checkTime) ? null : LocalTime.parse(shift[2], formatter);
+
+            LocalTime scheduledMorningCheckin = LocalTime.of(8, 0);
+            LocalTime scheduledMorningCheckout = LocalTime.of(12, 0);
+
+            LocalTime scheduledAfternoonCheckin = LocalTime.of(13, 0);
+            LocalTime scheduledAfternoonCheckout = LocalTime.of(17, 0);
+
+            LocalTime scheduledDinnerCheckin = LocalTime.of(18, 0);
+            LocalTime scheduledDinnerCheckout = LocalTime.of(22, 0);
+
+            if (ShiftName.equals("Ca sáng")) {
+                validateCheckTimes(checkinTime, checkoutTime, scheduledMorningCheckin, scheduledMorningCheckout);
+            } else if (ShiftName.equals("Ca chiều")) {
+                validateCheckTimes(checkinTime, checkoutTime, scheduledAfternoonCheckin, scheduledAfternoonCheckout);
+            } else if (ShiftName.equals("Ca tối")) {
+                validateCheckTimes(checkinTime, checkoutTime, scheduledDinnerCheckin, scheduledDinnerCheckout);
+            }
+        } else {
+            Log.e("IntentError", "Invalid position: " + Position);
+        }
+    }
+
+    private void validateCheckTimes(LocalTime checkinTime, LocalTime checkoutTime, LocalTime scheduledCheckin, LocalTime scheduledCheckout) {
+        if (checkinTime != null) {
+            if (checkinTime.isAfter(scheduledCheckin)) {
+                long minutesLate = java.time.Duration.between(scheduledCheckin, checkinTime).toMinutes();
+                workDetailCheckinLateTxt.setText("Trễ " + minutesLate + " phút");
+                workDetailCheckinLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
             } else {
                 workDetailCheckinLateTxt.setText("Hợp lệ");
                 workDetailCheckinLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
             }
-            if (shift[2].equals(checkTime)) {
-                workDetailCheckoutLateTxt.setText("");
+        } else {
+            workDetailCheckinLateTxt.setText("Không hợp lệ");
+            workDetailCheckinLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
+        }
+
+        if (checkoutTime != null) {
+            if (checkoutTime.isBefore(scheduledCheckout)) {
+                long minutesEarly = java.time.Duration.between(checkoutTime, scheduledCheckout).toMinutes();
+                workDetailCheckoutLateTxt.setText("Sớm " + minutesEarly + " phút");
+                workDetailCheckoutLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
             } else {
                 workDetailCheckoutLateTxt.setText("Hợp lệ");
                 workDetailCheckoutLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
             }
         } else {
-            Log.e("IntentError", "Invalid position: " + Position);
+            workDetailCheckoutLateTxt.setText("Không hợp lệ");
+            workDetailCheckoutLateTxt.setTextColor(getResources().getColor(R.color.purple_700));
         }
-
     }
-
 
     // Thiết lập các listeners cho các thành phần UI
     private void setupListeners() {
