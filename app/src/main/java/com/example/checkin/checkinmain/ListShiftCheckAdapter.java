@@ -1,16 +1,23 @@
 package com.example.checkin.checkinmain;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
 import com.example.checkin.models.classes.Shift;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,15 +31,15 @@ public class ListShiftCheckAdapter extends BaseAdapter {
     Context mContext;
     List<Shift> mShift;
     List<String[]> checkArray;
-    DatabaseHelper dbHelper;
     String employee;
     Date date;
+    DatabaseReference ref;
 
-    public ListShiftCheckAdapter(DatabaseHelper dbHelper, Context context, List<Shift> mShift, String employee, Date date){
+    public ListShiftCheckAdapter(DatabaseReference ref, Context context, List<Shift> mShift, String employee, Date date){
         this.mContext = context;
         this.mShift = mShift;
-        this.dbHelper = dbHelper;
         this.employee = employee;
+        this.ref = ref;
         this.date = date;
     }
 
@@ -121,19 +128,39 @@ public class ListShiftCheckAdapter extends BaseAdapter {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String datefilter = sdf.format(date);
-
-        String filter = "ShiftID = '" + shift.getShift_id() + "' AND CreatedTime like '" + datefilter + "%' AND EmployeeID = '" + employee + "'";
-
-        List<List> table = dbHelper.loadDataHandler("Attendance", filter, new String[]{"CreatedTime", "AttendanceType"});
-
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat sdff = new SimpleDateFormat("HH:mm:ss");
-        for (int i = 0; i < table.size(); i++) {
-            checkList.add(new String[]{
-                    sdff.format(sdf.parse(table.get(i).get(0).toString())),
-                    table.get(i).get(1).toString()
-            });
+
+//        List<List> table = dbHelper.loadDataHandler("Attendance", filter, new String[]{"CreatedTime", "AttendanceType"});
+
+        ref.child("attendances").orderByChild("employeeID").equalTo(employee).addValueEventListener(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot snapshot) {
+               for (DataSnapshot child : snapshot.getChildren()){
+                   Log.d("attendances", child.toString());
+                   if (child.child("shiftID").getValue(String.class).equals(shift.getShift_id())
+                   && child.child("createdTime").getValue(String.class).startsWith(datefilter)){
+                       String AttendanceType = child.child("attendanceType").getValue(String.class);
+                       String CreatedTime = child.child("createdTime").getValue(String.class);
+
+                       try {
+                           checkList.add(new String[]{
+                                   sdff.format(sdf.parse(CreatedTime)),
+                                   AttendanceType
+                           });
+                       } catch (ParseException e) {
+                           throw new RuntimeException(e);
+                       }
+                   }
+               }
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError error) {
+
+           }
         }
+       );
 
         return checkList;
     }

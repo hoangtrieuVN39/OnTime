@@ -12,7 +12,6 @@ import com.example.checkin.DatabaseHelper;
 public class FormViewModel extends ViewModel {
 
     private BaseViewModel parent;
-    private DatabaseHelper dbHelper;
     private String employeeID;
     int currentFragmentID;
 
@@ -24,7 +23,6 @@ public class FormViewModel extends ViewModel {
 
     public void loadDataFromParent(BaseViewModel _parent){
         this.parent = _parent;
-        this.dbHelper = parent.getDbHelper();
         this.employeeID = parent.getEmployeeID();
     }
 

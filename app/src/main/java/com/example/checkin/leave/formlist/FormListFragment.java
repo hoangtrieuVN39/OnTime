@@ -357,8 +357,6 @@ public class FormListFragment extends Fragment {
 
     private void loadDataFormFromFirebase(String targetEmployee, FormListActivity.DataLoadCallback callback) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        // Clear the current list
         listForms.clear();
         long[] pendingCalls = {0};
 
@@ -378,20 +376,18 @@ public class FormListFragment extends Fragment {
                             String employeeID = leaveRequestSnapshot.child("employeeID").getValue(String.class);
                             String statusLR = leaveRequestSnapshot.child("status").getValue(String.class);
                             Integer countshift = leaveRequestSnapshot.child("countShift").getValue(Integer.class);
+                            String CreateTime = leaveRequestSnapshot.child("createTime").getValue(String.class);
 
-                            // Fetch LeaveType to get LeaveTypeName
                             databaseReference.child("leavetypes").child(leaveTypeID).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot leaveTypeSnapshot) {
                                     String leaveTypeName = leaveTypeSnapshot.child("leaveTypeName").getValue(String.class);
 
-                                    // Fetch Employee to get EmployeeName
                                     databaseReference.child("employees").child(targetEmployee).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot employeeSnapshot) {
                                             String employeeName = employeeSnapshot.child("employeeName").getValue(String.class);
 
-                                            // Search in LeaveRequestApproval for matching leaveRequestID
                                             databaseReference.child("leaverequestapprovals").addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot approvalSnapshot) {
@@ -406,18 +402,11 @@ public class FormListFragment extends Fragment {
                                                         }
                                                     }
 
-                                                    // Format data and add to listForms
                                                     String formattedStartTime = formatDateTime(leaveStartTime);
                                                     String formattedEndTime = formatDateTime(leaveEndTime);
                                                     String dateOff = formattedStartTime + " - " + formattedEndTime;
-//                                            listForms.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,countshift));
-//
-//
-//                                            // Copy all data to listfilterAllForm after fetching is complete
-//                                            listAllForm.clear();
-////                                                filteredForms.addAll(listForms);
-//                                            listAllForm.addAll(listForms);
-                                                    listAllForm.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,countshift));
+
+                                                    listAllForm.add(new Form(leaveID, leaveTypeName, formattedStartTime, formattedEndTime, reason, statusLR,CreateTime,countshift));
                                                     loadInitialData();
                                                     callback.onDataLoaded();
                                                     Log.d("OnlyForm", "Dữ liệu được tải thành công: " + listAllForm.size());

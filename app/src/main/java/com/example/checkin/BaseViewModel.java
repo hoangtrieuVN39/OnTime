@@ -6,30 +6,23 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.checkin.models.classes.Place;
 import com.example.checkin.models.classes.Shift;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.List;
 
 public class BaseViewModel extends ViewModel {
-    private DatabaseHelper dbHelper;
+    private final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
     private String employeeID;
 
     private List<Shift> shifts;
     private List<Place> places;
 
     public void loadData(String _employeeID, Context context) throws IOException {
-        try {
-            dbHelper = new DatabaseHelper(context, null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         employeeID = _employeeID;
-        places = Utils.getListPlace(dbHelper);
-        shifts = Utils.getListShift(dbHelper);
-    }
-
-    public DatabaseHelper getDbHelper() {
-        return dbHelper;
+        places = Utils.getListPlace(ref);
+        shifts = Utils.getListShift(ref);
     }
 
     public String getEmployeeID() {
