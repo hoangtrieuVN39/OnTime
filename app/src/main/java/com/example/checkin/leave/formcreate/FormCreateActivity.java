@@ -136,7 +136,9 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         typeformNameSpinner.setAdapter(adapter);
 
         selectedType = getIntent().getStringExtra("TYPEFORM_NAME");
-        EmployeeID = getIntent().getStringExtra("EMPLOYEE_ID");
+        if (getIntent().hasExtra("EMPLOYEE_ID")) {
+            EmployeeID = getIntent().getStringExtra("EMPLOYEE_ID");
+        }
         if (selectedType != null) {
             int position = adapter.getPosition(selectedType);
             if (position >= 0) {
@@ -178,7 +180,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             @Override
             public void onClick(View v) {
                 String leaveTypeName = typeformNameSpinner.getSelectedItem().toString();
-                String employeeID = "NV001";
+                String employeeID = EmployeeID;
                 String startDate = startDateEditText.getText().toString();
                 String startTime = startHourEditText.getText().toString();
                 String endDate = endDateEditText.getText().toString();

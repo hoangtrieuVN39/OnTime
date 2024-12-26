@@ -359,7 +359,6 @@ public class FormPersonalFragment extends Fragment {
                 Intent intent = new Intent(requireActivity(), FormDetailActivity.class);
                 intent.putExtra("formid", form.getFormID());
                 startActivity(intent);
-                requireActivity().finish();
             }
         }, employeeID);
         lvTypeForm.setAdapter(typeformAdapter);
