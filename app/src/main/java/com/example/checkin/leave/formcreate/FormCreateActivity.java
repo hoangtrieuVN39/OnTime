@@ -607,16 +607,6 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         }
     }
 
-    private void loadDataNameApproveFromDatabase() {
-        List<List> employees = DBHelper.loadDataHandler("Employee", null, null);
-        ListApproverForm.clear();
-        for (List<String> row : employees) {
-            String nameApprover = row.get(1);
-            String approverID = row.get(0);
-            ListApproverForm.add(new ApproverBT(nameApprover,approverID));
-        }
-    }
-
     private void loadDataNameApproveFromFirebase() {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 

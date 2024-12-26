@@ -2,6 +2,7 @@ package com.example.checkin.leave;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,15 @@ public class TypeformAdapter extends BaseAdapter {
     Context tfContext;
     List<String> tForm;
     OnFormClickListener tfListener;
+    String employeeID;
 
-    public TypeformAdapter (Context context, List<String> forms, OnFormClickListener listener) {
+    public TypeformAdapter (Context context, List<String> forms, OnFormClickListener listener, String employeeID) {
         tfContext = context;
         tForm = forms;
         tfListener = listener;
+        this.employeeID = employeeID;
+
+        Log.d("employee", employeeID);
     }
 
     @Override
@@ -60,6 +65,7 @@ public class TypeformAdapter extends BaseAdapter {
             public void onClick(View view) {
                 Intent intent = new Intent(tfContext, FormCreateActivity.class);
                 intent.putExtra("TYPEFORM_NAME", tForm.get(i));
+                intent.putExtra("EMPLOYEE_ID", employeeID);
                 tfContext.startActivity(intent);
 //                tfListener.onFormClick(tForm.get(i).getNameTypeform());
             }

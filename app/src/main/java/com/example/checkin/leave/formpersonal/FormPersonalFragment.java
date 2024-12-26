@@ -361,7 +361,7 @@ public class FormPersonalFragment extends Fragment {
                 startActivity(intent);
                 requireActivity().finish();
             }
-        });
+        }, employeeID);
         lvTypeForm.setAdapter(typeformAdapter);
 
 //        lvTypeForm.setOnItemClickListener(new AdapterView.OnItemClickListener() {
