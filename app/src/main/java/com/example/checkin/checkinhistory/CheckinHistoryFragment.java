@@ -53,10 +53,25 @@ public class CheckinHistoryFragment extends Fragment {
         filterChips = view.findViewById(R.id.chips);
         listView = view.findViewById(R.id.date_lv);
 
-        updateListView(filterChips.getCheckedChipId());
+        viewModel.updateFilter(R.id.thisweek_chip);
+        viewModel.setListShift();
+
+        viewModel.getFilterID().observe(getViewLifecycleOwner(), filterID -> {
+            updateListView(filterID);
+        });
+
+        viewModel.getFilterID().observe(getViewLifecycleOwner(), shifts -> {
+            updateListView(viewModel.getFilterID().getValue());
+        });
+
+        viewModel.getAttendances().observe(getViewLifecycleOwner(), attendances -> {
+            if (attendances == null) return;
+            updateListView(viewModel.getFilterID().getValue());
+        });
+
 
         filterChips.setOnCheckedStateChangeListener((group, checkedIds) -> {
-                    updateListView(checkedIds.get(0));
+                    viewModel.updateFilter(checkedIds.get(0));
                 }
         );
 
