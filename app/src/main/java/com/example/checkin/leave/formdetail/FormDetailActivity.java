@@ -157,15 +157,15 @@ public class FormDetailActivity extends Activity {
             @Override
             public void onClick(View v) {
                 deleteLeaveRequest(formid);
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(FormDetailActivity.this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(FormDetailActivity.this, FormPersonalActivity.class);
-                        intent.putExtra("isDeleted", true);
-                        startActivity(intent);
-                    }
-                }, 3000);
+//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(FormDetailActivity.this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
+//                        Intent intent = new Intent(FormDetailActivity.this, FormPersonalActivity.class);
+//                        intent.putExtra("isDeleted", true);
+//                        startActivity(intent);
+//                    }
+//                }, 3000);
             }
         });
     }
@@ -345,7 +345,7 @@ public class FormDetailActivity extends Activity {
                     // Bước 3: Sau khi xóa các approval, xóa leaveRequest
                     leaveRequestRef.removeValue()
                             .addOnSuccessListener(aVoid -> {
-
+                                finish();
                             })
                             .addOnFailureListener(e -> {
 
