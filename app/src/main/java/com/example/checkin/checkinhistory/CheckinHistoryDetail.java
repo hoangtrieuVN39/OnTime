@@ -144,7 +144,7 @@ public class CheckinHistoryDetail extends AppCompatActivity {
             AfternoonHighlight.setVisibility(View.VISIBLE);
             DinnerHighlight.setVisibility(View.GONE);
             workDetailShiftTxt.setText("Ca chiều");
-            workDetailShiftTimeTxt.setText("13:00 - 15:00");
+            workDetailShiftTimeTxt.setText("13:00 - 17:00");
             handleClick("Ca chiều", 1);
         });
 
