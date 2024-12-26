@@ -349,9 +349,8 @@ public class FormApproveFragment extends Fragment {
     }
 
     public List<String> getShifts() {
-
         String query = "SELECT WorkShift.ShiftID AS ShiftID, " +
-                "WorkShift.shiftName AS shiftName, " +
+                "WorkShift.ShiftName AS ShiftName, " +
                 "WorkShift.StartTime AS StartTime, " +
                 "WorkShift.EndTime AS EndTime " +
                 "FROM WorkShift";
