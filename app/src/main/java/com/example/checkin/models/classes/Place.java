@@ -4,7 +4,7 @@ public class Place {
     private String placeID;
     private double latitude;
     private double longitude;
-    private final String name;
+    private String name;
 
     public Place(String placeID, String name, double latitude, double longitude) {
         this.name = name;
@@ -12,6 +12,7 @@ public class Place {
          this.latitude = latitude;
          this.longitude = longitude;
     }
+    public Place() {}
 
     public String getPlaceID() {
         return placeID;
