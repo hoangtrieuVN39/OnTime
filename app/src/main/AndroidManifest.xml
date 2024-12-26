@@ -26,7 +26,7 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAG8XlQgVklvP9ij4BtszizRjD1zAdz2Uc" />
 
-        <activity android:name="com.example.checkin.leave.formpersonal.FormPersonalActivity"
+        <activity android:name="com.example.checkin.TestingActivity"
             android:theme="@style/Theme.On_Time"
             android:exported="true">
             <intent-filter>

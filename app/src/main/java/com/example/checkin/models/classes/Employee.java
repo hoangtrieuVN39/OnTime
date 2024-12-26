@@ -12,6 +12,8 @@ public class Employee {
         this.phone = phone;
         this.email = email;
     }
+    public Employee() {
+    }
     public String getEmployeeID() {
         return employeeID;
     }

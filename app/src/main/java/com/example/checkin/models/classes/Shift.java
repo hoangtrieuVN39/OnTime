@@ -12,6 +12,7 @@ public class Shift {
         this.shift_time_start = shift_time_start;
         this.shift_time_end = shift_time_end;
     }
+    public Shift(){}
 
     public String getShift_id() {
         return shift_id;
