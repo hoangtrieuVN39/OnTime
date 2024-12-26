@@ -83,6 +83,7 @@ public class FormListFragment extends Fragment {
     StatusSpinnerAdapter ssAdapter;
     ImageButton btnFilter;
     SearchView searchView;
+    List<String> leaveTypeNames;
 
     private final List<Object> originalList = new ArrayList<>();
     private final List<Object> currentList = new ArrayList<>();
@@ -110,6 +111,7 @@ public class FormListFragment extends Fragment {
 
         setListMonth();
         setListStatus();
+        leaveTypeNames = getLeaveTypeNames();
 
         try {
             DBHelper = new DatabaseHelper(getContext(), null);
@@ -464,7 +466,7 @@ public class FormListFragment extends Fragment {
         allChip.setCheckedIcon(null);
         chipGroup.addView(allChip);
 
-        List<String> leaveTypeNames = getLeaveTypeNames();
+
         if (leaveTypeNames != null) {
             for (String leaveTypeName : leaveTypeNames) {
                 Chip chip = new Chip(new ContextThemeWrapper(requireContext(), R.style.Theme_Checkin_Chip));

@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Utils {
 
+
     public static final String API_KEY = "YOUR_API_KEY";
 
     public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) throws ParseException {

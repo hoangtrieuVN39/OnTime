@@ -39,6 +39,7 @@ import com.example.checkin.models.FilterTypeForm;
 import com.example.checkin.models.FormApprove;
 import com.example.checkin.models.MonthSpinner;
 import com.example.checkin.models.StatusSpinner;
+import com.example.checkin.models.classes.Place;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -80,6 +81,7 @@ public class FormApproveFragment extends Fragment {
     LinearLayout listFiltertypeform;
     DatabaseHelper DBHelper;
     SQLiteDatabase db;
+    List<String> leaveTypeNames;
 
     private final List<FormApprove> originalList = new ArrayList<>();
     private final List<FormApprove> currentList = new ArrayList<>();
@@ -122,7 +124,7 @@ public class FormApproveFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        leaveTypeNames = getLeaveTypeNames();
         loadDataFAFromFirebase(employeeID);
         Log.d("FormApproverss", "Dữ liệu listfilterFormApprove: " + listfilterFormApprove);
 
@@ -190,7 +192,7 @@ public class FormApproveFragment extends Fragment {
         allChip.setCheckedIcon(null);
         chipGroup.addView(allChip);
 
-        List<String> leaveTypeNames = getLeaveTypeNames();
+
         if (leaveTypeNames != null) {
             for (String leaveTypeName : leaveTypeNames) {
                 Chip chip = new Chip(new ContextThemeWrapper(requireContext(), R.style.Theme_Checkin_Chip));
@@ -310,6 +312,35 @@ public class FormApproveFragment extends Fragment {
             cursor.close();
         }
         return leaveTypeNames;
+    }
+    public List<String> getLocations() {
+
+        String query = "SELECT PlaceID, PlaceName,Latitude, Longitude " + "FROM Place";
+
+        List<String> place = new ArrayList<>();
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int PlaceID = cursor.getColumnIndex("PlaceID");
+                int PlaceName = cursor.getColumnIndex("PlaceName");
+                int Latitude = cursor.getColumnIndex("Latitude");
+                int Longitude = cursor.getColumnIndex("Longitude");
+
+                if (PlaceID != -1 && PlaceName != -1 && Latitude != -1 && Longitude != -1) {
+                    String placeID = cursor.getString(PlaceID);
+                    String placeName = cursor.getString(PlaceName);
+                    double latitude = cursor.getDouble(Latitude);
+                    double longitude = cursor.getDouble(Longitude);
+                    place.add(String.valueOf(new Place(placeID,placeName,latitude,longitude)));
+                }
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        return place;
     }
 
 
