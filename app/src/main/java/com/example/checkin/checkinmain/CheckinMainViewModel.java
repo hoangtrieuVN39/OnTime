@@ -38,19 +38,28 @@ public class CheckinMainViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _isCheckedIn = new MutableLiveData<>();
     private final MutableLiveData<Place> _currentPlace = new MutableLiveData<>();
     private final MutableLiveData<Double> _distance = new MutableLiveData<>();
+    MutableLiveData<List<Attendance>> attendances = new MutableLiveData<>();
     private String employeeID;
     private BaseViewModel parent;
     private List<Shift> shifts;
     private List<Place> places;
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+    private Thread loadData;
+
+    private ValueEventListener attendanceListener;
+    private ValueEventListener attendancesListener;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+    private SimpleDateFormat fullFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public void loadDataFromParent(BaseViewModel _parent) {
         this.parent = _parent;
         employeeID = parent.getEmployeeID();
         shifts = parent.getListShift();
         places = parent.getPlaces();
-        getAttendanceFirebase();
-        getAttendancesFirebase();
+        loadData = new Thread(this::loadDataAsync);
+        loadData.start();
         updateData(new Date());
     }
 
@@ -90,66 +99,53 @@ public class CheckinMainViewModel extends ViewModel {
         }
     }
 
+    private void loadDataAsync() {
+        getAttendanceFirebase();
+        getAttendancesFirebase();
+    }
+
     public void getCheckedInAndCurrentShift(Date current, List<Shift> shifts) throws ParseException {
-        try{
-            String time1 = lastAttendance.getCreatedTime();
-            String time2 = new SimpleDateFormat("yyyy-MM-dd").format(current.getTime());
+        if (shifts == null || shifts.isEmpty()) return;
+        
+        Shift currentShift = null;
+        boolean isCheckedIn = false;
 
-            boolean isExist = time1.startsWith(time2);
+        try {
+            if (lastAttendance != null) {
+                String currentDate = dateFormat.format(current);
+                String attendanceDate = lastAttendance.getCreatedTime().substring(0, 10);
 
-            Shift currentShift = null;
-            boolean isCheckedIn = false;
-
-            System.out.println(1);
-
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            if (!isExist) {
-                for (Shift shift : shifts) {
-                    try {
-                        Date d2 = sdf.parse(shift.getShift_time_end());
-                        double diff = getDateDiff(d2, current, TimeUnit.MINUTES);
-                        if (diff >= 0) {
-                            currentShift = shift;
-                            break;
-                        }
-                    } catch (ParseException e) {
-                        throw new RuntimeException(e);
+                if (!currentDate.equals(attendanceDate)) {
+                    currentShift = findNextAvailableShift(current, shifts);
+                } else {
+                    if ("checkin".equals(lastAttendance.getAttendanceType())) {
+                        currentShift = Utils.getShift(lastAttendance.getShiftID(), shifts);
+                        isCheckedIn = true;
+                    } else {
+                        currentShift = findNextShiftAfter(lastAttendance.getShiftID(), current, shifts);
                     }
                 }
             } else {
-                if (Objects.equals(lastAttendance.getAttendanceType(), "checkin")) {
-                    currentShift = Utils.getShift(lastAttendance.getShiftID(), shifts);
-                    isCheckedIn = true;
-                } else {
-                    currentShift = null;
-                    boolean getNext = false;
-                    for (Shift shift : shifts) {
-                        try {
-                            Date d2 = sdf.parse(shift.getShift_time_end());
-                            double diff = getDateDiff(d2, current, TimeUnit.MINUTES);
-                            if (diff >= 0 && getNext) {
-                                currentShift = shift;
-                                break;
-                            }
-                            if (shift.getShift_id().equals(lastAttendance.getShiftID())) {
-                                getNext = true;
-                            }
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
+                currentShift = findNextAvailableShift(current, shifts);
             }
-            _currentShift.setValue(currentShift);
-            _isCheckedIn.setValue(isCheckedIn);
         } catch (Exception e) {
+            Log.e("CheckinViewModel", "Error processing shifts", e);
         }
+
+        // Only update if values changed
+        _currentShift.setValue(currentShift);
+            _isCheckedIn.setValue(isCheckedIn);
     }
 
     public Attendance lastAttendance;
 
     private void getAttendanceFirebase() {
-        ref.child("attendances").orderByChild("employeeID").equalTo(employeeID).limitToLast(1).addValueEventListener(new ValueEventListener() {
+        // Remove previous listener if exists
+        if (attendanceListener != null) {
+            ref.child("attendances").removeEventListener(attendanceListener);
+        }
+        
+        attendanceListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot child : snapshot.getChildren()) {
@@ -160,19 +156,25 @@ public class CheckinMainViewModel extends ViewModel {
                             child.child("employeeID").getValue(String.class),
                             child.child("shiftID").getValue(String.class),
                             child.child("placeID").getValue(String.class),
-                            child.child("latitude").getValue(String.class),
-                            child.child("longitude").getValue(String.class)
+                            child.child("latitude").getValue(double.class),
+                            child.child("longitude").getValue(double.class)
                     );
                 }
+                updateData(new Date());
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("CheckinViewModel", "onCancelled: " + error.getMessage());
+                Log.e("CheckinViewModel", "Attendance fetch cancelled", error.toException());
             }
-        });
-    }
+        };
 
+        ref.child("attendances")
+           .orderByChild("employeeID")
+           .equalTo(employeeID)
+           .limitToLast(1)
+           .addValueEventListener(attendanceListener);
+    }
 
     public void onCheckBtnClicked(String employeeID, Shift currentshift, Place cPlace, Location clocation, Date current) throws ParseException {
         ref.child("attendances").orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -194,7 +196,7 @@ public class CheckinMainViewModel extends ViewModel {
                             attendanceType = "checkin";
                         }
 
-                        Attendance att = new Attendance(attendanceID, attendanceTime, attendanceType, employeeID, currentshift.getShift_id(), cPlace.getPlaceID(), clocation.getLatitude() + "", clocation.getLongitude() + "");
+                        Attendance att = new Attendance(attendanceID, attendanceTime, attendanceType, employeeID, currentshift.getShift_id(), cPlace.getPlaceID(), clocation.getLatitude(), clocation.getLongitude());
                         ref.child("attendances").child(attendanceID).setValue(att);
                     } catch (Exception e) {
                         Log.e("CheckinViewModel", "Error updating data", e);
@@ -214,8 +216,6 @@ public class CheckinMainViewModel extends ViewModel {
                 Log.d("CheckinViewModel", "onCancelled: " + error.getMessage());
             }
         });
-//        List<String> latest = dbHelper.getLast("Attendance", null, new String[]{"AttendanceID", "ShiftID"});
-
     }
 
     public void loadData(String _employeeID) throws IOException {
@@ -226,35 +226,76 @@ public class CheckinMainViewModel extends ViewModel {
         return shifts;
     }
 
-    List <Attendance> attendances;
+    private void getAttendancesFirebase() {
+        if (attendancesListener != null) {
+            ref.child("attendances").removeEventListener(attendancesListener);
+        }
 
-    private void getAttendancesFirebase(){
-        attendances = new ArrayList<>();
-        ref.child("attendances").orderByChild("employeeID").equalTo(employeeID).limitToLast(8).addValueEventListener(new ValueEventListener() {
+        attendancesListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Attendance> temp = new ArrayList<>();
                 for (DataSnapshot child : snapshot.getChildren()) {
-                    attendances.add( new Attendance(
+
+                    Attendance attendance = new Attendance(
                             child.child("attendanceID").getValue(String.class),
                             child.child("createdTime").getValue(String.class),
                             child.child("attendanceType").getValue(String.class),
                             child.child("employeeID").getValue(String.class),
                             child.child("shiftID").getValue(String.class),
                             child.child("placeID").getValue(String.class),
-                            child.child("latitude").getValue(String.class),
-                            child.child("longitude").getValue(String.class)
-                    ));
+                            child.child("latitude").getValue(double.class),
+                            child.child("longitude").getValue(double.class)
+                    );
+                    temp.add(attendance);
                 }
+                attendances.setValue(temp);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("CheckinViewModel", "onCancelled: " + error.getMessage());
+                Log.e("CheckinViewModel", "Attendances fetch cancelled", error.toException());
             }
-        });
+        };
+
+        ref.child("attendances")
+           .orderByChild("employeeID")
+           .equalTo(employeeID)
+           .limitToLast(8)
+           .addValueEventListener(attendancesListener);
     }
 
-    public ListShiftCheckAdapter getShiftAdapter(List<Shift> shifts, Date current, Context context) {
-        return new ListShiftCheckAdapter(attendances, context, shifts, employeeID, current);
+    public LiveData<List<Attendance>> getAttendances() {
+        return attendances;
+    }
+
+    public ListShiftCheckAdapter getShiftCheckAdapter(List<Shift> shifts, Date current, Context context) {
+        return new ListShiftCheckAdapter(attendances.getValue(), context, shifts, employeeID, current);
+    }
+
+    private Shift findNextAvailableShift(Date current, List<Shift> shifts) throws ParseException {
+        for (Shift shift : shifts) {
+            Date endTime = timeFormat.parse(shift.getShift_time_end());
+            if (getDateDiff(endTime, current, TimeUnit.MINUTES) >= 0) {
+                return shift;
+            }
+        }
+        return null;
+    }
+
+    private Shift findNextShiftAfter(String lastShiftId, Date current, List<Shift> shifts) throws ParseException {
+        boolean foundLast = false;
+        for (Shift shift : shifts) {
+            if (foundLast) {
+                Date endTime = timeFormat.parse(shift.getShift_time_end());
+                if (getDateDiff(endTime, current, TimeUnit.MINUTES) >= 0) {
+                    return shift;
+                }
+            }
+            if (shift.getShift_id().equals(lastShiftId)) {
+                foundLast = true;
+            }
+        }
+        return null;
     }
 }

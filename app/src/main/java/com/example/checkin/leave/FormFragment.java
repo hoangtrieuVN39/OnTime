@@ -81,7 +81,6 @@ public class FormFragment extends Fragment {
         viewModel.getOnFilterBtnClicked().observe(requireActivity(), new Observer<View.OnClickListener>() {
             @Override
             public void onChanged(View.OnClickListener newValue) {
-                System.out.println(newValue);
                 if (viewModel.currentFragmentID != R.id.formPersonalFragment){
                     binding.buttonlistFilter.setVisibility(View.VISIBLE);
                     binding.buttonlistFilter.setOnClickListener(newValue);

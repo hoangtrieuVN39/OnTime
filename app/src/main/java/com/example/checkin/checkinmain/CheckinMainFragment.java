@@ -100,9 +100,6 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         executor.execute(() -> {
             try {
                 viewModel.loadData(parent.getEmployeeID());
-                uiHandler.post(() -> {
-                    updateUIListView(viewModel.getListShift());
-                });
                 if (getContext() != null){
                     fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
                 }
@@ -153,22 +150,27 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
     private void setupObservers() {
         viewModel.getCurrentShift().observe(getViewLifecycleOwner(), shift -> {
             currentshift = shift;
-            updateUI();
+            updateShiftUI();
         });
 
         viewModel.getIsCheckedIn().observe(getViewLifecycleOwner(), checkedIn -> {
             isCheckedIn = checkedIn;
-            updateUI();
+            updateShiftUI();
         });
 
         viewModel.getCurrentPlace().observe(getViewLifecycleOwner(), place -> {
             cPlace = place;
-            updateUI();
+            updatePlaceUI();
         });
 
         viewModel.getDistance().observe(getViewLifecycleOwner(), dist -> {
             distance = dist;
-            updateUI();
+            updatePlaceUI();
+        });
+
+        viewModel.getAttendances().observe(getViewLifecycleOwner(), attendances -> {
+            if (attendances == null) return;
+            updateUIListView(viewModel.getListShift());
         });
     }
 
@@ -176,6 +178,7 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         uiUpdateRunnable = () -> {
             if (isAdded()) {
                 current = new Date();
+                updateTimeDateUI();
                 viewModel.updateData(current);
                 uiHandler.postDelayed(uiUpdateRunnable, 1000);
             }
@@ -183,15 +186,15 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
         uiHandler.post(uiUpdateRunnable);
 
         binding.mapSw.setOnCheckedChangeListener(this::switchMap);
-        updateUIListView(viewModel.getListShift());
+//        updateUIListView(viewModel.getListShift());
     }
 
     private void updateUIListView(List<Shift> shifts) {
-        ListShiftCheckAdapter shiftAdapter = viewModel.getShiftAdapter(shifts, current, getContext());
+        ListShiftCheckAdapter shiftAdapter = viewModel.getShiftCheckAdapter(shifts, current, getContext());
         listShift.setAdapter(shiftAdapter);
     }
 
-    private void updateUI() {
+    private void updateShiftUI() {
         if (currentshift != null) {
             setCheckButton();
             currentshift_txt.setText(currentshift.getShift_name());
@@ -201,12 +204,18 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
             checkin_txt.setText("Chưa có ca làm");
             check_btn.setOnTouchListener(null);
         }
-        currentdate_txt.setText(Utils.currentDate(current));
-        currentplace_txt.setText(cPlace != null ? cPlace.getPlaceName() : "Unknown Place");
-        currenttime_txt.setText(new SimpleDateFormat("HH:mm:ss").format(current.getTime()));
-        currentdis.setText(String.format("Ngoài vị trí %.0f m", distance));
-        updateUIListView(viewModel.getListShift());
+
         updateDistanceIndicator();
+    }
+
+    private void updatePlaceUI(){
+        currentplace_txt.setText(cPlace != null ? cPlace.getPlaceName() : "Unknown Place");
+        currentdis.setText(String.format("Ngoài vị trí %.0f m", distance));
+    }
+
+    private void updateTimeDateUI(){
+        currentdate_txt.setText(Utils.currentDate(current));
+        currenttime_txt.setText(new SimpleDateFormat("HH:mm:ss").format(current.getTime()));
     }
 
     private void updateDistanceIndicator() {
@@ -251,7 +260,6 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
                 check_btn.setTranslationZ(5);
                 try {
                     viewModel.onCheckBtnClicked(parent.getEmployeeID(), currentshift, cPlace, clocation, current);
-                    updateUIListView(viewModel.getListShift());
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }

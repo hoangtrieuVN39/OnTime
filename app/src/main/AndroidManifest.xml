@@ -42,11 +42,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
         <activity
-            android:name=".checkinhistory.CheckinHistoryActivity"
-            android:exported="true"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-        </activity>
-        <activity
             android:name=".leave.formdetail.FormApproveDetailActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         />
