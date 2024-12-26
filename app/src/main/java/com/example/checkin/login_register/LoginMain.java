@@ -163,7 +163,7 @@ public class LoginMain extends Activity {
 
     private void login(String user){
         Intent intent = new Intent(LoginMain.this, MainActivity.class);
-        intent.putExtra("Employee", user);
+        intent.putExtra("EmployeeID", user);
         startActivity(intent);
         finish();
     }
