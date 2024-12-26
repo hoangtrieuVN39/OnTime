@@ -40,6 +40,7 @@ import com.example.checkin.models.FormApprove;
 import com.example.checkin.models.MonthSpinner;
 import com.example.checkin.models.StatusSpinner;
 import com.example.checkin.models.classes.Place;
+import com.example.checkin.models.classes.Shift;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -313,9 +314,13 @@ public class FormApproveFragment extends Fragment {
         }
         return leaveTypeNames;
     }
-    public List<String> getLocations() {
+    public List<String> getPlaces() {
 
-        String query = "SELECT PlaceID, PlaceName,Latitude, Longitude " + "FROM Place";
+        String query = "SELECT Place.PlaceID AS PlaceID, " +
+                "Place.PlaceName AS PlaceName, " +
+                "Place.Latitude AS Latitude, " +
+                "Place.Longitude AS Longitude " +
+                "FROM Place";
 
         List<String> place = new ArrayList<>();
         SQLiteDatabase db = DBHelper.getReadableDatabase();
@@ -341,6 +346,40 @@ public class FormApproveFragment extends Fragment {
             cursor.close();
         }
         return place;
+    }
+
+    public List<String> getShifts() {
+
+        String query = "SELECT WorkShift.ShiftID AS ShiftID, " +
+                "WorkShift.shiftName AS shiftName, " +
+                "WorkShift.StartTime AS StartTime, " +
+                "WorkShift.EndTime AS EndTime " +
+                "FROM WorkShift";
+
+        List<String> shift = new ArrayList<>();
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int ShiftID = cursor.getColumnIndex("ShiftID");
+                int ShiftName = cursor.getColumnIndex("ShiftName");
+                int StartTime = cursor.getColumnIndex("StartTime");
+                int EndTime = cursor.getColumnIndex("EndTime");
+
+                if (ShiftID != -1 && ShiftName != -1 && StartTime != -1 && EndTime != -1) {
+                    String shiftID = cursor.getString(ShiftID);
+                    String shiftName = cursor.getString(ShiftName);
+                    String startTime = cursor.getString(StartTime);
+                    String endTime = cursor.getString(EndTime);
+                    shift.add(String.valueOf(new Shift(shiftID,shiftName,startTime,endTime)));
+                }
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        return shift;
     }
 
 
