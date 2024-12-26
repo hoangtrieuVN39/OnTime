@@ -1,12 +1,22 @@
 package com.example.checkin.checkinhistory;
 
 import android.content.Context;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
+import com.example.checkin.models.classes.Attendance;
 import com.example.checkin.models.classes.Shift;
 import com.example.checkin.BaseViewModel;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +32,9 @@ public class CheckinHistoryViewModel extends BaseViewModel {
     private String employeeID;
     private List<Shift> shifts;
     ExecutorService fixedThreadPool = Executors.newSingleThreadExecutor();
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+    MutableLiveData<Integer> _filterID = new MutableLiveData<>(R.id.thisweek_chip);
+    List<Date> dates = Collections.synchronizedList(new ArrayList<>());
 
     public void loadDataFromParent(BaseViewModel _parent){
         this.parent = _parent;
@@ -34,15 +47,13 @@ public class CheckinHistoryViewModel extends BaseViewModel {
     }
 
     public ListDateAdapter getDateAdapter(int filterID, Context context) {
-        List<Date> dates = Collections.synchronizedList(new ArrayList<>());
         CompletableFuture<ListDateAdapter> adapterFuture = CompletableFuture
                 .supplyAsync(() -> getDates(filterID), fixedThreadPool)
                 .thenApply(fetchedDates -> {
                     dates.addAll(fetchedDates);
-                    return new ListDateAdapter(context, dates, FirebaseDatabase.getInstance().getReference(), shifts, employeeID);
+                    return new ListDateAdapter(context, dates, attendances.getValue(), shifts, employeeID);
                 });
 
-        // If you need to wait for the adapter to be ready
         return adapterFuture.join();
     }
 
@@ -92,5 +103,63 @@ public class CheckinHistoryViewModel extends BaseViewModel {
         }
 
         return dates;
+    }
+
+    ValueEventListener attendancesListener;
+    MutableLiveData<List<Attendance>> attendances = new MutableLiveData<>();
+
+    private void getAttendancesFirebase() {
+        if (attendancesListener != null) {
+            ref.child("attendances").removeEventListener(attendancesListener);
+        }
+
+        attendancesListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Attendance> temp = new ArrayList<>();
+                for (DataSnapshot child : snapshot.getChildren()) {
+
+                    Attendance attendance = new Attendance(
+                            child.child("attendanceID").getValue(String.class),
+                            child.child("createdTime").getValue(String.class),
+                            child.child("attendanceType").getValue(String.class),
+                            child.child("employeeID").getValue(String.class),
+                            child.child("shiftID").getValue(String.class),
+                            child.child("placeID").getValue(String.class),
+                            child.child("latitude").getValue(double.class),
+                            child.child("longitude").getValue(double.class)
+                    );
+                    temp.add(attendance);
+                }
+                attendances.setValue(temp);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("CheckinViewModel", "Attendances fetch cancelled", error.toException());
+            }
+        };
+
+        ref.child("attendances")
+                .orderByChild("employeeID")
+                .equalTo(employeeID)
+                .limitToLast(62)
+                .addValueEventListener(attendancesListener);
+    }
+
+    public LiveData<List<Attendance>> getAttendances() {
+        return attendances;
+    }
+
+    public void setListShift() {
+        getAttendancesFirebase();
+    }
+
+    public void updateFilter(Integer ID) {
+        _filterID.setValue(ID);
+    }
+
+    public LiveData<Integer> getFilterID() {
+        return _filterID;
     }
 }
