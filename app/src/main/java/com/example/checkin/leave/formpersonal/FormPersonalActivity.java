@@ -38,6 +38,8 @@ import com.example.checkin.models.MonthSpinner;
 import com.example.checkin.models.StatusSpinner;
 import com.example.checkin.models.TypeForm;
 import com.example.checkin.models.classes.LeaveRequest;
+import com.example.checkin.models.classes.Place;
+import com.example.checkin.models.classes.Shift;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DataSnapshot;
@@ -115,6 +117,12 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
                 Log.d("filteredForms", "Dữ liệu listfilterAllForm: " + filteredForms.size());
             }
         });
+
+        List<String> shift = getShifts();
+        List<String> place = getPlaces();
+        Log.d("shift", "Dữ liệu shift: " + shift.size());
+        Log.d("place", "Dữ liệu shift: " + place.size());
+
 
         loadDataTypeFormFromDatabase();
         //        loadDataFromDatabase();
@@ -196,6 +204,73 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             String nameTypeform = row.get(1);
             ListtypeForm.add(new TypeForm(nameTypeform));
         }
+    }
+
+    public List<String> getPlaces() {
+
+        String query = "SELECT Place.PlaceID AS PlaceID, " +
+                "Place.PlaceName AS PlaceName, " +
+                "Place.Latitude AS Latitude, " +
+                "Place.Longitude AS Longitude " +
+                "FROM Place";
+
+        List<String> place = new ArrayList<>();
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int PlaceID = cursor.getColumnIndex("PlaceID");
+                int PlaceName = cursor.getColumnIndex("PlaceName");
+                int Latitude = cursor.getColumnIndex("Latitude");
+                int Longitude = cursor.getColumnIndex("Longitude");
+
+                if (PlaceID != -1 && PlaceName != -1 && Latitude != -1 && Longitude != -1) {
+                    String placeID = cursor.getString(PlaceID);
+                    String placeName = cursor.getString(PlaceName);
+                    double latitude = cursor.getDouble(Latitude);
+                    double longitude = cursor.getDouble(Longitude);
+                    place.add(String.valueOf(new Place(placeID,placeName,latitude,longitude)));
+                }
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        return place;
+    }
+
+    public List<String> getShifts() {
+        String query = "SELECT WorkShift.ShiftID AS ShiftID, " +
+                "WorkShift.ShiftName AS ShiftName, " +
+                "WorkShift.StartTime AS StartTime, " +
+                "WorkShift.EndTime AS EndTime " +
+                "FROM WorkShift";
+
+        List<String> shift = new ArrayList<>();
+        SQLiteDatabase db = DBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int ShiftID = cursor.getColumnIndex("ShiftID");
+                int ShiftName = cursor.getColumnIndex("ShiftName");
+                int StartTime = cursor.getColumnIndex("StartTime");
+                int EndTime = cursor.getColumnIndex("EndTime");
+
+                if (ShiftID != -1 && ShiftName != -1 && StartTime != -1 && EndTime != -1) {
+                    String shiftID = cursor.getString(ShiftID);
+                    String shiftName = cursor.getString(ShiftName);
+                    String startTime = cursor.getString(StartTime);
+                    String endTime = cursor.getString(EndTime);
+                    shift.add(String.valueOf(new Shift(shiftID,shiftName,startTime,endTime)));
+                }
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        return shift;
     }
 
 
