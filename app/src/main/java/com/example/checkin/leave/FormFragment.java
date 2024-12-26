@@ -23,6 +23,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.checkin.BaseViewModel;
 import com.example.checkin.R;
+import com.example.checkin.checkinmain.CheckinMainViewModel;
 import com.example.checkin.databinding.MainleaveLayoutBinding;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
@@ -43,14 +44,11 @@ public class FormFragment extends Fragment {
     BaseViewModel parentViewModel;
     FormViewModel viewModel;
 
-    public FormFragment(BaseViewModel _viewModel) {
-        parentViewModel = _viewModel;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        parentViewModel = new ViewModelProvider(requireActivity()).get(BaseViewModel.class);
         viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
         viewModel.loadDataFromParent(parentViewModel);
     }

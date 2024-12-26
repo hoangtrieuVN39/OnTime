@@ -47,14 +47,8 @@ public class CheckinHistoryViewModel extends BaseViewModel {
     }
 
     public ListDateAdapter getDateAdapter(int filterID, Context context) {
-        CompletableFuture<ListDateAdapter> adapterFuture = CompletableFuture
-                .supplyAsync(() -> getDates(filterID), fixedThreadPool)
-                .thenApply(fetchedDates -> {
-                    dates.addAll(fetchedDates);
-                    return new ListDateAdapter(context, dates, attendances.getValue(), shifts, employeeID);
-                });
-
-        return adapterFuture.join();
+        dates = getDates(filterID);
+        return new ListDateAdapter(context, dates, attendances.getValue(), shifts, employeeID);
     }
 
     private List<Date> getDates(int id) {

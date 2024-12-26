@@ -44,6 +44,8 @@ public class ListDateAdapter extends BaseAdapter {
     private OnItemClickListener listener;
     DatabaseReference databaseReference;
     private final List<Attendance> attendances;
+    private double workCounts;
+
 
     public ListDateAdapter(Context context, List<Date> dates, List<Attendance> attendances, List<Shift> listShift, String employee) {
         this.dates = dates;
@@ -54,13 +56,7 @@ public class ListDateAdapter extends BaseAdapter {
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int position, List<String[]> shifts);
-    }
-
-    public String getDate(int position){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String date = sdf.format(dates.get(position));
-        return date;
+        void onItemClick(List<String[]> fullShifts, String date, double workCountsDay);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -118,9 +114,14 @@ public class ListDateAdapter extends BaseAdapter {
 
         String place = "Không có";
 
-        double work_count = 0.0;
+        double work_count_day = 0.0;
+
+        List<String> work_counts = new ArrayList<>();
+
+        List<String[]> fullshifts = new ArrayList<>();
 
         for (Shift shift : shifts) {
+            Integer work_count_temp = 0;
             List<String[]> shiftcheck;
 
             String checkoutTime = "Không có";
@@ -157,19 +158,38 @@ public class ListDateAdapter extends BaseAdapter {
                     }
                 }
                 if (!(isCheckinLate || isCheckoutEarly)) {
-                    work_count += work_per_shift;
+                    work_count_day += work_per_shift;
+                    work_count_temp=1;
                 }
+            }
+
+            String workcountshift_s = String.valueOf(work_count_temp);
+            String place_s = "a";
+            String checkinTime_s = checkinTime;
+            String checkoutTime_s = checkoutTime;
+            String checkinShift_s = "";
+            String checkoutShift_s = "";
+            try{
+                checkinShift_s = new SimpleDateFormat("HH:mm").format(sdf.parse(shift.getShift_time_start()));
+                checkoutShift_s = new SimpleDateFormat("HH:mm").format(sdf.parse(shift.getShift_time_end()));
+            }catch (Exception e){
+
             }
 
             boolean isCheckinValid = Objects.equals(checkinTime, "Không có") || !isCheckinLate;
             boolean isCheckoutValid = Objects.equals(checkoutTime, "Không có") || !isCheckoutEarly;
+
+            fullshifts.add(new String[]{workcountshift_s, place_s, checkinTime_s, checkoutTime_s, checkinShift_s, checkoutShift_s, isCheckinValid ? "Valid" : "Invalid", isCheckoutValid ? "Valid" : "Invalid"});
+
             shiftchecks.add(new String[]{shift.getShift_name(), checkinTime, checkoutTime, place, placeCheck, isCheckinValid ? "Valid" : "Invalid", isCheckoutValid ? "Valid" : "Invalid"});
         }
 
-        work_count_txt.setText((work_count*1)+"");
+        work_count_txt.setText((work_count_day*1)+"");
+
+        double finalWork_count = work_count_day;
         view.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onItemClick(position, shiftchecks);
+                listener.onItemClick(fullshifts, new SimpleDateFormat("dd/MM/yyyy").format(dates.get(position)), finalWork_count);
             }
         });
 
@@ -177,7 +197,7 @@ public class ListDateAdapter extends BaseAdapter {
                 context,
                 shiftchecks,
                 dates,
-                work_count*work_per_shift
+                work_count_day*work_per_shift
         );
 
         shift_lv.setAdapter(adapter);

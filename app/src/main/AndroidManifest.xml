@@ -30,6 +30,14 @@
         <activity android:name="com.example.checkin.login_register.RegisterMain"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
+        <activity android:name="com.example.checkin.login_register.LoginMain"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported = "true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name="com.example.checkin.leave.formcreate.FormCreateActivity"
@@ -43,13 +51,13 @@
         </activity>
         <activity
             android:name=".leave.formdetail.FormApproveDetailActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.On_Time">
+
         </activity>
         <activity android:name=".checkinhistory.CheckinHistoryDetail"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>

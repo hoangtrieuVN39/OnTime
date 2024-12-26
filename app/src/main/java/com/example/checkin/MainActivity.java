@@ -43,20 +43,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            viewModel.loadData(employeeID, this);
+            viewModel.loadData(employeeID);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         // Initialize fragments only once
         if (checkinMainFragment == null) {
-            checkinMainFragment = new CheckinMainFragment(viewModel);
+            checkinMainFragment = new CheckinMainFragment();
         }
         if (checkinHistoryFragment == null) {
-            checkinHistoryFragment = new CheckinHistoryFragment(viewModel);
+            checkinHistoryFragment = new CheckinHistoryFragment();
         }
         if (FormFragment == null) {
-            FormFragment = new FormFragment(viewModel);
+            FormFragment = new FormFragment();
         }
 
         // Initial fragment setup

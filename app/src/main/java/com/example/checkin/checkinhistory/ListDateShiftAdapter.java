@@ -89,23 +89,6 @@ public class ListDateShiftAdapter extends BaseAdapter {
                 Checkout_time.setTextColor(Color.BLACK);
             }
         }
-        v.setOnClickListener(v1 -> {
-            try {
-                if (context instanceof android.app.Activity) {
-                    String date = getDate(position);
-                    Intent intent = new Intent(context, CheckinHistoryDetail.class);
-                    intent.putExtra("shifts", new ArrayList<>(shifts));
-                    intent.putExtra("date", date);
-                    intent.putExtra("shiftName", shifts.get(position)[0]);
-                    intent.putExtra("workCounts", workcount);
-                    context.startActivity(intent);
-                } else {
-                    throw new IllegalArgumentException("Context must be an instance of Activity");
-                }
-            } catch (Exception e) {
-                Log.e("IntentError", "Cannot navigate to CheckinHistoryDetail", e);
-            }
-        });
 
         return v;
     }

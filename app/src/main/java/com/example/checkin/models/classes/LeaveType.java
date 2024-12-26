@@ -4,8 +4,6 @@ public class LeaveType {
     private String LeaveTypeID;
     private String LeaveTypeName;
 
-    public LeaveType(){
-    }
     public LeaveType(String LeaveTypeID, String LeaveTypeName){
         this.LeaveTypeID = LeaveTypeID;
         this.LeaveTypeName = LeaveTypeName;

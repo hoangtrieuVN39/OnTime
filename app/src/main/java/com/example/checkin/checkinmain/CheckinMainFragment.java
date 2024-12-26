@@ -84,14 +84,12 @@ public class CheckinMainFragment extends Fragment implements OnMapReadyCallback 
     private Runnable uiUpdateRunnable;
     SupportMapFragment mapFragment;
 
-    public CheckinMainFragment(BaseViewModel _parent){
-        parent = _parent;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Initialize ViewModel
+        parent = new ViewModelProvider(requireActivity()).get(BaseViewModel.class);
         viewModel = new ViewModelProvider(requireActivity()).get(CheckinMainViewModel.class);
 
         // Load Database asynchronously

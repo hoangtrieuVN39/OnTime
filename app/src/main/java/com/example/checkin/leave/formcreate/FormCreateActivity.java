@@ -39,6 +39,7 @@ import com.example.checkin.leave.formpersonal.FormPersonalActivity;
 import com.example.checkin.models.ApproverBT;
 import com.example.checkin.models.classes.LeaveRequest;
 import com.example.checkin.models.classes.LeaveRequestApproval;
+import com.example.checkin.models.classes.Shift;
 import com.example.checkin.models.classes.WorkShift;
 //import com.example.on_time.adapter.ApproverBTAdapter;
 //import com.example.on_time.adapter.FormAdapter;
@@ -213,7 +214,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 
                             clearInputFields();
                         }
-                    }, 4000);
+                    }, 3000);
                 } else {
                     Toast.makeText(FormCreateActivity.this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
                 }
@@ -425,7 +426,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
             Date start = dateTimeFormat.parse(startDateStr + " " + startTimeStr);
             Date end = dateTimeFormat.parse(endDateStr + " " + endTimeStr);
 
-            List<WorkShift> shifts = getWorkShifts();
+            List<Shift> shifts = getWorkShifts();
             int totalShiftCount = 0;
 
             // Duyệt qua từng ngày trong phạm vi được chọn
@@ -434,9 +435,9 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 
             while (!cal.getTime().after(end)) {
                 String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-                for (WorkShift shift : shifts) {
-                    String shiftStartTime = currentDate + " " + shift.getStartTime();
-                    String shiftEndTime = currentDate + " " + shift.getEndTime();
+                for (Shift shift : shifts) {
+                    String shiftStartTime = currentDate + " " + shift.getShift_time_start();
+                    String shiftEndTime = currentDate + " " + shift.getShift_time_end();
 
                     // Kiểm tra nếu thời gian được chọn bao gồm ca làm hiện tại
                     if (start.compareTo(dateTimeFormat.parse(shiftEndTime)) <= 0 && end.compareTo(dateTimeFormat.parse(shiftStartTime)) >= 0) {
@@ -650,8 +651,8 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
 
 
 
-    public List<WorkShift> getWorkShifts() {
-        List<WorkShift> shifts = new ArrayList<>();
+    public List<Shift> getWorkShifts() {
+        List<Shift> shifts = new ArrayList<>();
         SQLiteDatabase db = DBHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM WorkShift", null);
         if (cursor.moveToFirst()) {
@@ -660,7 +661,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                 String shiftName = cursor.getString(1);
                 String startTime = cursor.getString(2);
                 String endTime = cursor.getString(3);
-                shifts.add(new WorkShift(shiftID,shiftName, startTime, endTime));
+                shifts.add(new Shift(shiftID,shiftName, startTime, endTime));
             } while (cursor.moveToNext());
         }
         cursor.close();

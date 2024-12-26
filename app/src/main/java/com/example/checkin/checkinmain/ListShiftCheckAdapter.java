@@ -93,35 +93,33 @@ public class ListShiftCheckAdapter extends BaseAdapter {
         String currentDay = sdf.format(date);
 
         for (int i = 0; i < attendances.size(); i++) {
-            if (attendances.get(i).getShiftID().equals(shift.getShift_id())) {
-                String date1s = attendances.get(i).getCreatedTime().substring(0, 10);
+            if (!attendances.get(i).getShiftID().equals(shift.getShift_id())) continue;
+            String date1s = attendances.get(i).getCreatedTime().substring(0, 10);
 
-                if (attendances.get(i).getAttendanceType().equals("checkout")){
-                }
-                if (date1s.startsWith(currentDay)) {
+            if (date1s.startsWith(currentDay)) {
+                sdf.applyPattern("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sdff = new SimpleDateFormat("HH:mm:ss");
+
+                if (attendances.get(i).getAttendanceType().equals("checkin")) {
+                    String time = attendances.get(i).getCreatedTime().substring(11, 19);
+                    check = new String[]{"Check", time, "Check in", "1", "0"};
+
                     Date date1 = sdf.parse(attendances.get(i).getCreatedTime());
-
-                    sdf.applyPattern("yyyy-MM-dd HH:mm:ss");
-                    SimpleDateFormat sdff = new SimpleDateFormat("HH:mm:ss");
-
-                    if (attendances.get(i).getAttendanceType().equals("checkin")) {
-                        String time = attendances.get(i).getCreatedTime().substring(11, 19);
-                        check = new String[]{"Check", time, "Check in", "1", "0"};
-                        Date date2 = sdff.parse(shift.getShift_time_start());
-
-                        if (Utils.isLate(date1, date2)) {
-                            check[4] = "1";
-                        }
+                    Date date2 = sdff.parse(shift.getShift_time_start());
+                    if (Utils.isLate(date1, date2)) {
+                        check[4] = "1";
 
                     }
-                    if (attendances.get(i).getAttendanceType().equals("checkout")) {
-                        String time = attendances.get(i).getCreatedTime().substring(11, 19);
-                        check2 = new String[]{"Check", time, "Check out", "1", "0"};
-                        Date date2 = sdff.parse(shift.getShift_time_end());
+                    continue;
+                }
+                if (attendances.get(i).getAttendanceType().equals("checkout")) {
+                    String time = attendances.get(i).getCreatedTime().substring(11, 19);
+                    check2 = new String[]{"Check", time, "Check out", "1", "0"};
 
-                        if (Utils.isEarly(date1, date2)) {
-                            check2[4] = "1";
-                        }
+                    Date date1 = sdf.parse(attendances.get(i).getCreatedTime());
+                    Date date2 = sdff.parse(shift.getShift_time_end());
+                    if (Utils.isEarly(date1, date2)) {
+                        check2[4] = "1";
                     }
                 }
             }

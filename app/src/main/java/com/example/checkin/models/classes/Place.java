@@ -12,7 +12,6 @@ public class Place {
          this.latitude = latitude;
          this.longitude = longitude;
     }
-    public Place() {}
 
     public String getPlaceID() {
         return placeID;
