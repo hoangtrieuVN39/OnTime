@@ -73,6 +73,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class FormCreateActivity extends Activity implements OnFormNameClickListener {
     String selectedType;
+    public String EmployeeID;
     Spinner typeformNameSpinner;
     TextView titleApplyTime;
     DatabaseHelper DBHelper;
@@ -87,6 +88,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
     ListView lvApproverForm;
     private LinearLayout flowApproveLayout;
     private LayoutInflater inflater;
+
 
     LinkedHashSet<String> selectedApprovers = new LinkedHashSet<>(); // Danh sách những người phê duyệt đã chọn
     Set<String> listselectedApprovers = new HashSet<>();
@@ -134,6 +136,7 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
         typeformNameSpinner.setAdapter(adapter);
 
         selectedType = getIntent().getStringExtra("TYPEFORM_NAME");
+        EmployeeID = getIntent().getStringExtra("EMPLOYEE_ID");
         if (selectedType != null) {
             int position = adapter.getPosition(selectedType);
             if (position >= 0) {
@@ -201,9 +204,10 @@ public class FormCreateActivity extends Activity implements OnFormNameClickListe
                         @Override
                         public void run() {
                             Toast.makeText(FormCreateActivity.this, "Đã lưu đơn từ thành công!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
-                            intent.putExtra("isSuccess", true);
-                            startActivity(intent);
+//                            Intent intent = new Intent(FormCreateActivity.this, FormPersonalActivity.class);
+//                            intent.putExtra("isSuccess", true);
+//                            startActivity(intent);
+                            finish();
 
                             clearInputFields();
                         }

@@ -2,6 +2,7 @@ package com.example.checkin.leave;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,20 +47,18 @@ public class FormFragment extends Fragment {
         parentViewModel = _viewModel;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
+        viewModel.loadDataFromParent(parentViewModel);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = MainleaveLayoutBinding.inflate(inflater, container, false);
-
-        viewModel = new ViewModelProvider(requireActivity()).get(FormViewModel.class);
-        viewModel.loadDataFromParent(parentViewModel);
-
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
         navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.view);
         navController = navHostFragment.getNavController();
@@ -73,6 +72,8 @@ public class FormFragment extends Fragment {
 
         tabLayout = binding.tabLayout;
         setupTabLayout();
+
+        return binding.getRoot();
     }
 
     @Override
@@ -100,16 +101,16 @@ public class FormFragment extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 switch(tab.getPosition()) {
                     case 0:
+                        viewModel.setCurrentFragmentID(R.id.formPersonalFragment);
                         navController.navigate(R.id.formPersonalFragment);
-                        viewModel.setCurrentFragment(R.id.formPersonalFragment);
                         break;
                     case 1:
+                        viewModel.setCurrentFragmentID(R.id.formApproveFragment);
                         navController.navigate(R.id.formApproveFragment);
-                        viewModel.setCurrentFragment(R.id.formApproveFragment);
                         break;
                     case 2:
+                        viewModel.setCurrentFragmentID(R.id.formListFragment);
                         navController.navigate(R.id.formListFragment);
-                        viewModel.setCurrentFragment(R.id.formListFragment);
                         break;
                 }
             }
@@ -119,5 +120,23 @@ public class FormFragment extends Fragment {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        int tabs = 0;
+        if (viewModel.getCurrentFragmentID() == R.id.formPersonalFragment){
+            tabs = 0;
+            navController.navigate(R.id.formPersonalFragment);
+        } else if (viewModel.getCurrentFragmentID() == R.id.formApproveFragment){
+            tabs = 1;
+            navController.navigate(R.id.formApproveFragment);
+        } else if (viewModel.getCurrentFragmentID() == R.id.formListFragment){
+            tabs = 2;
+            navController.navigate(R.id.formListFragment);
+        }
+        TabLayout.Tab tab = tabLayout.getTabAt(tabs);
+        tabLayout.selectTab(tab);
     }
 }
