@@ -417,8 +417,8 @@ public class FormPersonalActivity extends Activity implements OnFormClickListene
             }
         });
 
-        TypeformAdapter typeformAdapter = new TypeformAdapter(this, ListtypeForm, this);
-        lvTypeForm.setAdapter(typeformAdapter);
+//        TypeformAdapter typeformAdapter = new TypeformAdapter(this, ListtypeForm, this);
+//        lvTypeForm.setAdapter(typeformAdapter);
 
         lvTypeForm.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
