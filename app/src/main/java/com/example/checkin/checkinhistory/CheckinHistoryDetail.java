@@ -88,8 +88,6 @@ public class CheckinHistoryDetail extends AppCompatActivity {
         String date = getIntent().getStringExtra("date");
         double workDayValue = getIntent().getDoubleExtra("workCountsDay", 0.0);
 
-        Log.d("a", "setupInitialData: " + Arrays.toString(fullShifts.get(0)));
-
         workCountTxt.setText(String.valueOf(workDayValue));
         workDetailWorkRecordTxt.setText(String.valueOf(fullShifts.get(0)[0]));
         workDetailDateTxt.setText(date);

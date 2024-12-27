@@ -48,7 +48,7 @@ public class CheckinHistoryViewModel extends BaseViewModel {
 
     public ListDateAdapter getDateAdapter(int filterID, Context context) {
         dates = getDates(filterID);
-        return new ListDateAdapter(context, dates, attendances.getValue(), shifts, employeeID);
+        return new ListDateAdapter(context, dates, attendances.getValue(), shifts, employeeID, parent);
     }
 
     private List<Date> getDates(int id) {

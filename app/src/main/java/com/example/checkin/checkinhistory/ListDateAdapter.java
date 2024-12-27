@@ -9,10 +9,12 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.checkin.BaseViewModel;
 import com.example.checkin.DatabaseHelper;
 import com.example.checkin.R;
 import com.example.checkin.Utils;
 import com.example.checkin.models.classes.Attendance;
+import com.example.checkin.models.classes.Place;
 import com.example.checkin.models.classes.Shift;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 
@@ -45,14 +48,16 @@ public class ListDateAdapter extends BaseAdapter {
     DatabaseReference databaseReference;
     private final List<Attendance> attendances;
     private double workCounts;
+    BaseViewModel viewModel;
 
 
-    public ListDateAdapter(Context context, List<Date> dates, List<Attendance> attendances, List<Shift> listShift, String employee) {
+    public ListDateAdapter(Context context, List<Date> dates, List<Attendance> attendances, List<Shift> listShift, String employee, BaseViewModel viewModel) {
         this.dates = dates;
         this.context = context;
         this.attendances = attendances;
         this.listShift = listShift;
         this.employee = employee;
+        this.viewModel = viewModel;
     }
 
     public interface OnItemClickListener {
@@ -139,6 +144,9 @@ public class ListDateAdapter extends BaseAdapter {
             String placeCheck = "Không có";
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
+            String place_s = "Không có";
+
+
             for (String[] check : shiftcheck) {
                 if (check[1].equals("checkin")) {
                     checkinTime = check[0];
@@ -161,10 +169,20 @@ public class ListDateAdapter extends BaseAdapter {
                     work_count_day += work_per_shift;
                     work_count_temp=1;
                 }
+                for (Place p: viewModel.getPlaces())
+                {
+                    if (p.getPlaceID().equals(check[3]))
+                    {
+                        place_s = p.getPlaceName();
+                        break;
+                    }
+                }
             }
 
+
             String workcountshift_s = String.valueOf(work_count_temp);
-            String place_s = "a";
+
+
             String checkinTime_s = checkinTime;
             String checkoutTime_s = checkoutTime;
             String checkinShift_s = "";
@@ -180,7 +198,6 @@ public class ListDateAdapter extends BaseAdapter {
             boolean isCheckoutValid = Objects.equals(checkoutTime, "Không có") || !isCheckoutEarly;
 
             fullshifts.add(new String[]{workcountshift_s, place_s, checkinTime_s, checkoutTime_s, checkinShift_s, checkoutShift_s, isCheckinValid ? "Valid" : "Invalid", isCheckoutValid ? "Valid" : "Invalid"});
-
             shiftchecks.add(new String[]{shift.getShift_name(), checkinTime, checkoutTime, place, placeCheck, isCheckinValid ? "Valid" : "Invalid", isCheckoutValid ? "Valid" : "Invalid"});
         }
 
