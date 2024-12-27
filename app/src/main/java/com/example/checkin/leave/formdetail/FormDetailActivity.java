@@ -160,10 +160,11 @@ public class FormDetailActivity extends Activity {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(FormDetailActivity.this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(FormDetailActivity.this, FormPersonalActivity.class);
-                        intent.putExtra("isDeleted", true);
-                        startActivity(intent);
+//                        Toast.makeText(FormDetailActivity.this, "Đã xóa đơn từ thành công!", Toast.LENGTH_SHORT).show();
+//                        Intent intent = new Intent(FormDetailActivity.this, FormPersonalActivity.class);
+//                        intent.putExtra("isDeleted", true);
+//                        startActivity(intent);
+                        finish();
                     }
                 }, 3000);
             }
